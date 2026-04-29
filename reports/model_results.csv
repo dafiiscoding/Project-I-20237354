@@ -1,0 +1,5 @@
+model,cv_auc,test_auc,avg_precision,f1,precision,recall,threshold,train_time_s
+Logistic Regression,0.8371,0.8432,0.3700,0.4340,0.3878,0.4927,0.66,487.9
+Decision Tree,0.8509,0.8579,0.3762,0.4314,0.3991,0.4694,0.80,13.2
+Random Forest,0.8635,0.8703,0.3980,0.4439,0.3869,0.5206,0.72,511.4
+XGBoost,0.8656,0.8714,0.4005,0.4466,0.3937,0.5160,0.77,126.6
