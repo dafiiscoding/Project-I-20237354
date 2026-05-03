@@ -28,6 +28,7 @@ final_report/*.toc
 final_report/*.lof
 final_report/*.lot
 final_report/*.out
+final_report/*.synctex.gz
 
 # ─── Legacy/duplicate report artifact ─────────────────────────────────────────
 reports/fig_26_shap_bar.png

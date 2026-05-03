@@ -237,8 +237,8 @@ def main():
         with col_a:
             revolving_util = st.number_input(
                 "Revolving Utilization",
-                min_value=0.0, max_value=1.0, value=0.3, step=0.01,
-                help="Ratio of unsecured credit used (0-1)"
+                min_value=0.0, max_value=10.0, value=0.3, step=0.01,
+                help="Ratio of unsecured credit used (0–1 bình thường; >1 = vượt hạn mức)"
             )
             age = st.number_input(
                 "Age (years)",
