@@ -226,7 +226,7 @@ Phân phối (thang log) cho thấy thu nhập trung vị ~$5.400/tháng, phù h
 1. Tử số (monthly debt) bao gồm cả non-cash obligations (insurance, taxes) theo định nghĩa rộng hơn standard DTI
 2. Khi income = 0 hoặc rất nhỏ, ratio phình to vô nghĩa
 
-**Hệ quả:** `DebtRatio` thô không đáng tin cậy bằng `DebtToIncomeRatio = DebtRatio × MonthlyIncome` (DTI tuyệt đối, đơn vị USD/tháng) sau khi MonthlyIncome đã được ước tính. Đặc trưng này sẽ được tạo trong Phase 2.
+**Hệ quả:** `DebtRatio` thô không đáng tin cậy bằng `AbsoluteMonthlyDebt = DebtRatio × MonthlyIncome` (DTI tuyệt đối, đơn vị USD/tháng) sau khi MonthlyIncome đã được ước tính. Đặc trưng này sẽ được tạo trong Phase 2.
 
 ---
 
@@ -245,7 +245,7 @@ Phân phối (thang log) cho thấy thu nhập trung vị ~$5.400/tháng, phù h
 ### Trích xuất Đặc trưng (theo thứ tự tạo)
 7. `TotalDelinquencyScore` (cần trước bước 8, 9)
 8. `FinancialStressIndex = RevolvingUtilization × TotalDelinquencyScore`
-9. `DebtToIncomeRatio = DebtRatio × MonthlyIncome` (sau khi impute income)
+9. `AbsoluteMonthlyDebt = DebtRatio × MonthlyIncome` (sau khi impute income)
 10. `DelinquencyTrend = (30-59) - (90+)` — trajectory indicator
 
 ### Hệ quả Lập mô hình từ EDA

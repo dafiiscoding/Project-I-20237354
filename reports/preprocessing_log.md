@@ -101,7 +101,7 @@ $$\text{FSI} = \text{RevolvingUtilization} \times \text{TotalDelinquencyScore}$$
 
 Interaction term `Util × Delinq` capture profile "double stressed": maxed out credit AND có delinquency history. Đây là highest-risk pattern trong credit scoring.
 
-### 4.3 DebtToIncomeRatio
+### 4.3 AbsoluteMonthlyDebt
 
 $$\text{DTI\_abs} = \text{DebtRatio} \times \text{MonthlyIncome}$$
 

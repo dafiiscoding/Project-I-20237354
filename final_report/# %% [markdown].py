@@ -692,7 +692,7 @@ print(f"Sau khi xóa: {len(df) - age_zero_count} rows")
 # 
 # ### MonthlyIncome
 # 
-# Income là denominator trong DTI. Khi income = 0 hoặc missing, DebtRatio trở nên vô nghĩa. Đây là lý do cần **impute MonthlyIncome trước** khi tính DebtToIncomeRatio absolute.
+# Income là denominator trong DTI. Khi income = 0 hoặc missing, DebtRatio trở nên vô nghĩa. Đây là lý do cần **impute MonthlyIncome trước** khi tính AbsoluteMonthlyDebt absolute.
 # 
 
 # %%
@@ -784,7 +784,7 @@ plt.show()
 # ### Feature Engineering cần làm (Phase 2):
 # - `TotalDelinquencyScore` = 3×(90+) + 2×(60-89) + 1×(30-59): weighted severity
 # - `FinancialStressIndex` = Utilization × TotalDelinquencyScore: multiplicative risk signal
-# - `DebtToIncomeRatio` = DebtRatio × MonthlyIncome: absolute DTI
+# - `AbsoluteMonthlyDebt` = DebtRatio × MonthlyIncome: absolute DTI
 # - `DelinquencyTrend` = (30-59) - (90+): trajectory of financial health
 # 
 

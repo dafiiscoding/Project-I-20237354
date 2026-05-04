@@ -42,7 +42,7 @@ FEATURES = [
     'NumberOfOpenCreditLinesAndLoans', 'NumberOfTimes90DaysLate',
     'NumberRealEstateLoansOrLines', 'NumberOfTime60-89DaysPastDueNotWorse',
     'NumberOfDependents', 'TotalDelinquencyScore', 'FinancialStressIndex',
-    'DebtToIncomeRatio', 'DelinquencyTrend',
+    'AbsoluteMonthlyDebt', 'DelinquencyTrend',
 ]
 TARGET = 'SeriousDlqin2yrs'
 

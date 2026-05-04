@@ -48,7 +48,7 @@ FEATURES = [
     'NumberOfDependents',
     'TotalDelinquencyScore',
     'FinancialStressIndex',
-    'DebtToIncomeRatio',
+    'AbsoluteMonthlyDebt',
     'DelinquencyTrend',
 ]
 
@@ -66,7 +66,7 @@ FEATURE_LABELS = {
     'NumberOfDependents': 'Số người phụ thuộc',
     'TotalDelinquencyScore': 'Điểm lịch sử trả nợ tổng hợp',
     'FinancialStressIndex': 'Chỉ số stress tài chính',
-    'DebtToIncomeRatio': 'Tổng nợ tuyệt đối',
+    'AbsoluteMonthlyDebt': 'Tổng nợ tuyệt đối (USD/tháng)',
     'DelinquencyTrend': 'Xu hướng cải thiện nợ',
 }
 
@@ -163,7 +163,7 @@ def build_prediction_dataframe(
         'NumberOfDependents': n_dependents,
         'TotalDelinquencyScore': total_delinq,
         'FinancialStressIndex': financial_stress,
-        'DebtToIncomeRatio': dti,
+        'AbsoluteMonthlyDebt': dti,
         'DelinquencyTrend': delinq_trend,
     }
     

@@ -96,17 +96,17 @@ def compute_financial_stress_index(df: pd.DataFrame) -> pd.Series:
     )
 
 
-def compute_debt_to_income_ratio(df: pd.DataFrame) -> pd.Series:
+def compute_absolute_monthly_debt(df: pd.DataFrame) -> pd.Series:
     """
-    DTI tuyệt đối (absolute debt amount USD/month).
+    Số nợ tuyệt đối hàng tháng (tính bằng USD).
 
-    DebtToIncomeRatio = DebtRatio × MonthlyIncome
+    AbsoluteMonthlyDebt = DebtRatio × MonthlyIncome
 
     Lý do cần feature này:
     - DebtRatio raw là dimensionless ratio (nợ/income), không có đơn vị USD
     - Cùng DebtRatio=0.5 với income=$2k (nợ $1k/tháng) vs income=$20k (nợ $10k/tháng)
       là 2 situations tài chính hoàn toàn khác nhau
-    - DebtToIncomeRatio = số USD nợ thực tế mỗi tháng → meaningful cho credit analysts
+    - AbsoluteMonthlyDebt = số USD nợ thực tế mỗi tháng → meaningful cho credit analysts
     - Chỉ có ý nghĩa sau khi MonthlyIncome đã được imputed (không có missing)
 
     Parameters
@@ -166,7 +166,7 @@ def engineer_all_features(df: pd.DataFrame) -> pd.DataFrame:
     Thứ tự quan trọng:
     1. TotalDelinquencyScore (cần trước FSI)
     2. FinancialStressIndex (cần TotalDelinquencyScore)
-    3. DebtToIncomeRatio (cần MonthlyIncome đã imputed)
+    3. AbsoluteMonthlyDebt (cần MonthlyIncome đã imputed)
     4. DelinquencyTrend (independent)
 
     Parameters
@@ -183,7 +183,7 @@ def engineer_all_features(df: pd.DataFrame) -> pd.DataFrame:
 
     df_out['TotalDelinquencyScore'] = compute_total_delinquency_score(df_out)
     df_out['FinancialStressIndex']  = compute_financial_stress_index(df_out)
-    df_out['DebtToIncomeRatio']     = compute_debt_to_income_ratio(df_out)
+    df_out['AbsoluteMonthlyDebt']   = compute_absolute_monthly_debt(df_out)
     df_out['DelinquencyTrend']      = compute_delinquency_trend(df_out)
 
     return df_out

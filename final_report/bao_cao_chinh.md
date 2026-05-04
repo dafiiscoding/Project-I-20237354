@@ -409,11 +409,11 @@ $$\text{FSI} = \text{RevolvingUtilization} \times \text{TotalDelinquencyScore}$$
 ![Tương quan Spearman của 14 đặc trưng với biến mục tiêu — đặc trưng được tạo dẫn đầu](../reports/fig_12_feature_importance.png)
 *Hình 3.3: FinancialStressIndex (ρ=0,346) và TotalDelinquencyScore (ρ=0,345) dẫn đầu tương quan với target, vượt các đặc trưng gốc thô — xác nhận Feature Engineering có chủ đích theo lĩnh vực tài chính mang lại giá trị dự báo cao hơn.*
 
-### 3.4.3 AbsoluteDebt — Dư nợ tuyệt đối (tên code: `DebtToIncomeRatio`)
+### 3.4.3 AbsoluteDebt — Dư nợ tuyệt đối (tên code: `AbsoluteMonthlyDebt`)
 
 $$\text{AbsoluteDebt} = \text{DebtRatio} \times \text{MonthlyIncome}$$
 
-`DebtRatio` là tỷ lệ nợ/income (không thứ nguyên), không phản ánh quy mô tuyệt đối. DebtRatio=2 với income=$2.000 (nợ $4.000/tháng) khác hoàn toàn DebtRatio=2 với income=$10.000 (nợ $20.000/tháng). Phép nhân triệt tiêu income → kết quả là **số tiền nợ tuyệt đối** (USD/tháng), không phải ratio. SHAP cho mean|SHAP|=0,065 — nhỏ nhưng đủ để giữ lại. *(Lưu ý: tên cột trong code là `DebtToIncomeRatio` — legacy misnomer, giữ nguyên để tương thích với model đã huấn luyện.)*
+`DebtRatio` là tỷ lệ nợ/income (không thứ nguyên), không phản ánh quy mô tuyệt đối. DebtRatio=2 với income=$2.000 (nợ $4.000/tháng) khác hoàn toàn DebtRatio=2 với income=$10.000 (nợ $20.000/tháng). Phép nhân triệt tiêu income → kết quả là **số tiền nợ tuyệt đối** (USD/tháng), không phải ratio. SHAP cho mean|SHAP|=0,065 — nhỏ nhưng đủ để giữ lại. *(Lưu ý: tên cột trong code là `AbsoluteMonthlyDebt` — legacy misnomer, giữ nguyên để tương thích với model đã huấn luyện.)*
 
 ### 3.4.4 DelinquencyTrend (Cán cân mức độ trễ hạn)
 
@@ -502,7 +502,7 @@ $$x_{\text{scaled}} = \frac{x - \text{median}(\mathbf{x})}{\text{IQR}(\mathbf{x}
 | FinancialStressIndex | 0,186 | **1,205** | Interaction effect |
 | age | −0,210 | **0,811** | +10 tuổi → odds ×0,811 (người lớn tuổi ít vỡ nợ) |
 | NumberOfTimes90DaysLate | **0** | 1,000 | **L1 triệt tiêu** — dư thừa so với TotalDelinquencyScore |
-| DebtToIncomeRatio | **0** | 1,000 | **L1 triệt tiêu** — mô hình tuyến tính không thấy đóng góp |
+| AbsoluteMonthlyDebt | **0** | 1,000 | **L1 triệt tiêu** — mô hình tuyến tính không thấy đóng góp |
 
 Đáng chú ý là L1 (C=0,001) đưa hệ số `NumberOfTimes90DaysLate` về 0, trong khi `TotalDelinquencyScore` — vốn đã mã hóa thông tin của đặc trưng đó — vẫn được giữ lại với hệ số dương. Đây là bằng chứng gián tiếp cho thấy Feature Engineering đi đúng hướng.
 
@@ -590,7 +590,7 @@ Top 5: TotalDelinquencyScore, FinancialStressIndex, RevolvingUtilization, age, M
 | 3 | TotalDelinquencyScore | **Được tạo** | 0,410 |
 | 4 | age | Gốc | 0,244 |
 | 5 | NumberOfOpenCreditLinesAndLoans | Gốc | 0,168 |
-| 9 | DebtToIncomeRatio | Được tạo | 0,065 |
+| 9 | AbsoluteMonthlyDebt | Được tạo | 0,065 |
 | 12 | NumberOfTimes90DaysLate | Gốc | 0,013 |
 
 ![Biểu đồ thanh SHAP tổng quát — mean |SHAP value| của 14 đặc trưng](../reports/fig_26a_shap_bar.png)
@@ -879,7 +879,7 @@ Nhìn chung, mô hình chưa được hiệu chỉnh xác suất. Với mục ti
 |-----------|---------|---------|
 | `TotalDelinquencyScore` | $3\times(90+) + 2\times(60\text{–}89) + (30\text{–}59)$ | Điểm tổng hợp trễ hạn có trọng số |
 | `FinancialStressIndex` | $\text{RevUtil} \times \text{TotalDelinquencyScore}$ | Tương tác hạn mức × trễ hạn |
-| `DebtToIncomeRatio` (AbsoluteDebt) | $\text{DebtRatio} \times \text{MonthlyIncome}$ | Dư nợ tuyệt đối (USD/tháng) |
+| `AbsoluteMonthlyDebt` (AbsoluteDebt) | $\text{DebtRatio} \times \text{MonthlyIncome}$ | Dư nợ tuyệt đối (USD/tháng) |
 | `DelinquencyTrend` | $(30\text{–}59) - (90+)$ | Xu hướng cải thiện trễ hạn |
 
 ## 5.3 Tính năng chính

@@ -110,7 +110,7 @@ Bốn đặc trưng mới được tạo dựa trên lĩnh vực tài chính:
 |-------------|-----------|-------|
 | `TotalDelinquencyScore` | $3 \cdot N_{90+} + 2 \cdot N_{60-89} + 1 \cdot N_{30-59}$ | Phân lớp trễ hạn có trọng số theo FICO |
 | `FinancialStressIndex` | RevUtil × TotalDelinquencyScore | Sự cộng hưởng giữa áp lực ngắn hạn và lịch sử trả nợ |
-| `DebtToIncomeRatio` | DebtRatio × MonthlyIncome | Tổng nợ tuyệt đối (không phải tỷ số) |
+| `AbsoluteMonthlyDebt` | DebtRatio × MonthlyIncome | Tổng nợ tuyệt đối (không phải tỷ số) |
 | `DelinquencyTrend` | $N_{30-59} - N_{90+}$ | Giá trị âm thể hiện xu hướng đang xấu dần |
 
 **Kết quả:** FinancialStressIndex (Spearman ρ=0,346) và TotalDelinquencyScore (ρ=0,345) dẫn đầu tương quan với biến mục tiêu — vượt tất cả đặc trưng thô gốc.

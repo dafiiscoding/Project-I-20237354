@@ -128,7 +128,7 @@ Dựa trên SHAP TreeExplainer (3,000 test samples, exact Shapley values):
 | 3 | **TotalDelinquencyScore** | Được tạo | 0,410 | Tổng hợp trễ hạn có trọng số |
 | 4 | age | Gốc | 0,244 | Đại diện kinh nghiệm tài chính |
 | 5 | NumberOfOpenCreditLinesAndLoans | Gốc | 0,168 | Tín hiệu đa dạng hóa/quá mức |
-| 9 | **DebtToIncomeRatio** | Được tạo | 0,065 | R14: GIỮ (>5% của đặc trưng #2) |
+| 9 | **AbsoluteMonthlyDebt** | Được tạo | 0,065 | R14: GIỮ (>5% của đặc trưng #2) |
 | 14 | **DelinquencyTrend** | Được tạo | 0,002 | Thấp nhất — có thể bỏ sau |
 
 **Nhận xét quan trọng:**
@@ -138,7 +138,7 @@ Dựa trên SHAP TreeExplainer (3,000 test samples, exact Shapley values):
 - NumberOfTimes90DaysLate chỉ ở rank 12 (SHAP=0,013) mặc dù đây là tín hiệu mạnh nhất theo lĩnh vực
   → XGBoost học được nó qua FinancialStressIndex và TotalDelinquencyScore thay thế
 - DelinquencyTrend (SHAP=0.002) rất thấp → có thể drop trong Phase 5
-- R14 xác nhận: DTI SHAP=0,065 > ngưỡng 0,027 → **GIỮ DebtToIncomeRatio**
+- R14 xác nhận: DTI SHAP=0,065 > ngưỡng 0,027 → **GIỮ AbsoluteMonthlyDebt**
 
 ### 4.2 SHAP Dependence Analysis (fig_27)
 
@@ -166,7 +166,7 @@ Dựa trên SHAP TreeExplainer (3,000 test samples, exact Shapley values):
 - RevolvingUtil và TotalDelinquencyScore ở mức trung bình, không đủ để vượt ngưỡng
 - Giá trị nền thấp → cần nhiều "bằng chứng dương" hơn để đẩy dự đoán đủ cao
 
-### 4.4 R14 Verification: DebtToIncomeRatio
+### 4.4 R14 Verification: AbsoluteMonthlyDebt
 
 Từ Phase 2 (R14): cần kiểm tra nếu DTI SHAP < 5% của đặc trưng #2 thì đề xuất loại bỏ.
 
@@ -176,7 +176,7 @@ Kết quả từ SHAP analysis:
 
 **Kết quả (R14 verification):**
 - DTI mean|SHAP| = 0,065, ngưỡng (5% của #2) = 0,027
-- **KẾT LUẬN: GIỮ DebtToIncomeRatio** → DTI SHAP vượt ngưỡng gần 2,5× → không thể loại bỏ
+- **KẾT LUẬN: GIỮ AbsoluteMonthlyDebt** → DTI SHAP vượt ngưỡng gần 2,5× → không thể loại bỏ
 - R14 hypothesis bị bác bỏ: DTI có contribution đáng kể mặc dù L1 zero-out ở Logistic Regression
 
 ---
@@ -250,7 +250,7 @@ SHAP analysis xác nhận:
 
 ### 6.4 Nợ Kỹ thuật & Hành động Phase 5
 
-- **DebtToIncomeRatio:** Kiểm tra R14 — nếu SHAP thấp, loại bỏ khỏi form Streamlit
+- **AbsoluteMonthlyDebt:** Kiểm tra R14 — nếu SHAP thấp, loại bỏ khỏi form Streamlit
 - **Tích hợp SHAP:** Dùng `shap.TreeExplainer` trong Streamlit cho biểu đồ waterfall thời gian thực
 - **Tham số ngưỡng:** Đưa thanh trượt ngưỡng vào dashboard để người dùng thử nghiệm
 - **Lưu mô hình:** `best_model.pkl` (XGBoost) đã sẵn sàng cho ứng dụng Streamlit

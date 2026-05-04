@@ -57,7 +57,7 @@ Training time: 487.9s
 | NumberOfTime30-59 | +0.062 | 1.064 | Trễ nhẹ vẫn có tín hiệu |
 | DelinquencyTrend | +0.025 | 1.025 | Yếu, nhưng có hướng |
 | NumberOfTimes90DaysLate | **0.000** | 1.000 | L1 triệt tiêu (đã nắm bắt bởi TotalDelinquency) |
-| DebtToIncomeRatio | **0.000** | 1.000 | L1 triệt tiêu (tín hiệu yếu) |
+| AbsoluteMonthlyDebt | **0.000** | 1.000 | L1 triệt tiêu (tín hiệu yếu) |
 | age | -0.120 | **0.887** | Protective: tuổi cao → risk giảm |
 | MonthlyIncome | -0.059 | 0.942 | Protective: income cao → risk giảm |
 | NumberOfDependents | -0.052 | 0.949 | Nhẹ: nhiều người phụ thuộc → giảm risk? |

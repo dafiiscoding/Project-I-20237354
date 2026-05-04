@@ -563,12 +563,12 @@ Bốn đặc trưng mới được tạo dựa trên kiến thức lĩnh vực t
 \caption{FinancialStressIndex ($\rho = 0{,}346$) và TotalDelinquencyScore ($\rho = 0{,}345$) dẫn đầu tương quan với biến mục tiêu, vượt các đặc trưng gốc --- xác nhận Feature Engineering có chủ đích theo domain tài chính mang lại giá trị dự báo cao hơn.}
 \end{figure}
 
-\subsection{AbsoluteDebt --- Dư nợ tuyệt đối (tên code: \texttt{DebtToIncomeRatio})}
+\subsection{AbsoluteDebt --- Dư nợ tuyệt đối (tên code: \texttt{AbsoluteMonthlyDebt})}
 \begin{equation}
 \text{AbsoluteDebt} = \text{DebtRatio} \times \text{MonthlyIncome}
 \end{equation}
 
-\textbf{Cơ sở:} \texttt{DebtRatio} là tỷ lệ nợ/income (không thứ nguyên) --- không phản ánh quy mô tuyệt đối. Phép nhân triệt tiêu income, kết quả là \textbf{số tiền nợ tuyệt đối} (USD/tháng), không phải ratio. Người có $\text{DebtRatio} = 2$, $\text{Income} = \$2.000$ (nợ \$4.000/tháng) khác hoàn toàn $\text{DebtRatio} = 2$, $\text{Income} = \$10.000$ (nợ \$20.000/tháng). SHAP: $\text{mean}|\text{SHAP}| = 0{,}065$ --- giữ lại. \textit{(Tên cột trong code: \texttt{DebtToIncomeRatio} --- legacy misnomer, giữ để tương thích model đã huấn luyện.)}
+\textbf{Cơ sở:} \texttt{DebtRatio} là tỷ lệ nợ/income (không thứ nguyên) --- không phản ánh quy mô tuyệt đối. Phép nhân triệt tiêu income, kết quả là \textbf{số tiền nợ tuyệt đối} (USD/tháng), không phải ratio. Người có $\text{DebtRatio} = 2$, $\text{Income} = \$2.000$ (nợ \$4.000/tháng) khác hoàn toàn $\text{DebtRatio} = 2$, $\text{Income} = \$10.000$ (nợ \$20.000/tháng). SHAP: $\text{mean}|\text{SHAP}| = 0{,}065$ --- giữ lại. \textit{(Tên cột trong code: \texttt{AbsoluteMonthlyDebt} --- legacy misnomer, giữ để tương thích model đã huấn luyện.)}
 
 \subsection{DelinquencyTrend (Cán cân mức độ trễ hạn)}
 \begin{equation}
@@ -685,7 +685,7 @@ RevolvingUtilization      & 0,204   & \textbf{1,226} & $+10\%$ utilization $\to$
 FinancialStressIndex      & 0,186   & \textbf{1,205} & Interaction effect \\
 age                       & $-0{,}210$ & \textbf{0,811} & $+10$ tuổi $\to$ odds $\times 0{,}811$ \\
 NumberOfTimes90DaysLate   & \textbf{0} & 1,000 & \textbf{L1 triệt tiêu} --- dư thừa so với TDS \\
-DebtToIncomeRatio         & \textbf{0} & 1,000 & \textbf{L1 triệt tiêu} --- tuyến tính không thấy đóng góp \\
+AbsoluteMonthlyDebt         & \textbf{0} & 1,000 & \textbf{L1 triệt tiêu} --- tuyến tính không thấy đóng góp \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -814,7 +814,7 @@ Thời gian huấn luyện        & 127 s \\
 3  & TotalDelinquencyScore                 & \textbf{Được tạo} & 0,410 \\
 4  & age                                   & Gốc               & 0,244 \\
 5  & NumberOfOpenCreditLinesAndLoans       & Gốc               & 0,168 \\
-9  & DebtToIncomeRatio                     & Được tạo          & 0,065 \\
+9  & AbsoluteMonthlyDebt                     & Được tạo          & 0,065 \\
 12 & NumberOfTimes90DaysLate               & Gốc               & 0,013 \\
 \bottomrule
 \end{tabular}
@@ -1192,7 +1192,7 @@ Phép này không thay đổi thứ tự xếp hạng (AUC không đổi) nhưng
 \midrule
 \texttt{TotalDelinquencyScore} & $3\times(\text{90+}) + 2\times(\text{60--89}) + (\text{30--59})$ & Điểm tổng hợp trễ hạn có trọng số \\
 \texttt{FinancialStressIndex}  & $\texttt{RevUtil} \times \texttt{TotalDelinquencyScore}$        & Tương tác hạn mức $\times$ trễ hạn \\
-\texttt{DebtToIncomeRatio} (AbsoluteDebt) & $\texttt{DebtRatio} \times \texttt{MonthlyIncome}$ & Dư nợ tuyệt đối (USD/tháng) \\
+\texttt{AbsoluteMonthlyDebt} (AbsoluteDebt) & $\texttt{DebtRatio} \times \texttt{MonthlyIncome}$ & Dư nợ tuyệt đối (USD/tháng) \\
 \texttt{DelinquencyTrend}      & $(\text{30--59}) - (\text{90+})$                               & Xu hướng cải thiện trễ hạn \\
 \bottomrule
 \end{tabularx}
