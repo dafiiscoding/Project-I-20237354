@@ -30,7 +30,7 @@ FEATURE_COLS = [
     "NumberOfDependents",
 ]
 
-EXPECTED_SHAPE = (150000, 11)
+EXPECTED_SHAPE = (150000, 11)  # raw CSV: 150.000 dòng, 11 cột (10 features + target). Sau khi loại 1 dòng age=0 còn 149.999.
 
 
 # ─── Hàm tải dữ liệu ─────────────────────────────────────────────────────────

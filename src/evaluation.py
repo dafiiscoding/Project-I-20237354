@@ -201,8 +201,8 @@ def plot_confusion_matrix(
 
     sns.heatmap(
         cm, annot=labels, fmt='', cmap='Blues',
-        xticklabels=['Predicted 0\n(No Default)', 'Predicted 1\n(Default)'],
-        yticklabels=['Actual 0\n(No Default)', 'Actual 1\n(Default)'],
+        xticklabels=['Dự báo: Không vỡ nợ', 'Dự báo: Vỡ nợ'],
+        yticklabels=['Thực tế: Không vỡ nợ', 'Thực tế: Vỡ nợ'],
         ax=ax, linewidths=0.5,
     )
     ax.set_title(title, fontweight='bold', pad=10)
@@ -247,10 +247,10 @@ def plot_roc_pr_curves(
     fpr, tpr, _ = roc_curve(y, proba)
     ax_roc.plot(fpr, tpr, color=color, lw=2,
                 label=f'{model_name} (AUC={auc_roc:.4f})')
-    ax_roc.plot([0, 1], [0, 1], 'k--', alpha=0.4, label='Random')
-    ax_roc.set_xlabel('False Positive Rate (1-Specificity)')
-    ax_roc.set_ylabel('True Positive Rate (Sensitivity / Recall)')
-    ax_roc.set_title('ROC Curve', fontweight='bold')
+    ax_roc.plot([0, 1], [0, 1], 'k--', alpha=0.4, label='Ngẫu nhiên')
+    ax_roc.set_xlabel('Tỷ lệ dương tính giả (1-Specificity)')
+    ax_roc.set_ylabel('Tỷ lệ dương tính thật (Recall)')
+    ax_roc.set_title('Đường cong ROC', fontweight='bold')
     ax_roc.legend(loc='lower right', fontsize=9)
 
     # PR curve
@@ -259,10 +259,10 @@ def plot_roc_pr_curves(
     ax_pr.plot(recall, precision, color=color, lw=2,
                label=f'{model_name} (AP={auc_pr:.4f})')
     ax_pr.axhline(prevalence, ls='--', color='gray', alpha=0.5,
-                  label=f'Baseline (prevalence={prevalence:.3f})')
-    ax_pr.set_xlabel('Recall (Sensitivity)')
-    ax_pr.set_ylabel('Precision (PPV)')
-    ax_pr.set_title('Precision-Recall Curve', fontweight='bold')
+                  label=f'Đường cơ sở (tỷ lệ={prevalence:.3f})')
+    ax_pr.set_xlabel('Nhạy cảm (Recall)')
+    ax_pr.set_ylabel('Độ chính xác (Precision)')
+    ax_pr.set_title('Đường cong Precision-Recall', fontweight='bold')
     ax_pr.legend(loc='upper right', fontsize=9)
 
     return ax_roc, ax_pr
@@ -301,10 +301,10 @@ def plot_overlay_roc(
         auc = roc_auc_score(y, proba)
         ax.plot(fpr, tpr, lw=2, color=color, label=f'{name} (AUC={auc:.4f})')
 
-    ax.plot([0, 1], [0, 1], 'k--', alpha=0.4, label='Random')
-    ax.set_xlabel('False Positive Rate')
-    ax.set_ylabel('True Positive Rate')
-    ax.set_title('ROC Curves — Model Comparison', fontweight='bold')
+    ax.plot([0, 1], [0, 1], 'k--', alpha=0.4, label='Ngẫu nhiên')
+    ax.set_xlabel('Tỷ lệ dương tính giả (1-Specificity)')
+    ax.set_ylabel('Tỷ lệ dương tính thật (Recall)')
+    ax.set_title('So sánh đường cong ROC giữa các mô hình', fontweight='bold')
     ax.legend(loc='lower right', fontsize=10)
     ax.set_xlim([0, 1])
     ax.set_ylim([0, 1.02])
@@ -469,16 +469,16 @@ def plot_calibration_curve(
         _, ax = plt.subplots(figsize=(7, 6))
 
     colors = ['#3498db', '#e67e22', '#2ecc71', '#e74c3c']
-    ax.plot([0, 1], [0, 1], 'k--', alpha=0.5, label='Perfect calibration')
+    ax.plot([0, 1], [0, 1], 'k--', alpha=0.5, label='Hiệu chỉnh hoàn hảo')
 
     for (name, model), color in zip(models.items(), colors):
         proba = model.predict_proba(X)[:, 1]
         frac_pos, mean_pred = calibration_curve(np.asarray(y), proba, n_bins=n_bins)
         ax.plot(mean_pred, frac_pos, marker='o', lw=2, color=color, label=name)
 
-    ax.set_xlabel('Mean predicted probability', fontweight='bold')
-    ax.set_ylabel('Fraction of positives (actual)', fontweight='bold')
-    ax.set_title('Reliability Diagram — Calibration Quality', fontweight='bold')
+    ax.set_xlabel('Xác suất dự báo trung bình', fontweight='bold')
+    ax.set_ylabel('Tỷ lệ vỡ nợ thực tế', fontweight='bold')
+    ax.set_title('Biểu đồ độ tin cậy — Chất lượng hiệu chỉnh xác suất', fontweight='bold')
     ax.legend(loc='upper left', fontsize=9)
     ax.set_xlim([0, 1])
     ax.set_ylim([0, 1])
@@ -524,10 +524,10 @@ def plot_overlay_pr(
         ax.plot(recall, precision, lw=2, color=color, label=f'{name} (AP={ap:.4f})')
 
     ax.axhline(prevalence, ls='--', color='gray', alpha=0.5,
-               label=f'Baseline (prevalence={prevalence:.3f})')
-    ax.set_xlabel('Recall')
-    ax.set_ylabel('Precision')
-    ax.set_title('Precision-Recall Curves — Model Comparison', fontweight='bold')
+               label=f'Đường cơ sở (tỷ lệ={prevalence:.3f})')
+    ax.set_xlabel('Nhạy cảm (Recall)')
+    ax.set_ylabel('Độ chính xác (Precision)')
+    ax.set_title('So sánh đường cong Precision-Recall giữa các mô hình', fontweight='bold')
     ax.legend(loc='upper right', fontsize=10)
 
     if save_path:
