@@ -588,7 +588,7 @@ Kiểm định DeLong [13] so sánh hai AUC từ cùng tập test, có tính đ�
 
 | So sánh | AUC A | AUC B | Δ AUC | z-stat | p-value (2-tailed) | Kết luận |
 |---------|-------|-------|-------|--------|--------------------|----------|
-| XGBoost vs RF tái huấn luyện | 0,8714 | 0,8671 | +0,0043 | 4,1833 | < 0,0001 | **Có ý nghĩa thống kê cho cặp addendum** |
+| XGBoost vs RF tái huấn luyện | 0,8714 | 0,8671 | +0,0043 | 4,1833 | < 0,0001 | **Có ý nghĩa** |
 
 > *Ghi chú tái lập:* RF trong kiểm định DeLong được huấn luyện lại như một model phụ nội bộ để có xác suất so sánh cùng tập test. Vì vậy AUC=0,8671 trong bảng DeLong khác với RF AUC=0,8703 ở bảng so sánh chính. Kết quả DeLong dưới đây chỉ khẳng định sự khác biệt cho cặp model tái lập trong addendum; quyết định chọn XGBoost vẫn nên được hiểu chủ yếu từ hiệu năng tổng thể và lợi thế vận hành.
 
@@ -654,7 +654,7 @@ $$t^* = \arg\max_{t} F_2(t) = 0,625$$
 | Mặc định (0,50) | 77,5% | 22,2% | 0,518 | 5,84 |
 | **F2-optimal (0,625)** | **66,9%** | **29,9%** | **0,537** | **6,78** |
 | F1-optimal (0,77) | 51,6% | 39,4% | 0,486 | 8,79 |
-| Bayes-optimal (0,043) | 99,2% | 6,9% | 0,265 | 34,5 |
+| Bayes (0,043) | 99,2% | 6,9% | 0,265 | 34,5 |
 
 **Chi phí kinh doanh** (FN=$11.250/case, FP=$500/case, loan $15.000 × LGD 75%): t=0,5 có chi phí thấp nhất tuyệt đối (khoảng 5,84 triệu USD) nhưng tạo khoảng 4.000 FP — khó vận hành. t=0,625 (F2-optimal) là điểm thỏa hiệp: giảm khoảng 2,01 triệu USD so với t=0,77, tăng Recall 15,3 điểm, FP kiểm soát được.
 
