@@ -11,7 +11,7 @@ Dự báo xác suất vỡ nợ tín dụng bằng Machine Learning trên datase
 | Random Forest | 0,8703 | 0,444 | 0,387 | 0,521 | 0,72 |
 | **XGBoost** | **0,8714** | **0,447** | **0,394** | **0,516** | **0,77** |
 
-*Bảng trên đo ở ngưỡng tối ưu F1 của từng mô hình.* Ngưỡng triển khai thực tế **t = 0,625** được chọn bằng cách tối ưu F2-score (ưu tiên Recall vì bỏ sót người vỡ nợ tốn kém hơn từ chối nhầm). Tại ngưỡng triển khai, XGBoost đạt **F2 = 0,537, Recall = 0,669, Precision = 0,299** — Recall tăng 15,3 điểm so với ngưỡng F1-opt, ước tính tiết kiệm ~$2M/năm trên 22.500 hồ sơ.
+*Bảng trên đo ở ngưỡng tối ưu F1 của từng mô hình.* Ngưỡng triển khai thực tế **t = 0,625** được chọn bằng cách tối ưu F2-score (ưu tiên Recall vì bỏ sót người vỡ nợ tốn kém hơn từ chối nhầm). Tại ngưỡng triển khai, XGBoost đạt **F2 = 0,537, Recall = 0,669, Precision = 0,299** — Recall tăng 15,3 điểm so với ngưỡng F1-opt, ước tính tiết kiệm khoảng 2,01 triệu USD trên tập kiểm tra 22.500 hồ sơ.
 
 Theo SHAP, hai trong ba features quan trọng nhất là features tự tạo (`FinancialStressIndex`, `TotalDelinquencyScore`), không phải features gốc từ dataset.
 

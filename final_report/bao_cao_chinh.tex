@@ -174,8 +174,8 @@ có demo đánh giá danh mục.
   \textbf{Ngưỡng mặc định không phù hợp với tín dụng.} Ở ngưỡng
   F1-optimal t=0,77, mô hình bỏ sót 48,4\% người vỡ nợ. Chọn ngưỡng
   F2-optimal t=0,625 giúp Recall tăng từ 51,6\% lên 66,9\%, tương ứng
-  giảm ước tính khoảng \$2 triệu chi phí so với ngưỡng F1-optimal trên
-  tập kiểm tra 22.500 hồ sơ.
+  giảm ước tính khoảng 2,01 triệu USD chi phí so với ngưỡng F1-optimal
+  trên tập kiểm tra 22.500 hồ sơ.
 \item
   \textbf{Sai số còn lại có nguyên nhân rõ ràng.} Nhóm False Negative
   thường không có lịch sử trễ hạn (\texttt{TotalDelinquencyScore\ =\ 0},
@@ -863,10 +863,10 @@ income=\$2.000 khác hoàn toàn với income=\$10.000. Phép nhân cho kết qu
 tiền nợ tuyệt đối (USD/tháng). SHAP mean\textbar SHAP\textbar=0,065 ---
 nhỏ nhưng giữ lại.
 
-\subsubsection{3.4.4 DelinquencyTrend (Cán cân mức độ trễ
-hạn)}\label{delinquencytrend-cuxe1n-cuxe2n-mux1ee9c-ux111ux1ed9-trux1ec5-hux1ea1n}
+\subsubsection{3.4.4 DelinquencySeverityBalance (Cán cân mức độ trễ
+hạn)}\label{delinquencyseveritybalance-cuxe1n-cuxe2n-mux1ee9c-ux111ux1ed9-trux1ec5-hux1ea1n}
 
-\[\text{DelinquencyTrend} = N_{30-59} - N_{90+}\]
+\[\text{DelinquencySeverityBalance} = N_{30-59} - N_{90+}\]
 
 Dương = chủ yếu trễ hạn nhẹ; âm = chủ yếu trễ hạn nghiêm trọng. Lưu ý:
 cross-sectional snapshot, không phải chuỗi thời gian thực sự. SHAP
@@ -1379,31 +1379,46 @@ Tìm ngưỡng tối ưu trên tập kiểm định:
 \textbf{Kết quả so sánh trên tập kiểm tra:}
 
 {\def\LTcaptype{none} % do not increment counter
-\begin{longtable}[]{@{}llllll@{}}
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.1964}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.1429}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.1964}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.0714}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.3929}}@{}}
 \toprule\noalign{}
-Ngưỡng & F1 & F2 & Precision & Recall & Chi phí ước tính (triệu USD) \\
+\begin{minipage}[b]{\linewidth}\raggedright
+Ngưỡng
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Recall
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Precision
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+F2
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Chi phí (triệu USD)
+\end{minipage} \\
 \midrule\noalign{}
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-0,50 & 0,346 & 0,518 & 0,222 & 0,775 & 5,84 \\
-\textbf{0,625} (F2 opt) & 0,414 & \textbf{0,537} & 0,299 &
-\textbf{0,669} & 6,78 \\
-0,77 (F1 opt) & \textbf{0,447} & 0,486 & \textbf{0,394} & 0,516 &
-8,79 \\
+Mặc định (0,50) & 77,5\% & 22,2\% & 0,518 & 5,84 \\
+\textbf{F2-optimal (0,625)} & \textbf{66,9\%} & \textbf{29,9\%} &
+\textbf{0,537} & \textbf{6,78} \\
+F1-optimal (0,77) & 51,6\% & 39,4\% & 0,486 & 8,79 \\
+Bayes-optimal (0,043) & 99,2\% & 6,9\% & 0,265 & 34,5 \\
 \end{longtable}
 }
 
 \textbf{Chi phí kinh doanh} (FN=\$11.250/case, FP=\$500/case, loan
-\$15.000 × LGD 75\%): t=0,5 chi phí thấp nhất tuyệt đối
-(\textasciitilde\$5,84M) nhưng tạo \textasciitilde4.000 FP --- khó vận
-hành. t=0,625 (F2-optimal) là điểm thỏa hiệp: giảm \$2M vs t=0,77, tăng
-Recall 15,3 điểm, FP kiểm soát được (\textasciitilde2.350).
+\$15.000 × LGD 75\%): t=0,5 có chi phí thấp nhất tuyệt đối (khoảng 5,84
+triệu USD) nhưng tạo khoảng 4.000 FP --- khó vận hành. t=0,625
+(F2-optimal) là điểm thỏa hiệp: giảm khoảng 2,01 triệu USD so với
+t=0,77, tăng Recall 15,3 điểm, FP kiểm soát được.
 
 \pandocbounded{\includegraphics[keepaspectratio,alt={F1, F2, Precision và Recall theo ngưỡng --- điểm tối ưu F2 tại t=0,625}]{../reports/fig_25_threshold_optimization.png}}
 \emph{Hình 4.5: F2-optimal t=0,625 tăng Recall từ 51,6\% → 66,9\%, giảm
-chi phí \$2M so với F1-optimal t=0,77. Đường đứt đỏ = ngưỡng triển
-khai.}
+chi phí khoảng 2,01 triệu USD so với F1-optimal t=0,77. Đường đứt đỏ =
+ngưỡng triển khai.}
 
 \subsubsection{4.7.5 Đường cong học (Learning Curve) --- chẩn đoán độ
 chệch và phương
@@ -1576,8 +1591,8 @@ mức × trễ hạn \\
 \texttt{AbsoluteMonthlyDebt} (AbsoluteDebt) &
 \(\text{DebtRatio} \times \text{MonthlyIncome}\) & Dư nợ tuyệt đối
 (USD/tháng) \\
-\texttt{DelinquencyTrend} & \((30\text{–}59) - (90+)\) & Xu hướng cải
-thiện trễ hạn \\
+\texttt{DelinquencySeverityBalance} & \((30\text{–}59) - (90+)\) & Cán
+cân mức độ trễ hạn \\
 \end{longtable}
 }
 
@@ -1657,7 +1672,7 @@ features thủ công --- chiếm \#1 và \#3 SHAP ranking; L1 triệt tiêu
 48,4\% người vỡ nợ không bị phát hiện ở ngưỡng F1-optimal \(t=0{,}77\)
 --- giới hạn của đặc trưng lịch sử, không phải mô hình yếu. Hạ ngưỡng
 xuống \(t=0{,}625\) (F2-optimal) giúp Recall tăng +15,3 điểm (51,6\% →
-66,9\%), tiết kiệm \textasciitilde\$2M chi phí so với F1-optimal.
+66,9\%), tiết kiệm khoảng 2,01 triệu USD chi phí so với F1-optimal.
 
 Sản phẩm: Streamlit multi-tab (đơn lẻ + batch CSV/XLSX), giải thích SHAP
 real-time và xuất kết quả theo lô. \texttt{streamlit\ run\ app/app.py}.
@@ -1675,7 +1690,8 @@ sử, không phản ánh sự kiện bất ngờ (mất việc, bệnh tật). �
 sai.
 
 \textbf{2. Dữ liệu tĩnh:} Cross-sectional snapshot, không có chuỗi thời
-gian. \texttt{DelinquencyTrend} chỉ là proxy gián tiếp.
+gian. \texttt{DelinquencySeverityBalance} chỉ là chỉ báo cân bằng mức độ
+trễ hạn tại một thời điểm, không phải xu hướng thời gian.
 
 \textbf{3. Giới hạn địa lý:} Dữ liệu Mỹ --- áp dụng cho thị trường Việt
 Nam cần huấn luyện lại + điều chỉnh ngưỡng chi phí.

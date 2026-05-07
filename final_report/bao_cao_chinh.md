@@ -26,7 +26,7 @@ Báo cáo trình bày nghiên cứu ứng dụng Machine Learning vào bài toá
 
 1. **Mô hình tốt nhất đạt AUC-ROC = 0,8714.** XGBoost vượt mục tiêu AUC > 0,87 và nhỉnh hơn Random Forest (0,8703), trong khi nhỏ hơn nhiều về kích thước model và nhanh hơn khi suy luận.
 2. **Feature engineering tạo ra tín hiệu thật.** Hai đặc trưng tự thiết kế (`FinancialStressIndex`, `TotalDelinquencyScore`) nằm trong top-3 SHAP, cho thấy kiến thức nghiệp vụ về hạn mức tín dụng và lịch sử trễ hạn cải thiện khả năng phân biệt rủi ro.
-3. **Ngưỡng mặc định không phù hợp với tín dụng.** Ở ngưỡng F1-optimal t=0,77, mô hình bỏ sót 48,4% người vỡ nợ. Chọn ngưỡng F2-optimal t=0,625 giúp Recall tăng từ 51,6% lên 66,9%, tương ứng giảm ước tính khoảng $2 triệu chi phí so với ngưỡng F1-optimal trên tập kiểm tra 22.500 hồ sơ.
+3. **Ngưỡng mặc định không phù hợp với tín dụng.** Ở ngưỡng F1-optimal t=0,77, mô hình bỏ sót 48,4% người vỡ nợ. Chọn ngưỡng F2-optimal t=0,625 giúp Recall tăng từ 51,6% lên 66,9%, tương ứng giảm ước tính khoảng 2,01 triệu USD chi phí so với ngưỡng F1-optimal trên tập kiểm tra 22.500 hồ sơ.
 4. **Sai số còn lại có nguyên nhân rõ ràng.** Nhóm False Negative thường không có lịch sử trễ hạn (`TotalDelinquencyScore = 0`, `FinancialStressIndex = 0`), nghĩa là họ “trông sạch” trong dữ liệu lịch sử. Đây là giới hạn của bộ đặc trưng hiện tại, không đơn thuần là lỗi thuật toán.
 5. **Xác suất chưa được hiệu chỉnh tốt.** Brier Skill Score âm ở cả 4 mô hình cho thấy output phù hợp để xếp hạng rủi ro hơn là diễn giải như xác suất tuyệt đối. Nếu triển khai thật cần Platt Scaling hoặc Isotonic Regression.
 
@@ -401,9 +401,9 @@ $$\text{AbsoluteDebt} = \text{DebtRatio} \times \text{MonthlyIncome}$$
 
 `DebtRatio` không phản ánh quy mô tuyệt đối: DebtRatio=2 với income=$2.000 khác hoàn toàn với income=$10.000. Phép nhân cho kết quả tiền nợ tuyệt đối (USD/tháng). SHAP mean|SHAP|=0,065 — nhỏ nhưng giữ lại.
 
-### 3.4.4 DelinquencyTrend (Cán cân mức độ trễ hạn)
+### 3.4.4 DelinquencySeverityBalance (Cán cân mức độ trễ hạn)
 
-$$\text{DelinquencyTrend} = N_{30-59} - N_{90+}$$
+$$\text{DelinquencySeverityBalance} = N_{30-59} - N_{90+}$$
 
 Dương = chủ yếu trễ hạn nhẹ; âm = chủ yếu trễ hạn nghiêm trọng. Lưu ý: cross-sectional snapshot, không phải chuỗi thời gian thực sự. SHAP mean|SHAP|=0,002 — thấp nhất trong tất cả đặc trưng.
 
@@ -649,16 +649,17 @@ $$t^* = \arg\max_{t} F_2(t) = 0,625$$
 
 **Kết quả so sánh trên tập kiểm tra:**
 
-| Ngưỡng | F1 | F2 | Precision | Recall | Chi phí ước tính (triệu USD) |
-|-----------|----|----|-----------|--------|-----------|
-| 0,50 | 0,346 | 0,518 | 0,222 | 0,775 | 5,84 |
-| **0,625** (F2 opt) | 0,414 | **0,537** | 0,299 | **0,669** | 6,78 |
-| 0,77 (F1 opt) | **0,447** | 0,486 | **0,394** | 0,516 | 8,79 |
+| Ngưỡng | Recall | Precision | F2 | Chi phí (triệu USD) |
+|-----------|--------|-----------|----|----------------------|
+| Mặc định (0,50) | 77,5% | 22,2% | 0,518 | 5,84 |
+| **F2-optimal (0,625)** | **66,9%** | **29,9%** | **0,537** | **6,78** |
+| F1-optimal (0,77) | 51,6% | 39,4% | 0,486 | 8,79 |
+| Bayes-optimal (0,043) | 99,2% | 6,9% | 0,265 | 34,5 |
 
-**Chi phí kinh doanh** (FN=$11.250/case, FP=$500/case, loan $15.000 × LGD 75%): t=0,5 chi phí thấp nhất tuyệt đối (~$5,84M) nhưng tạo ~4.000 FP — khó vận hành. t=0,625 (F2-optimal) là điểm thỏa hiệp: giảm $2M vs t=0,77, tăng Recall 15,3 điểm, FP kiểm soát được (~2.350).
+**Chi phí kinh doanh** (FN=$11.250/case, FP=$500/case, loan $15.000 × LGD 75%): t=0,5 có chi phí thấp nhất tuyệt đối (khoảng 5,84 triệu USD) nhưng tạo khoảng 4.000 FP — khó vận hành. t=0,625 (F2-optimal) là điểm thỏa hiệp: giảm khoảng 2,01 triệu USD so với t=0,77, tăng Recall 15,3 điểm, FP kiểm soát được.
 
 ![F1, F2, Precision và Recall theo ngưỡng — điểm tối ưu F2 tại t=0,625](../reports/fig_25_threshold_optimization.png)
-*Hình 4.5: F2-optimal t=0,625 tăng Recall từ 51,6% → 66,9%, giảm chi phí $2M so với F1-optimal t=0,77. Đường đứt đỏ = ngưỡng triển khai.*
+*Hình 4.5: F2-optimal t=0,625 tăng Recall từ 51,6% → 66,9%, giảm chi phí khoảng 2,01 triệu USD so với F1-optimal t=0,77. Đường đứt đỏ = ngưỡng triển khai.*
 
 ### 4.7.5 Đường cong học (Learning Curve) — chẩn đoán độ chệch và phương sai
 
@@ -740,7 +741,7 @@ Người dùng nhập 10 đặc trưng gốc (xem ý nghĩa đầy đủ tại �
 | `TotalDelinquencyScore` | $3\times(90+) + 2\times(60\text{–}89) + (30\text{–}59)$ | Điểm tổng hợp trễ hạn có trọng số |
 | `FinancialStressIndex` | $\text{RevUtil} \times \text{TotalDelinquencyScore}$ | Tương tác hạn mức × trễ hạn |
 | `AbsoluteMonthlyDebt` (AbsoluteDebt) | $\text{DebtRatio} \times \text{MonthlyIncome}$ | Dư nợ tuyệt đối (USD/tháng) |
-| `DelinquencyTrend` | $(30\text{–}59) - (90+)$ | Xu hướng cải thiện trễ hạn |
+| `DelinquencySeverityBalance` | $(30\text{–}59) - (90+)$ | Cán cân mức độ trễ hạn |
 
 ## 5.3 Tính năng chính
 
@@ -774,7 +775,7 @@ Người dùng nhập 10 đặc trưng gốc (xem ý nghĩa đầy đủ tại �
 
 Bốn mô hình theo thứ tự tăng độ phức tạp: LR (0,8432) → DT (0,8579) → RF (0,8703) → XGBoost (0,8714, vượt mục tiêu 0,87). `FinancialStressIndex` và `TotalDelinquencyScore` — features thủ công — chiếm #1 và #3 SHAP ranking; L1 triệt tiêu `NumberOfTimes90DaysLate` xác nhận TDS đủ mã hóa tín hiệu đó.
 
-48,4% người vỡ nợ không bị phát hiện ở ngưỡng F1-optimal $t=0{,}77$ — giới hạn của đặc trưng lịch sử, không phải mô hình yếu. Hạ ngưỡng xuống $t=0{,}625$ (F2-optimal) giúp Recall tăng +15,3 điểm (51,6% → 66,9%), tiết kiệm ~$2M chi phí so với F1-optimal.
+48,4% người vỡ nợ không bị phát hiện ở ngưỡng F1-optimal $t=0{,}77$ — giới hạn của đặc trưng lịch sử, không phải mô hình yếu. Hạ ngưỡng xuống $t=0{,}625$ (F2-optimal) giúp Recall tăng +15,3 điểm (51,6% → 66,9%), tiết kiệm khoảng 2,01 triệu USD chi phí so với F1-optimal.
 
 Sản phẩm: Streamlit multi-tab (đơn lẻ + batch CSV/XLSX), giải thích SHAP real-time và xuất kết quả theo lô. `streamlit run app/app.py`.
 
@@ -784,7 +785,7 @@ Sản phẩm: Streamlit multi-tab (đơn lẻ + batch CSV/XLSX), giải thích S
 
 **1. Đặc trưng nhìn lại quá khứ:** 10 đặc trưng gốc phản ánh lịch sử, không phản ánh sự kiện bất ngờ (mất việc, bệnh tật). Đây là lý do 48,4% người vỡ nợ bị bỏ sót — giới hạn đặc trưng, không phải mô hình sai.
 
-**2. Dữ liệu tĩnh:** Cross-sectional snapshot, không có chuỗi thời gian. `DelinquencyTrend` chỉ là proxy gián tiếp.
+**2. Dữ liệu tĩnh:** Cross-sectional snapshot, không có chuỗi thời gian. `DelinquencySeverityBalance` chỉ là chỉ báo cân bằng mức độ trễ hạn tại một thời điểm, không phải xu hướng thời gian.
 
 **3. Giới hạn địa lý:** Dữ liệu Mỹ — áp dụng cho thị trường Việt Nam cần huấn luyện lại + điều chỉnh ngưỡng chi phí.
 
