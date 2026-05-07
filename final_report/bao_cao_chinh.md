@@ -310,14 +310,14 @@ Chấm điểm tín dụng là một trong những lĩnh vực ứng dụng Mach
 
 | Đặc trưng | Ý nghĩa | Chú ý lĩnh vực |
 |---------|---------|--------------|
-| `RevolvingUtilizationOfUnsecuredLines` | Tỷ lệ sử dụng hạn mức tín dụng xoay vòng (thẻ tín dụng) | FICO chiếm 30% điểm; >70% là ngưỡng cảnh báo |
+| `RevolvingUtilization` | Tỷ lệ sử dụng hạn mức tín dụng xoay vòng | FICO chiếm 30% điểm; >70% là ngưỡng cảnh báo |
 | `age` | Tuổi người vay | Đại diện kinh nghiệm tài chính; thanh niên và người cao tuổi rủi ro cao hơn |
 | `NumberOfTime30-59DaysPastDueNotWorse` | Số lần trả nợ trễ 30–59 ngày | Trễ hạn nhẹ, yếu tố cấu thành Lịch sử thanh toán (chiếm 35% điểm FICO) |
 | `DebtRatio` | Tổng nợ / Thu nhập hàng tháng | Tương đương DTI ratio trong underwriting; chuẩn US: DTI < 43% |
 | `MonthlyIncome` | Thu nhập hàng tháng (USD) | 19,8% missing — MAR/MNAR |
-| `NumberOfOpenCreditLinesAndLoans` | Số tài khoản tín dụng đang mở | Nhiều tài khoản: overextension hoặc diversification |
-| `NumberOfTimes90DaysLate` | Số lần trể hạn > 90 ngày | Tín hiệu mạnh nhất — trễ hạn nghiêm trọng |
-| `NumberRealEstateLoansOrLines` | Số khoản vay bất động sản | Tài sản thế chấp, giảm rủi ro |
+| `OpenCreditLines` | Số tài khoản tín dụng đang mở | Nhiều tài khoản: overextension hoặc diversification |
+| `Times90DaysLate` | Số lần trễ hạn > 90 ngày | Tín hiệu mạnh nhất — trễ hạn nghiêm trọng |
+| `RealEstateLoans` | Số khoản vay bất động sản | Tài sản thế chấp, giảm rủi ro |
 | `NumberOfTime60-89DaysPastDueNotWorse` | Số lần trễ 60–89 ngày | Trễ hạn trung bình |
 | `NumberOfDependents` | Số người phụ thuộc | Tăng gánh nặng tài chính thực tế; 2,6% missing |
 
@@ -367,8 +367,8 @@ Chi-squared test ($H_0$: missing độc lập với target): $\chi^2 = 67,89$, $
 
 Kết quả: Median imputation dồn tất cả về $5.400 (không phương sai); KNN cho phân phối đa dạng — mean nhóm missing = $336, std = $1.157.
 
-![So sánh phân phối MonthlyIncome sau KNN Imputer và Median Imputation](../reports/fig_11_imputation_comparison.png)
-*Hình 3.2: KNN tạo phân phối đa dạng (std=$1.157); Median dồn tất cả vào $5.400 — mất tín hiệu tương quan.*
+![Phân phối thu nhập sau xử lý thiếu và tỷ lệ vỡ nợ theo trạng thái thiếu thu nhập](../reports/fig_11_imputation_comparison.png)
+*Hình 3.2: nhóm thiếu thu nhập có hành vi khác nhóm khai báo thu nhập; missing không hoàn toàn ngẫu nhiên nên cần xử lý có chủ đích.*
 
 `NumberOfDependents` (2,6% null, MCAR): Median = 0 đủ.
 
@@ -471,12 +471,12 @@ Phân chia phân tầng đảm bảo tỷ lệ lớp thiểu số nhất quán. 
 
 | Đặc trưng | Hệ số β | Odds Ratio $e^\beta$ | Diễn giải |
 |---------|--------------|---------------------|----------------|
-| TotalDelinquencyScore | 0,255 | **1,291** | +1 điểm delinquency → odds vỡ nợ ×1,29 |
-| RevolvingUtilization | 0,204 | **1,226** | +10% utilization → odds ×1,12 |
-| FinancialStressIndex | 0,186 | **1,205** | Interaction effect |
+| TDS | 0,255 | **1,291** | +1 điểm trễ hạn → odds vỡ nợ ×1,29 |
+| RevUtil | 0,204 | **1,226** | +10% utilization → odds ×1,12 |
+| FSI | 0,186 | **1,205** | Interaction effect |
 | age | −0,210 | **0,811** | +10 tuổi → odds ×0,811 (người lớn tuổi ít vỡ nợ) |
-| NumberOfTimes90DaysLate | **0** | 1,000 | **L1 triệt tiêu** — dư thừa so với TotalDelinquencyScore |
-| AbsoluteMonthlyDebt | **0** | 1,000 | **L1 triệt tiêu** — mô hình tuyến tính không thấy đóng góp |
+| Times90Late | **0** | 1,000 | **L1 triệt tiêu** — dư thừa so với TDS |
+| AbsDebt | **0** | 1,000 | **L1 triệt tiêu** — mô hình tuyến tính không thấy đóng góp |
 
 L1 triệt tiêu `NumberOfTimes90DaysLate` (hệ số=0) nhưng giữ `TotalDelinquencyScore` — TDS đã mã hóa đủ thông tin đó.
 
@@ -540,8 +540,8 @@ Node gốc phân chia tại `TotalDelinquencyScore ≤ 2,5` (128K mẫu, 4,1% v�
 | Ngưỡng tối ưu | 0,77 |
 | Thời gian huấn luyện | 127s |
 
-![Confusion matrix, ROC curve, Precision-Recall curve và learning curve của XGBoost](../reports/fig_19_xgb_analysis.png)
-*Hình 4.1: AUC=0,8714; hội tụ sau ~45.000 mẫu; train/val gap = 0,021.*
+![Ma trận nhầm lẫn, ROC và top đặc trưng SHAP của XGBoost](../reports/fig_19_xgb_analysis.png)
+*Hình 4.1: XGBoost đạt AUC=0,8714; các tín hiệu mạnh nhất đến từ áp lực tài chính, tỷ lệ dùng hạn mức và điểm trễ hạn.*
 
 ### 4.5.2 SHAP Analysis
 
@@ -549,13 +549,13 @@ Node gốc phân chia tại `TotalDelinquencyScore ≤ 2,5` (128K mẫu, 4,1% v�
 
 | Hạng | Đặc trưng | Loại | Mean\|SHAP\| |
 |------|---------|------|-------------|
-| 1 | FinancialStressIndex | **Được tạo** | **0,577** |
-| 2 | RevolvingUtilizationOfUnsecuredLines | Gốc | 0,535 |
-| 3 | TotalDelinquencyScore | **Được tạo** | 0,410 |
+| 1 | FSI | **Được tạo** | **0,577** |
+| 2 | RevolvingUtilization | Gốc | 0,535 |
+| 3 | TDS | **Được tạo** | 0,410 |
 | 4 | age | Gốc | 0,244 |
-| 5 | NumberOfOpenCreditLinesAndLoans | Gốc | 0,168 |
-| 9 | AbsoluteMonthlyDebt | Được tạo | 0,065 |
-| 12 | NumberOfTimes90DaysLate | Gốc | 0,013 |
+| 5 | OpenCreditLines | Gốc | 0,168 |
+| 9 | AbsoluteDebt | Được tạo | 0,065 |
+| 12 | Times90DaysLate | Gốc | 0,013 |
 
 ![Biểu đồ thanh SHAP tổng quát — mean |SHAP value| của 14 đặc trưng](../reports/fig_26a_shap_bar.png)
 *Hình 4.2: FSI (#1, 0,577) và TDS (#3, 0,410) — 2 features thủ công trong top-3 — xác nhận Feature Engineering có giá trị ngay cả với XGBoost.*
@@ -575,7 +575,7 @@ FSI (#1) > RevolvingUtilization (#2): tương tác phi tuyến vượt thành ph
 
 *Ghi chú: Inference time đo trên lô 22.500 mẫu (Python 3.14, CPU Intel), lấy minimum của 3 lần chạy để loại bỏ nhiễu đo lường.*
 
-![Overlay ROC curves của 4 mô hình trên tập kiểm tra](../reports/fig_20_model_comparison.png)
+![So sánh ROC của 4 mô hình trên tập kiểm tra](../reports/fig_20_model_comparison.png)
 *Hình 4.3: XGBoost (0,8714) và RF (0,8703) gần trùng nhau về ROC — nhưng XGBoost vượt về tốc độ (127s vs 511s) và kích thước (340KB vs 12MB).*
 
 **Nhận xét:** AUC tăng đơn điệu theo độ phức tạp (LR < DT < RF ≲ XGB). RF và XGB rất gần nhau về AUC, nên quyết định chọn XGBoost không chỉ dựa vào chênh lệch AUC mà còn dựa vào vận hành: huấn luyện nhanh hơn, model nhỏ hơn, inference nhanh hơn và SHAP TreeExplainer thuận lợi hơn. **Mô hình tốt nhất: XGBoost** → `models/best_model.pkl`.
@@ -738,10 +738,10 @@ Người dùng nhập 10 đặc trưng gốc (xem ý nghĩa đầy đủ tại �
 
 | Đặc trưng | Công thức | Ý nghĩa |
 |-----------|---------|---------|
-| `TotalDelinquencyScore` | $3\times(90+) + 2\times(60\text{–}89) + (30\text{–}59)$ | Điểm tổng hợp trễ hạn có trọng số |
-| `FinancialStressIndex` | $\text{RevUtil} \times \text{TotalDelinquencyScore}$ | Tương tác hạn mức × trễ hạn |
-| `AbsoluteMonthlyDebt` (AbsoluteDebt) | $\text{DebtRatio} \times \text{MonthlyIncome}$ | Dư nợ tuyệt đối (USD/tháng) |
-| `DelinquencySeverityBalance` | $(30\text{–}59) - (90+)$ | Cán cân mức độ trễ hạn |
+| `TDS` | $3\times(90+) + 2\times(60\text{–}89) + (30\text{–}59)$ | Điểm tổng hợp trễ hạn có trọng số |
+| `FSI` | $\text{RevUtil} \times \text{TDS}$ | Tương tác hạn mức × trễ hạn |
+| `AbsoluteDebt` | $\text{DebtRatio} \times \text{MonthlyIncome}$ | Dư nợ tuyệt đối (USD/tháng) |
+| `SeverityBalance` | $(30\text{–}59) - (90+)$ | Cán cân mức độ trễ hạn |
 
 ## 5.3 Tính năng chính
 
@@ -756,8 +756,8 @@ Người dùng nhập 10 đặc trưng gốc (xem ý nghĩa đầy đủ tại �
 
 **Biểu đồ SHAP Waterfall:** Hiển thị top 10 đặc trưng đóng góp vào quyết định, màu đỏ = tăng rủi ro, màu xanh = giảm rủi ro. Xác suất cơ sở và xác suất cuối hiển thị rõ ràng.
 
-![SHAP waterfall cho 3 dự đoán cụ thể — khách hàng thấp/cao/biên](../reports/fig_28_shap_waterfall.png)
-*Hình 5.1: SHAP waterfall 3 hồ sơ: an toàn (age/income kéo xuống), rủi ro cao (TDS/FSI đẩy lên), biên (tín hiệu hỗn hợp).*
+![SHAP cho 2 hồ sơ tiêu biểu — rủi ro thấp/biên và rủi ro cao](../reports/fig_28_shap_waterfall.png)
+*Hình 5.1: SHAP cho 2 hồ sơ tiêu biểu: một hồ sơ thấp/biên có nhiều yếu tố kéo giảm rủi ro, và một hồ sơ rủi ro cao bị đẩy lên bởi tỷ lệ nợ, áp lực tài chính và điểm trễ hạn.*
 
 ## 5.4 Các Tình huống Minh họa
 
