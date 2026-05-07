@@ -97,13 +97,13 @@ def load_explainer(_model):
 
 # ─── Risk tier ──────────────────────────────────────────────────────────────
 
-def get_risk_tier(prob: float) -> Tuple[str, str, str]:
+def get_risk_tier(prob: float, threshold: float = THRESHOLD) -> Tuple[str, str, str]:
     """Phân loại risk tier. Trả về (tier_key, label_vi, color)."""
     if prob < 0.10:
         return 'LOW', f"🟢 Rủi ro {RISK_LABELS_VI['LOW']}", RISK_COLORS['LOW']
     elif prob < 0.30:
         return 'MEDIUM', f"🟡 Rủi ro {RISK_LABELS_VI['MEDIUM']}", RISK_COLORS['MEDIUM']
-    elif prob < THRESHOLD:
+    elif prob < threshold:
         return 'HIGH', f"🟠 Rủi ro {RISK_LABELS_VI['HIGH']}", RISK_COLORS['HIGH']
     else:
         return 'VERY_HIGH', f"🔴 Rủi ro {RISK_LABELS_VI['VERY_HIGH']}", RISK_COLORS['VERY_HIGH']
@@ -220,3 +220,24 @@ def make_template_csv() -> bytes:
         'NumberOfDependents': [0, 2, 1, 3, 0],
     })
     return sample.to_csv(index=False).encode('utf-8')
+
+
+def read_uploaded_table(uploaded_file) -> pd.DataFrame:
+    """
+    Đọc file upload từ Streamlit.
+    Hỗ trợ CSV (utf-8/utf-8-sig/latin-1) và Excel (.xlsx/.xls).
+    """
+    file_name = str(getattr(uploaded_file, 'name', ''))
+    ext = Path(file_name).suffix.lower()
+
+    if ext in {'.xlsx', '.xls'}:
+        return pd.read_excel(io.BytesIO(uploaded_file.getvalue()))
+
+    raw_bytes = uploaded_file.getvalue()
+    for enc in ('utf-8-sig', 'utf-8', 'latin-1'):
+        try:
+            return pd.read_csv(io.StringIO(raw_bytes.decode(enc)))
+        except UnicodeDecodeError:
+            continue
+
+    raise ValueError("Không đọc được file. Hãy dùng CSV UTF-8/Latin-1 hoặc Excel (.xlsx).")

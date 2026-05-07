@@ -5,7 +5,7 @@ Mô hình: XGBoost | AUC=0.8714 | Ngưỡng triển khai=0.625
 
 Cấu trúc:
   Tab 1 — Khách hàng đơn lẻ : nhập thủ công + SHAP
-  Tab 2 — Đánh giá theo lô  : upload CSV + batch predict + visualization
+  Tab 2 — Đánh giá theo lô  : upload CSV/XLSX + batch predict + visualization
   Tab 3 — Hướng dẫn         : giải thích ứng dụng + cách đọc kết quả
 
 Chạy: streamlit run app/app.py (từ thư mục gốc project)
@@ -85,11 +85,14 @@ def _render_help() -> None:
 
     st.markdown("### Tab 2 — Đánh giá theo lô")
     st.markdown("""
-    1. Chuẩn bị file CSV với 10 cột (nhấn **Tải CSV mẫu** để xem đúng định dạng).
+    1. Chuẩn bị file CSV/XLSX với 10 cột (nhấn **Tải CSV mẫu** để xem đúng định dạng).
     2. Tải file lên, xem trước dữ liệu.
-    3. Nhấn **Đánh giá toàn bộ** — ứng dụng tự động tính thêm 4 đặc trưng kỹ thuật.
-    4. Xem các biểu đồ: phân bố rủi ro, top khách hàng rủi ro cao, phân tích phân khúc.
-    5. Tải CSV kết quả với 3 cột bổ sung: `probability`, `risk_tier`, `decision`.
+    3. Chọn ngưỡng quyết định phù hợp cho tập hiện tại.
+    4. Nhấn **Đánh giá toàn bộ** — ứng dụng tự động tính thêm 4 đặc trưng kỹ thuật.
+    5. Xem các biểu đồ: phân bố rủi ro, top khách hàng rủi ro cao, phân tích phân khúc và benchmark nếu file có nhãn.
+    6. Tải CSV kết quả với 4 cột bổ sung: `probability`, `risk_tier`, `decision`, `decision_threshold`.
+    
+    Ghi chú: để upload linh hoạt, app demo điền thiếu bằng trung vị; pipeline nghiên cứu trong notebook dùng KNN Imputer và capping outlier.
     """)
 
     st.markdown("### Giải thích các chỉ số")
@@ -97,7 +100,8 @@ def _render_help() -> None:
     st.dataframe(pd.DataFrame([
         {"Chỉ số": "probability", "Ý nghĩa": "Xác suất vỡ nợ trong 2 năm tới (0 → 1)"},
         {"Chỉ số": "risk_tier", "Ý nghĩa": "Mức độ rủi ro: LOW / MEDIUM / HIGH / VERY_HIGH"},
-        {"Chỉ số": "decision", "Ý nghĩa": "APPROVE nếu P < 0.625, REJECT nếu P ≥ 0.625"},
+        {"Chỉ số": "decision", "Ý nghĩa": "APPROVE nếu P < threshold, REJECT nếu P ≥ threshold"},
+        {"Chỉ số": "decision_threshold", "Ý nghĩa": "Ngưỡng quyết định đã dùng cho lần đánh giá batch"},
         {"Chỉ số": "SHAP value", "Ý nghĩa": "Đóng góp của đặc trưng vào dự báo; đỏ = tăng rủi ro"},
     ]), hide_index=True, use_container_width=True)
 

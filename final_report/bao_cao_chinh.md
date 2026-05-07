@@ -20,9 +20,19 @@ Dù đã cố gắng hết sức, báo cáo chắc chắn còn nhiều thiếu s
 
 ## TÓM TẮT
 
-Báo cáo trình bày nghiên cứu ứng dụng Machine Learning vào bài toán dự báo rủi ro vỡ nợ tín dụng, sử dụng bộ dữ liệu *Give Me Some Credit* (Kaggle, 149.999 hồ sơ vay sau khi loại 1 dòng tuổi = 0 từ tập gốc 150.000). Bốn mô hình Supervised Learning được xây dựng và đánh giá theo thứ tự tăng dần độ phức tạp: Logistic Regression (AUC=0,8432), Decision Tree CART (AUC=0,8579), Random Forest (AUC=0,8703), và XGBoost (AUC=0,8714). Mô hình tốt nhất — XGBoost với cơ chế boosting bậc hai — vượt mục tiêu đặt ra (AUC > 0,87) và được phân tích sâu qua SHAP TreeExplainer. Feature Engineering có chủ đích (TotalDelinquencyScore, FinancialStressIndex) được SHAP xác nhận là 2 trong top-3 đặc trưng quan trọng nhất. Ngưỡng F2-optimal t=0,625 tăng Recall từ 51,6% lên 66,9% và giảm ước tính chi phí $2 triệu so với ngưỡng F1-optimal (t=0,77), là điểm thỏa hiệp giữa tối thiểu hóa FN và kiểm soát FP. Sản phẩm cuối là ứng dụng Streamlit tương tác, giải thích từng quyết định tín dụng bằng SHAP waterfall chart.
+Báo cáo trình bày nghiên cứu ứng dụng Machine Learning vào bài toán dự báo rủi ro vỡ nợ tín dụng, sử dụng bộ dữ liệu *Give Me Some Credit* (Kaggle, 149.999 hồ sơ vay sau khi loại 1 dòng tuổi = 0 từ tập gốc 150.000). Kết quả chính không chỉ là một mô hình có AUC cao hơn, mà là một quy trình chấm điểm rủi ro có thể giải thích, có ngưỡng vận hành và có demo đánh giá danh mục.
 
-**Từ khóa:** dự báo vỡ nợ, chấm điểm tín dụng, XGBoost, SHAP, tối ưu F-beta, mất cân bằng dữ liệu (data imbalance).
+**Các kết quả nổi bật của đồ án:**
+
+1. **Mô hình tốt nhất đạt AUC-ROC = 0,8714.** XGBoost vượt mục tiêu AUC > 0,87 và nhỉnh hơn Random Forest (0,8703), trong khi nhỏ hơn nhiều về kích thước model và nhanh hơn khi suy luận.
+2. **Feature engineering tạo ra tín hiệu thật.** Hai đặc trưng tự thiết kế (`FinancialStressIndex`, `TotalDelinquencyScore`) nằm trong top-3 SHAP, cho thấy kiến thức nghiệp vụ về hạn mức tín dụng và lịch sử trễ hạn cải thiện khả năng phân biệt rủi ro.
+3. **Ngưỡng mặc định không phù hợp với tín dụng.** Ở ngưỡng F1-optimal t=0,77, mô hình bỏ sót 48,4% người vỡ nợ. Chọn ngưỡng F2-optimal t=0,625 giúp Recall tăng từ 51,6% lên 66,9%, tương ứng giảm ước tính khoảng $2 triệu chi phí so với ngưỡng F1-optimal trên tập kiểm tra 22.500 hồ sơ.
+4. **Sai số còn lại có nguyên nhân rõ ràng.** Nhóm False Negative thường không có lịch sử trễ hạn (`TotalDelinquencyScore = 0`, `FinancialStressIndex = 0`), nghĩa là họ “trông sạch” trong dữ liệu lịch sử. Đây là giới hạn của bộ đặc trưng hiện tại, không đơn thuần là lỗi thuật toán.
+5. **Xác suất chưa được hiệu chỉnh tốt.** Brier Skill Score âm ở cả 4 mô hình cho thấy output phù hợp để xếp hạng rủi ro hơn là diễn giải như xác suất tuyệt đối. Nếu triển khai thật cần Platt Scaling hoặc Isotonic Regression.
+
+Sản phẩm cuối là Streamlit dashboard cho phép dự báo từng khách hàng, giải thích bằng SHAP và đánh giá theo lô CSV/XLSX để xem chất lượng danh mục khách hàng.
+
+**Từ khóa:** dự báo vỡ nợ, chấm điểm tín dụng, XGBoost, SHAP, tối ưu F-beta, mất cân bằng dữ liệu.
 
 ---
 
@@ -66,14 +76,14 @@ Báo cáo giữ một số thuật ngữ tiếng Anh đã trở thành chuẩn q
 
 ## MỤC LỤC
 
-1. [Giới thiệu](#chương-1-giới-thiệu)
-2. [Cơ sở lý thuyết](#chương-2-cơ-sở-lý-thuyết)
-3. [Dữ liệu và Tiền xử lý](#chương-3-dữ-liệu-và-tiền-xử-lý)
-4. [Thực nghiệm và Đánh giá](#chương-4-thực-nghiệm-và-đánh-giá)
-5. [Sản phẩm — Streamlit Dashboard](#chương-5-sản-phẩm--streamlit-dashboard)
-6. [Kết luận và Hướng phát triển](#chương-6-kết-luận-và-hướng-phát-triển)
-7. [Tài liệu tham khảo](#tài-liệu-tham-khảo)
-8. [Phụ lục](#phụ-lục)
+1. Giới thiệu
+2. Cơ sở lý thuyết
+3. Dữ liệu và Tiền xử lý
+4. Thực nghiệm và Đánh giá
+5. Sản phẩm — Streamlit Dashboard
+6. Kết luận và Hướng phát triển
+7. Tài liệu tham khảo
+8. Phụ lục
 
 ---
 
@@ -101,7 +111,23 @@ Nghiên cứu này đặt ra các mục tiêu SMART sau:
 
 > **Chú thích:** SMART = **S**pecific (Cụ thể) — **M**easurable (Đo lường được) — **A**chievable (Khả thi) — **R**elevant (Thực tế) — **T**ime-bound (Có thời hạn).
 
-## 1.3 Phạm vi nghiên cứu
+## 1.3 Câu hỏi nghiên cứu và đóng góp
+
+Đồ án tập trung trả lời 4 câu hỏi cụ thể:
+
+1. **Mô hình tree-based có cải thiện đáng kể so với baseline tuyến tính không?**  
+   Có. AUC tăng từ 0,8432 (Logistic Regression) lên 0,8714 (XGBoost), tương ứng cải thiện 2,82 điểm AUC.
+
+2. **Đặc trưng tự thiết kế có thực sự hữu ích hay chỉ làm báo cáo đẹp hơn?**  
+   Có hữu ích. `FinancialStressIndex` và `TotalDelinquencyScore` là 2 trong top-3 đặc trưng quan trọng nhất theo SHAP; đây là bằng chứng định lượng cho giá trị của domain knowledge.
+
+3. **Có nên dùng ngưỡng 0,5 hoặc ngưỡng tối ưu F1 để ra quyết định tín dụng không?**  
+   Không nên dùng máy móc. Ngưỡng F1-optimal t=0,77 cho Precision cao hơn nhưng bỏ sót gần một nửa người vỡ nợ. Ngưỡng F2-optimal t=0,625 phù hợp hơn khi chi phí False Negative lớn hơn False Positive.
+
+4. **Mô hình có đủ tin cậy để dùng xác suất tuyệt đối không?**  
+   Chưa. Calibration còn yếu (BSS < 0), nên đầu ra hiện phù hợp nhất để xếp hạng, cảnh báo và hỗ trợ thẩm định; muốn dùng như xác suất tuyệt đối cần bước hiệu chỉnh.
+
+## 1.4 Phạm vi nghiên cứu
 
 - **Dữ liệu:** Bộ dữ liệu công khai *Give Me Some Credit* (Kaggle, 2011), 149.999 hồ sơ vay tiêu dùng Mỹ.
 - **Mô hình:** 4 mô hình Binary Classification có giám sát: Logistic Regression, Decision Tree CART, Random Forest, XGBoost.
@@ -158,7 +184,7 @@ Tối thiểu hóa hàm log-likelihood âm (cross-entropy loss) — hàm lồi, 
 
 $$\mathcal{L}(\boldsymbol{\beta}) = -\frac{1}{N}\sum_{i=1}^{N} \left[ y_i \ln \sigma(\mathbf{x}_i^\top \boldsymbol{\beta}) + (1-y_i) \ln(1 - \sigma(\mathbf{x}_i^\top \boldsymbol{\beta})) \right]$$
 
-*(Derivation gradient đầy đủ: defense_guide.md Phần B.1)*
+Phần này chỉ giữ công thức loss ở mức cần thiết để hiểu mô hình; các bước đạo hàm chi tiết được dùng trong phần chuẩn bị bảo vệ.
 
 ### 2.2.3 Regularization
 
@@ -190,7 +216,7 @@ Cây đầy đủ chiều sâu gây overfitting với dữ liệu huấn luyện
 
 ### 2.3.3 class_weight='balanced' (Bù đắp Class Imbalance)
 
-scikit-learn gán $w_+ = N/(2N_+) \approx 7{,}48$ cho lớp thiểu số và $w_- \approx 0{,}54$ cho lớp đa số (tỷ lệ $w_+/w_- \approx 14$). Tiêu chí phân chia trở thành weighted Gini — tính đến trọng số mẫu khi đánh giá độ tinh khiết node. *(Chi tiết: defense_guide.md Phần B.2)*
+scikit-learn gán $w_+ = N/(2N_+) \approx 7{,}48$ cho lớp thiểu số và $w_- \approx 0{,}54$ cho lớp đa số (tỷ lệ $w_+/w_- \approx 14$). Tiêu chí phân chia trở thành weighted Gini — tính đến trọng số mẫu khi đánh giá độ tinh khiết node.
 
 ## 2.4 Random Forest
 
@@ -204,7 +230,7 @@ Khoảng 37% mẫu không được chọn vào mỗi bootstrap sample → dùng 
 
 ### 2.4.2 Giảm Variance
 
-Với $B$ cây có variance $\sigma^2$ và tương quan $\rho$: $\text{Var}\!\left(\frac{1}{B}\sum_b f_b\right) = \rho\sigma^2 + \frac{1-\rho}{B}\sigma^2 \xrightarrow{B\to\infty} \rho\sigma^2$. Lấy mẫu ngẫu nhiên theo đặc trưng ($\sqrt{p}$ features/node) giảm $\rho$ → giảm variance. *(Chứng minh đầy đủ: defense_guide.md Phần B.3)*
+Với $B$ cây có variance $\sigma^2$ và tương quan $\rho$: $\text{Var}\!\left(\frac{1}{B}\sum_b f_b\right) = \rho\sigma^2 + \frac{1-\rho}{B}\sigma^2 \xrightarrow{B\to\infty} \rho\sigma^2$. Lấy mẫu ngẫu nhiên theo đặc trưng ($\sqrt{p}$ features/node) giảm $\rho$ → giảm variance.
 
 **OOB score trong thực nghiệm:** 0,8286 (AUC tập test=0,8703 — OOB hơi thận trọng, đúng kỳ vọng).
 
@@ -236,11 +262,11 @@ Tối thiểu hóa $\mathcal{O}^{(t)}$ giải analytic cho trọng số lá tố
 
 $$w_j^* = -\frac{G_j}{H_j + \lambda}, \quad G_j = \sum_{i \in I_j} g_i, \quad H_j = \sum_{i \in I_j} h_i$$
 
-$\lambda$ đóng vai trò regularization — ngăn trọng số cực đoan khi $H_j$ nhỏ. *(Derivation + Gain formula đầy đủ: defense_guide.md Phần B.4)*
+$\lambda$ đóng vai trò regularization — ngăn trọng số cực đoan khi $H_j$ nhỏ.
 
 ### 2.5.4 Xử lý scale_pos_weight
 
-`scale_pos_weight = 13,96` (tỷ lệ âm/dương) nhân gradient và Hessian của mẫu dương lên $13{,}96\times$ — tương đương oversampling lớp thiểu số trong không gian gradient mà không tạo dữ liệu tổng hợp. *(Derivation: defense_guide.md Phần B.4)*
+`scale_pos_weight = 13,96` (tỷ lệ âm/dương) nhân gradient và Hessian của mẫu dương lên $13{,}96\times$ — tương đương oversampling lớp thiểu số trong không gian gradient mà không tạo dữ liệu tổng hợp.
 
 ### 2.5.5 SHAP — Shapley Additive exPlanations
 
@@ -248,7 +274,7 @@ SHAP phân rã dự đoán thành đóng góp từng đặc trưng dựa trên l
 
 **Tính chất cộng:** $f(\mathbf{x}) = \phi_0 + \sum_{j=1}^{p} \phi_j(\mathbf{x})$ với $\phi_0 = E[f(\mathbf{x})]$ là giá trị cơ sở.
 
-**TreeExplainer** tính exact Shapley values cho tree-based models trong $O(TLD^2)$ (đa thức thay vì exponential). *(Derivation đầy đủ: defense_guide.md Phần B.5)*
+**TreeExplainer** tính exact Shapley values cho tree-based models trong $O(TLD^2)$ (đa thức thay vì exponential).
 
 ## 2.6 Nghiên cứu Liên quan
 
@@ -337,7 +363,7 @@ Chi-squared test ($H_0$: missing độc lập với target): $\chi^2 = 67,89$, $
 
 ### 3.3.2 Lý do chọn KNN Imputer
 
-**KNN Imputation** (k=5, nan-Euclidean distance): ước lượng $\hat{x}_{i,j}$ bằng trung bình có trọng số của 5 láng giềng gần nhất trong không gian đặc trưng còn lại. *(Công thức: defense_guide.md Phần B.3)*
+**KNN Imputation** (k=5, nan-Euclidean distance): ước lượng $\hat{x}_{i,j}$ bằng trung bình có trọng số của 5 láng giềng gần nhất trong không gian đặc trưng còn lại.
 
 Kết quả: Median imputation dồn tất cả về $5.400 (không phương sai); KNN cho phân phối đa dạng — mean nhóm missing = $336, std = $1.157.
 
@@ -552,21 +578,21 @@ FSI (#1) > RevolvingUtilization (#2): tương tác phi tuyến vượt thành ph
 ![Overlay ROC curves của 4 mô hình trên tập kiểm tra](../reports/fig_20_model_comparison.png)
 *Hình 4.3: XGBoost (0,8714) và RF (0,8703) gần trùng nhau về ROC — nhưng XGBoost vượt về tốc độ (127s vs 511s) và kích thước (340KB vs 12MB).*
 
-**Nhận xét:** AUC tăng đơn điệu theo độ phức tạp (LR < DT < RF ≲ XGB). RF và XGB rất gần nhau về AUC — cần DeLong test (§4.6.1) để xác nhận. XGBoost vượt RF về vận hành: huấn luyện 4×, model size 35×, inference 6×. **Mô hình tốt nhất: XGBoost** → `models/best_model.pkl`.
+**Nhận xét:** AUC tăng đơn điệu theo độ phức tạp (LR < DT < RF ≲ XGB). RF và XGB rất gần nhau về AUC, nên quyết định chọn XGBoost không chỉ dựa vào chênh lệch AUC mà còn dựa vào vận hành: huấn luyện nhanh hơn, model nhỏ hơn, inference nhanh hơn và SHAP TreeExplainer thuận lợi hơn. **Mô hình tốt nhất: XGBoost** → `models/best_model.pkl`.
 
 ### 4.6.1 Kiểm định Thống kê Sự khác biệt AUC — DeLong Test
 
-Kiểm định DeLong [13] so sánh hai AUC từ cùng tập test, có tính đến tương quan giữa hai bộ dự báo (hai estimator không độc lập). Phương pháp dùng U-statistic, tính covariance giữa các structural components của hai AUC estimators. *(Derivation U-statistic đầy đủ: defense_guide.md Phần C.1)*
+Kiểm định DeLong [13] so sánh hai AUC từ cùng tập test, có tính đến tương quan giữa hai bộ dự báo (hai estimator không độc lập). Phương pháp dùng U-statistic, tính covariance giữa các structural components của hai AUC estimators.
 
-**Kết quả thực nghiệm** (chạy `python notebooks/analysis_addendum.py`, output đầy đủ ở `reports/addendum_results.md`):
+**Kết quả thực nghiệm** (output đầy đủ ở `reports/addendum_results.md`; script tái lập là công cụ nội bộ, không đưa vào bản GitHub gọn):
 
 | So sánh | AUC A | AUC B | Δ AUC | z-stat | p-value (2-tailed) | Kết luận |
 |---------|-------|-------|-------|--------|--------------------|----------|
-| XGBoost vs RF | 0,8714 | 0,8671 | +0,0043 | 4,1833 | < 0,0001 | **Có ý nghĩa thống kê** (p<0,05) |
+| XGBoost vs RF tái huấn luyện | 0,8714 | 0,8671 | +0,0043 | 4,1833 | < 0,0001 | **Có ý nghĩa thống kê cho cặp addendum** |
 
-> *Ghi chú tái lập:* RF được huấn luyện lại với cùng hyperparameters (`n_estimators=200, max_depth=10, max_features=0.3, class_weight='balanced'`) bằng `notebooks/train_supplementary_models.py` để có file `models/model_rf.pkl` cho DeLong test. AUC=0,8671 chênh nhẹ so với 0,8703 ghi nhận trong notebook 03 (sklearn 1.8 vs phiên bản gốc, không ảnh hưởng kết luận định tính).
+> *Ghi chú tái lập:* RF trong kiểm định DeLong được huấn luyện lại như một model phụ nội bộ để có xác suất so sánh cùng tập test. Vì vậy AUC=0,8671 trong bảng DeLong khác với RF AUC=0,8703 ở bảng so sánh chính. Kết quả DeLong dưới đây chỉ khẳng định sự khác biệt cho cặp model tái lập trong addendum; quyết định chọn XGBoost vẫn nên được hiểu chủ yếu từ hiệu năng tổng thể và lợi thế vận hành.
 
-$z = 4{,}18$, $p < 0{,}0001$ → XGBoost vượt RF về AUC có ý nghĩa thống kê. **Quyết định chọn XGBoost** dựa trên 3 lý do: (i) AUC cao hơn (DeLong p<0,0001), (ii) lợi thế vận hành (huấn luyện 4×, model size 35×, inference 6×), (iii) SHAP TreeExplainer chính xác.
+$z = 4{,}18$, $p < 0{,}0001$ cho cặp XGBoost và RF tái huấn luyện trong addendum. **Quyết định chọn XGBoost** dựa trên 3 lý do thực tế hơn: (i) AUC cao nhất trong bảng chính (0,8714), (ii) lợi thế vận hành (huấn luyện 4×, model size 35×, inference 6×), (iii) SHAP TreeExplainer chính xác và dễ dùng trong dashboard.
 
 ## 4.7 Phân tích Sai số
 
@@ -665,7 +691,7 @@ AUC-ROC đo khả năng xếp hạng, không đảm bảo xác suất đầu ra 
 
 $$\text{BS} = \frac{1}{N}\sum_{i=1}^{N}(\hat{p}_i - y_i)^2, \quad \text{BSS} = 1 - \frac{\text{BS}}{\text{BS}_{\text{ref}}}$$
 
-Baseline $\text{BS}_{\text{ref}} = 0{,}0668 \times (1-0{,}0668) \approx 0{,}0623$ (dự báo tỷ lệ phổ biến cho mọi hồ sơ). BSS > 0: tốt hơn baseline. *(Derivation: defense_guide.md Phần C.2)*
+Baseline $\text{BS}_{\text{ref}} = 0{,}0668 \times (1-0{,}0668) \approx 0{,}0623$ (dự báo tỷ lệ phổ biến cho mọi hồ sơ). BSS > 0: tốt hơn baseline.
 
 **Kết quả thực nghiệm** trên tập kiểm tra 22.500 hồ sơ (chi tiết: `reports/addendum_results.md`):
 
@@ -689,7 +715,7 @@ Chia dự đoán thành 10 bins: trục x = $\hat{p}$ trung bình, trục y = t�
 
 ### 4.9.4 Hướng cải thiện hiệu chỉnh xác suất
 
-Mô hình chưa được hiệu chỉnh xác suất — chấp nhận được vì ngưỡng t=0,625 được chọn theo F2-score (không phụ thuộc vào ý nghĩa tuyệt đối của $\hat{p}$). Nếu triển khai thực tế cần giải thích xác suất cụ thể cho khách hàng, nên áp dụng **Platt Scaling** (khớp Logistic Regression trên điểm số raw) hoặc **Isotonic Regression** — không thay đổi AUC nhưng cải thiện Brier Score và ECE. *(Chi tiết: defense_guide.md Phần C.3)*
+Mô hình chưa được hiệu chỉnh xác suất — chấp nhận được vì ngưỡng t=0,625 được chọn theo F2-score (không phụ thuộc vào ý nghĩa tuyệt đối của $\hat{p}$). Nếu triển khai thực tế cần giải thích xác suất cụ thể cho khách hàng, nên áp dụng **Platt Scaling** (khớp Logistic Regression trên điểm số raw) hoặc **Isotonic Regression** — không thay đổi AUC nhưng cải thiện Brier Score và ECE.
 
 ---
 
@@ -697,7 +723,9 @@ Mô hình chưa được hiệu chỉnh xác suất — chấp nhận được v
 
 ## 5.1 Kiến trúc Hệ thống
 
-Ứng dụng có 3 tabs: (1) Khách hàng đơn lẻ, (2) Đánh giá theo lô CSV, (3) Hướng dẫn. Luồng xử lý Tab 1: người dùng nhập 10 đặc trưng gốc → tự động tính 4 đặc trưng mới → `model.predict_proba(X_df)[0,1]` → `shap.TreeExplainer(model)(X_df)` → hiển thị mức rủi ro + SHAP waterfall.
+Ứng dụng có 3 tabs: (1) Khách hàng đơn lẻ, (2) Đánh giá theo lô CSV/XLSX, (3) Hướng dẫn. Luồng xử lý Tab 1: người dùng nhập 10 đặc trưng gốc → tự động tính 4 đặc trưng mới → `model.predict_proba(X_df)[0,1]` → `shap.TreeExplainer(model)(X_df)` → hiển thị mức rủi ro + SHAP waterfall. Với Tab 2, người dùng có thể chọn ngưỡng quyết định, xem đánh giá danh mục và tải kết quả từng hồ sơ.
+
+> Ghi chú triển khai demo: để xử lý file upload linh hoạt, app batch điền giá trị thiếu bằng trung vị. Pipeline nghiên cứu trong notebook vẫn dùng KNN Imputer và capping outlier trên tập train; vì vậy app là demo scoring/danh mục, không phải artifact tái lập preprocessing 100%.
 
 **Caching:** `@st.cache_resource` cho model/explainer. `plt.close(fig)` sau `st.pyplot()` tránh rò rỉ bộ nhớ.
 
@@ -748,7 +776,7 @@ Bốn mô hình theo thứ tự tăng độ phức tạp: LR (0,8432) → DT (0,
 
 48,4% người vỡ nợ không bị phát hiện ở ngưỡng F1-optimal $t=0{,}77$ — giới hạn của đặc trưng lịch sử, không phải mô hình yếu. Hạ ngưỡng xuống $t=0{,}625$ (F2-optimal) giúp Recall tăng +15,3 điểm (51,6% → 66,9%), tiết kiệm ~$2M chi phí so với F1-optimal.
 
-Sản phẩm: Streamlit multi-tab (đơn lẻ + batch CSV), giải thích SHAP real-time. `streamlit run app/app.py`.
+Sản phẩm: Streamlit multi-tab (đơn lẻ + batch CSV/XLSX), giải thích SHAP real-time và xuất kết quả theo lô. `streamlit run app/app.py`.
 
 **Thách thức kỹ thuật đã giải quyết:** mất cân bằng 1:14 (scale_pos_weight + F2-threshold), đa cộng tuyến VIF=∞ (nén thành TotalDelinquencyScore), explainability (SHAP TreeExplainer đáp ứng Basel III Pillar 3 + GDPR Article 22).
 

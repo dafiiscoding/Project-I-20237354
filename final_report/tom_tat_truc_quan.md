@@ -89,4 +89,4 @@ F2-score ưu tiên Recall gấp đôi Precision — phù hợp với logic kinh 
 | [`presentation/slide.md`](../presentation/slide.md) | 29 slides defense kỹ thuật (Marp) |
 | [`presentation/slide_executive_summary.md`](../presentation/slide_executive_summary.md) | 7 slides tóm tắt cho người không chuyên |
 | [`presentation/defense_guide.md`](../presentation/defense_guide.md) | Q&A + toán học chi tiết để chuẩn bị bảo vệ |
-| [`app/app.py`](../app/app.py) — `streamlit run app/app.py` | Dashboard tương tác |
+| [`app/app.py`](../app/app.py) — `streamlit run app/app.py` | Dashboard tương tác: dự báo đơn lẻ + đánh giá theo lô CSV/XLSX |

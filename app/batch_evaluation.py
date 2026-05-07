@@ -1,7 +1,6 @@
-"""Tab 2: Đánh giá theo lô (CSV upload)."""
+"""Tab 2: Đánh giá theo lô (CSV/XLSX upload)."""
 
 import sys
-import io
 import numpy as np
 import pandas as pd
 import streamlit as st
@@ -11,32 +10,32 @@ from pathlib import Path
 try:
     from .utils import (FEATURES, FEATURE_LABELS, REQUIRED_COLS, TARGET_COL, THRESHOLD,
                         RISK_COLORS, RISK_LABELS_VI, validate_batch_input, prepare_features,
-                        batch_predict, get_risk_tier, make_template_csv)
+                        batch_predict, get_risk_tier, make_template_csv, read_uploaded_table)
     from .viz import (plot_risk_tier_donut, plot_prob_histogram, plot_segment_analysis,
                       plot_income_segment, plot_shap_global,
                       plot_roc_pr, plot_lift_gain, plot_calibration_batch, compute_ks_stat)
 except ImportError:
     from utils import (FEATURES, FEATURE_LABELS, REQUIRED_COLS, TARGET_COL, THRESHOLD,
                        RISK_COLORS, RISK_LABELS_VI, validate_batch_input, prepare_features,
-                       batch_predict, get_risk_tier, make_template_csv)
+                       batch_predict, get_risk_tier, make_template_csv, read_uploaded_table)
     from viz import (plot_risk_tier_donut, plot_prob_histogram, plot_segment_analysis,
                      plot_income_segment, plot_shap_global,
                      plot_roc_pr, plot_lift_gain, plot_calibration_batch, compute_ks_stat)
 
 
 def render(model) -> None:
-    """Render Tab 2: CSV upload + batch evaluation + export."""
+    """Render Tab 2: CSV/XLSX upload + batch evaluation + export."""
 
-    st.subheader("📊 Đánh giá rủi ro theo lô (CSV)")
-    st.caption("Tải lên file CSV chứa danh sách khách hàng để đánh giá hàng loạt.")
+    st.subheader("📊 Đánh giá rủi ro theo lô (CSV/XLSX)")
+    st.caption("Tải lên danh sách khách hàng để dự báo hàng loạt, xem phân bố rủi ro và tải kết quả.")
 
     # ── Step 1: Upload ──
     col_upload, col_template = st.columns([3, 1])
     with col_upload:
         uploaded = st.file_uploader(
-            "Tải file CSV (tối đa 500,000 dòng)",
-            type=["csv"],
-            help=f"File cần chứa đủ {len(REQUIRED_COLS)} cột raw. Tải CSV mẫu bên phải nếu chưa có."
+            "Tải file dữ liệu (CSV hoặc XLSX, tối đa 500,000 dòng)",
+            type=["csv", "xlsx"],
+            help=f"File cần chứa đủ {len(REQUIRED_COLS)} cột gốc. Tải CSV mẫu bên phải nếu chưa có."
         )
     with col_template:
         st.markdown("&nbsp;")
@@ -54,15 +53,10 @@ def render(model) -> None:
 
     # ── Step 2: Load & Validate ──
     try:
-        for enc in ['utf-8', 'latin-1']:
-            try:
-                df_raw = pd.read_csv(io.StringIO(uploaded.getvalue().decode(enc)))
-                break
-            except UnicodeDecodeError:
-                continue
-        else:
-            st.error("Không đọc được file. Hãy đảm bảo file được lưu dưới encoding UTF-8 hoặc Latin-1.")
-            return
+        df_raw = read_uploaded_table(uploaded)
+    except ValueError as e:
+        st.error(str(e))
+        return
     except Exception as e:
         st.error(f"Lỗi khi đọc file: {e}")
         return
@@ -77,6 +71,19 @@ def render(model) -> None:
     has_target = TARGET_COL in df_raw.columns
     n_rows = len(df_raw)
     st.success(f"✅ Tải thành công: **{n_rows:,} dòng**, {len(df_raw.columns)} cột{' (có cột mục tiêu — sẽ hiển thị kết quả benchmark)' if has_target else ''}.")
+
+    decision_threshold = st.slider(
+        "Ngưỡng quyết định từ chối cho tập này",
+        min_value=0.10,
+        max_value=0.90,
+        value=float(st.session_state.get('batch_threshold', THRESHOLD)),
+        step=0.005,
+        help="Khách hàng có xác suất vỡ nợ >= ngưỡng này sẽ được gán quyết định REJECT.",
+    )
+    st.info(
+        "Ghi chú demo: app batch điền thiếu bằng trung vị để file upload chạy linh hoạt. "
+        "Pipeline nghiên cứu trong notebook dùng KNN Imputer và capping outlier trên tập train."
+    )
 
     with st.expander("👀 Xem trước dữ liệu (10 dòng đầu)"):
         st.dataframe(df_raw.head(10), use_container_width=True)
@@ -93,15 +100,17 @@ def render(model) -> None:
         with st.spinner("Đang dự báo..."):
             probs = batch_predict(model, X_feat)
 
-        df_out = df_raw.copy()
+        df_out = df_raw.loc[X_feat.index].copy()
         df_out['probability'] = probs
-        df_out['risk_tier'] = [get_risk_tier(p)[0] for p in probs]
-        df_out['decision'] = np.where(probs >= THRESHOLD, 'REJECT', 'APPROVE')
+        df_out['risk_tier'] = [get_risk_tier(p, threshold=decision_threshold)[0] for p in probs]
+        df_out['decision'] = np.where(probs >= decision_threshold, 'REJECT', 'APPROVE')
+        df_out['decision_threshold'] = decision_threshold
 
         st.session_state['batch_result'] = df_out
-        st.session_state['batch_raw'] = df_raw
+        st.session_state['batch_raw'] = df_out.copy()
         st.session_state['batch_feat'] = X_feat
         st.session_state['has_target'] = has_target
+        st.session_state['batch_threshold'] = decision_threshold
         st.rerun()
 
     # ── Step 4: Show results ──
@@ -110,13 +119,15 @@ def render(model) -> None:
         df_raw_cached = st.session_state.get('batch_raw', df_raw)
         X_feat_cached = st.session_state.get('batch_feat', None)
         has_target_cached = st.session_state.get('has_target', False)
+        threshold_cached = float(st.session_state.get('batch_threshold', THRESHOLD))
 
         st.markdown("---")
         st.markdown("### 📈 Kết quả đánh giá")
+        st.caption(f"Ngưỡng quyết định đang dùng: **{threshold_cached:.3f}**")
 
         # A. Tổng quan + đánh giá portfolio
-        _render_overview(df_out)
-        _render_portfolio_assessment(df_out)
+        _render_overview(df_out, threshold_cached)
+        _render_portfolio_assessment(df_out, threshold_cached)
 
         st.markdown("---")
 
@@ -132,7 +143,7 @@ def render(model) -> None:
                 use_container_width=True, hide_index=True
             )
         with col_c:
-            st.plotly_chart(plot_prob_histogram(df_out), use_container_width=True)
+            st.plotly_chart(plot_prob_histogram(df_out, threshold=threshold_cached), use_container_width=True)
 
         st.markdown("---")
 
@@ -159,6 +170,7 @@ def render(model) -> None:
             fig_inc = plot_income_segment(df_raw_cached, df_out)
             if fig_inc:
                 st.plotly_chart(fig_inc, use_container_width=True)
+        _render_segment_summary_table(df_raw_cached, df_out)
 
         st.markdown("---")
 
@@ -177,7 +189,7 @@ def render(model) -> None:
         if has_target_cached and TARGET_COL in df_raw_cached.columns:
             st.markdown("---")
             st.markdown("#### Đánh giá hiệu năng mô hình (Benchmark)")
-            _render_benchmark(model, X_feat_cached, df_raw_cached[TARGET_COL])
+            _render_benchmark(model, X_feat_cached, df_raw_cached[TARGET_COL], threshold_cached)
 
         st.markdown("---")
 
@@ -192,18 +204,18 @@ def render(model) -> None:
             file_name="ket_qua_danh_gia_rui_ro.csv",
             mime="text/csv",
         )
-        st.caption(f"File kết quả gồm {len(df_download):,} dòng với 3 cột bổ sung: `probability`, `risk_tier`, `decision`.")
+        st.caption(f"File kết quả gồm {len(df_download):,} dòng với 4 cột bổ sung: `probability`, `risk_tier`, `decision`, `decision_threshold`.")
 
         if st.button("🗑️ Xóa kết quả hiện tại", key="clear_results"):
-            for k in ['batch_result', 'batch_raw', 'batch_feat', 'has_target']:
+            for k in ['batch_result', 'batch_raw', 'batch_feat', 'has_target', 'batch_threshold']:
                 st.session_state.pop(k, None)
             st.rerun()
 
 
-def _render_overview(df_out: pd.DataFrame) -> None:
+def _render_overview(df_out: pd.DataFrame, threshold: float) -> None:
     """Hiển thị 4 metric tổng quan."""
     n = len(df_out)
-    pct_default = (df_out['probability'] >= THRESHOLD).mean()
+    pct_default = (df_out['probability'] >= threshold).mean()
     avg_prob = df_out['probability'].mean()
     pct_reject = (df_out['decision'] == 'REJECT').mean()
 
@@ -211,10 +223,10 @@ def _render_overview(df_out: pd.DataFrame) -> None:
     col1.metric("Tổng số khách hàng", f"{n:,}")
     col2.metric("Tỷ lệ dự báo vỡ nợ", f"{pct_default:.1%}")
     col3.metric("Xác suất vỡ nợ TB", f"{avg_prob:.1%}")
-    col4.metric("Tỷ lệ bị từ chối", f"{pct_reject:.1%}")
+    col4.metric(f"Tỷ lệ bị từ chối (t={threshold:.3f})", f"{pct_reject:.1%}")
 
 
-def _render_benchmark(model, X_feat: pd.DataFrame, y_true: pd.Series) -> None:
+def _render_benchmark(model, X_feat: pd.DataFrame, y_true: pd.Series, threshold: float) -> None:
     """Khi CSV có cột target — đánh giá toàn diện hiệu năng mô hình trên tập đó."""
     import numpy as np
 
@@ -226,7 +238,7 @@ def _render_benchmark(model, X_feat: pd.DataFrame, y_true: pd.Series) -> None:
         probs = model.predict_proba(X_feat)[:, 1]
 
         # 4 KPI chính
-        metrics = evaluate_model(model, X_feat, y_arr, threshold=THRESHOLD, name='XGBoost')
+        metrics = evaluate_model(model, X_feat, y_arr, threshold=threshold, name='XGBoost')
         col1, col2, col3, col4 = st.columns(4)
         col1.metric("AUC-ROC", f"{metrics['AUC-ROC']:.4f}",
                     help="Khả năng phân biệt — 0,5 = ngẫu nhiên, 1 = hoàn hảo")
@@ -287,10 +299,10 @@ def _render_benchmark(model, X_feat: pd.DataFrame, y_true: pd.Series) -> None:
         st.plotly_chart(fig_cal, use_container_width=True)
 
         # Confusion matrix
-        st.markdown(f"##### Ma trận nhầm lẫn (ngưỡng = {THRESHOLD})")
+        st.markdown(f"##### Ma trận nhầm lẫn (ngưỡng = {threshold:.3f})")
         fig, ax = plt.subplots(figsize=(5, 4))
-        plot_confusion_matrix(model, X_feat, y_arr, threshold=THRESHOLD,
-                              title=f'Ma trận nhầm lẫn (Ngưỡng={THRESHOLD})', ax=ax)
+        plot_confusion_matrix(model, X_feat, y_arr, threshold=threshold,
+                              title=f'Ma trận nhầm lẫn (Ngưỡng={threshold:.3f})', ax=ax)
         plt.tight_layout()
         st.pyplot(fig, use_container_width=False)
         plt.close(fig)
@@ -302,7 +314,7 @@ def _render_benchmark(model, X_feat: pd.DataFrame, y_true: pd.Series) -> None:
             st.code(traceback.format_exc())
 
 
-def _render_portfolio_assessment(df_out: pd.DataFrame) -> None:
+def _render_portfolio_assessment(df_out: pd.DataFrame, threshold: float) -> None:
     """Đánh giá định tính tổng thể danh mục — nhận xét bằng ngôn ngữ kinh doanh."""
     import numpy as np
 
@@ -356,13 +368,66 @@ def _render_portfolio_assessment(df_out: pd.DataFrame) -> None:
         f"**🟠 Hồ sơ cần thẩm định kỹ (HIGH)**\n\n{tier.get('HIGH', 0):.1%} ({int(tier.get('HIGH', 0) * n):,} người)\n\n_Yêu cầu xác minh thu nhập + tài sản đảm bảo bổ sung._"
     )
     cols[2].markdown(
-        f"**🔴 Hồ sơ từ chối (VERY HIGH)**\n\n{tier.get('VERY_HIGH', 0):.1%} ({int(tier.get('VERY_HIGH', 0) * n):,} người)\n\n_Vượt ngưỡng triển khai 0,625 — không cấp tín dụng._"
+        f"**🔴 Hồ sơ từ chối (VERY HIGH)**\n\n{tier.get('VERY_HIGH', 0):.1%} ({int(tier.get('VERY_HIGH', 0) * n):,} người)\n\n_Vượt ngưỡng {threshold:.3f} — không cấp tín dụng._"
     )
+
+
+def _render_segment_summary_table(df_raw: pd.DataFrame, df_out: pd.DataFrame) -> None:
+    """Bảng tóm tắt nhanh theo nhóm tuổi và thu nhập."""
+    st.markdown("##### Bảng tóm tắt theo phân khúc")
+    combined = df_raw[['age', 'MonthlyIncome']].copy()
+    combined['probability'] = df_out['probability'].values
+    combined['decision'] = df_out['decision'].values
+
+    combined['Nhóm tuổi'] = pd.cut(
+        combined['age'],
+        bins=[0, 30, 45, 60, 200],
+        labels=['<30', '30-45', '45-60', '>60'],
+    )
+
+    income_clean = combined['MonthlyIncome'].fillna(combined['MonthlyIncome'].median())
+    try:
+        combined['Nhóm thu nhập'] = pd.qcut(
+            income_clean,
+            q=4,
+            labels=['Q1 thấp', 'Q2', 'Q3', 'Q4 cao'],
+            duplicates='drop',
+        )
+    except ValueError:
+        combined['Nhóm thu nhập'] = 'Không đủ biến thiên'
+
+    def _make_table(group_col: str) -> pd.DataFrame:
+        tbl = (
+            combined.groupby(group_col, observed=True)
+            .agg(
+                so_khach_hang=('probability', 'count'),
+                xac_suat_tb=('probability', 'mean'),
+                ty_le_tu_choi=('decision', lambda x: (x == 'REJECT').mean()),
+            )
+            .reset_index()
+        )
+        tbl = tbl.rename(columns={
+            group_col: 'Phân khúc',
+            'so_khach_hang': 'Số khách hàng',
+            'xac_suat_tb': 'Xác suất TB',
+            'ty_le_tu_choi': 'Tỷ lệ từ chối',
+        })
+        tbl['Xác suất TB'] = tbl['Xác suất TB'].map(lambda x: f"{x:.1%}")
+        tbl['Tỷ lệ từ chối'] = tbl['Tỷ lệ từ chối'].map(lambda x: f"{x:.1%}")
+        return tbl
+
+    c1, c2 = st.columns(2)
+    with c1:
+        st.caption("Theo nhóm tuổi")
+        st.dataframe(_make_table('Nhóm tuổi'), use_container_width=True, hide_index=True)
+    with c2:
+        st.caption("Theo nhóm thu nhập")
+        st.dataframe(_make_table('Nhóm thu nhập'), use_container_width=True, hide_index=True)
 
 
 def _show_column_guide() -> None:
     """Hiển thị hướng dẫn các cột cần thiết."""
-    st.markdown("**10 cột bắt buộc trong file CSV:**")
+    st.markdown("**10 cột bắt buộc trong file CSV/XLSX:**")
     col_desc = {
         'RevolvingUtilizationOfUnsecuredLines': 'Tỷ lệ sử dụng hạn mức tín dụng (số thực, 0-10)',
         'age': 'Tuổi (số nguyên, 18-100)',

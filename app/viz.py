@@ -50,10 +50,10 @@ def plot_shap_waterfall(X_df: pd.DataFrame, explanation, prob: float) -> plt.Fig
 
 # ─── Batch: overview metrics (no chart — just data) ─────────────────────────
 
-def compute_batch_stats(df_out: pd.DataFrame) -> dict:
+def compute_batch_stats(df_out: pd.DataFrame, threshold: float = THRESHOLD) -> dict:
     """Tính các chỉ số tổng quan cho batch result."""
     n = len(df_out)
-    pct_default = (df_out['probability'] >= THRESHOLD).mean()
+    pct_default = (df_out['probability'] >= threshold).mean()
     avg_prob = df_out['probability'].mean()
     pct_reject = (df_out['decision'] == 'REJECT').mean()
     return {'n': n, 'pct_default': pct_default, 'avg_prob': avg_prob, 'pct_reject': pct_reject}
@@ -90,7 +90,7 @@ def plot_risk_tier_donut(df_out: pd.DataFrame) -> go.Figure:
 
 # ─── Batch: Probability histogram ───────────────────────────────────────────
 
-def plot_prob_histogram(df_out: pd.DataFrame) -> go.Figure:
+def plot_prob_histogram(df_out: pd.DataFrame, threshold: float = THRESHOLD) -> go.Figure:
     """Histogram xác suất vỡ nợ với đường ngưỡng."""
     fig = go.Figure()
     fig.add_trace(go.Histogram(
@@ -103,7 +103,7 @@ def plot_prob_histogram(df_out: pd.DataFrame) -> go.Figure:
     for thresh, color, label in [
         (0.10, 'rgba(46,204,113,0.6)', 'Ngưỡng Thấp (10%)'),
         (0.30, 'rgba(243,156,18,0.6)', 'Ngưỡng TB (30%)'),
-        (THRESHOLD, 'rgba(231,76,60,0.9)', f'Ngưỡng từ chối ({THRESHOLD})'),
+        (threshold, 'rgba(231,76,60,0.9)', f'Ngưỡng từ chối ({threshold:.3f})'),
     ]:
         fig.add_vline(x=thresh, line_dash='dash', line_color=color,
                       annotation_text=label, annotation_position='top right',
