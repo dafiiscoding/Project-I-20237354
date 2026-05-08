@@ -56,7 +56,7 @@ FEATURE_LABELS = {
     'TotalDelinquencyScore': 'Điểm lịch sử trả nợ tổng hợp',
     'FinancialStressIndex': 'Chỉ số stress tài chính',
     'AbsoluteMonthlyDebt': 'Tổng nợ tuyệt đối (USD/tháng)',
-    'DelinquencyTrend': 'Xu hướng cải thiện nợ',
+    'DelinquencyTrend': 'Cán cân mức độ trễ hạn',
 }
 
 RISK_COLORS = {
@@ -225,7 +225,7 @@ def make_template_csv() -> bytes:
 def read_uploaded_table(uploaded_file) -> pd.DataFrame:
     """
     Đọc file upload từ Streamlit.
-    Hỗ trợ CSV (utf-8/utf-8-sig/latin-1) và Excel (.xlsx/.xls).
+    Hỗ trợ CSV (utf-8/utf-8-sig/latin-1) và Excel (xlsx/xls).
     """
     file_name = str(getattr(uploaded_file, 'name', ''))
     ext = Path(file_name).suffix.lower()
@@ -233,6 +233,7 @@ def read_uploaded_table(uploaded_file) -> pd.DataFrame:
     if ext in {'.xlsx', '.xls'}:
         return pd.read_excel(io.BytesIO(uploaded_file.getvalue()))
 
+    # Mặc định xử lý CSV khi không có extension rõ ràng.
     raw_bytes = uploaded_file.getvalue()
     for enc in ('utf-8-sig', 'utf-8', 'latin-1'):
         try:

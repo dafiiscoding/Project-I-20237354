@@ -13,29 +13,52 @@ try:
                         batch_predict, get_risk_tier, make_template_csv, read_uploaded_table)
     from .viz import (plot_risk_tier_donut, plot_prob_histogram, plot_segment_analysis,
                       plot_income_segment, plot_shap_global,
-                      plot_roc_pr, plot_lift_gain, plot_calibration_batch, compute_ks_stat)
+                      plot_roc_curve, plot_pr_curve, plot_lift_gain, plot_calibration_batch,
+                      compute_ks_stat, plot_threshold_tradeoff)
 except ImportError:
     from utils import (FEATURES, FEATURE_LABELS, REQUIRED_COLS, TARGET_COL, THRESHOLD,
                        RISK_COLORS, RISK_LABELS_VI, validate_batch_input, prepare_features,
                        batch_predict, get_risk_tier, make_template_csv, read_uploaded_table)
     from viz import (plot_risk_tier_donut, plot_prob_histogram, plot_segment_analysis,
                      plot_income_segment, plot_shap_global,
-                     plot_roc_pr, plot_lift_gain, plot_calibration_batch, compute_ks_stat)
+                     plot_roc_curve, plot_pr_curve, plot_lift_gain, plot_calibration_batch,
+                     compute_ks_stat, plot_threshold_tradeoff)
+
+
+def _get_local_demo_files() -> list[tuple[str, Path]]:
+    """Trả về các file demo local nếu data/raw có sẵn trên máy chạy app."""
+    raw_dir = Path(__file__).parent.parent / 'data' / 'raw'
+    candidates = [
+        ("Demo hậu kiểm 5.000 dòng có target", raw_dir / 'batch_demo_from_training_5000.csv'),
+        ("Kaggle cs-test.csv để dự đoán/submission", raw_dir / 'cs-test.csv'),
+    ]
+    return [(label, path) for label, path in candidates if path.exists()]
 
 
 def render(model) -> None:
-    """Render Tab 2: CSV/XLSX upload + batch evaluation + export."""
+    """Render Tab 2: CSV upload + batch evaluation + export."""
 
-    st.subheader("📊 Đánh giá rủi ro theo lô (CSV/XLSX)")
-    st.caption("Tải lên danh sách khách hàng để dự báo hàng loạt, xem phân bố rủi ro và tải kết quả.")
+    st.subheader("📊 Đánh giá rủi ro theo lô (CSV)")
+    st.caption("Tải lên file CSV/XLSX hoặc chọn file demo local để đánh giá hàng loạt.")
 
     # ── Step 1: Upload ──
+    local_files = _get_local_demo_files()
+    source_options = ["Upload file mới"] + [label for label, _ in local_files]
+    default_source = 1 if local_files else 0
+    source_choice = st.selectbox(
+        "Nguồn dữ liệu",
+        options=source_options,
+        index=default_source,
+        help="File demo local chỉ hiện khi data/raw có sẵn trên máy đang chạy Streamlit.",
+    )
+
     col_upload, col_template = st.columns([3, 1])
     with col_upload:
         uploaded = st.file_uploader(
-            "Tải file dữ liệu (CSV hoặc XLSX, tối đa 500,000 dòng)",
+            "Tải file dữ liệu (CSV hoặc XLSX, tối đa 500.000 dòng)",
             type=["csv", "xlsx"],
-            help=f"File cần chứa đủ {len(REQUIRED_COLS)} cột gốc. Tải CSV mẫu bên phải nếu chưa có."
+            disabled=source_choice != "Upload file mới",
+            help=f"File cần chứa đủ {len(REQUIRED_COLS)} cột raw. Tải CSV mẫu bên phải nếu chưa có."
         )
     with col_template:
         st.markdown("&nbsp;")
@@ -46,14 +69,20 @@ def render(model) -> None:
             mime="text/csv",
         )
 
-    if not uploaded:
+    if source_choice == "Upload file mới" and not uploaded:
         st.markdown("---")
         _show_column_guide()
         return
 
     # ── Step 2: Load & Validate ──
     try:
-        df_raw = read_uploaded_table(uploaded)
+        if source_choice == "Upload file mới":
+            df_raw = read_uploaded_table(uploaded)
+            source_note = getattr(uploaded, 'name', 'file upload')
+        else:
+            local_path = dict(local_files)[source_choice]
+            df_raw = pd.read_csv(local_path)
+            source_note = str(local_path)
     except ValueError as e:
         st.error(str(e))
         return
@@ -70,19 +99,15 @@ def render(model) -> None:
 
     has_target = TARGET_COL in df_raw.columns
     n_rows = len(df_raw)
-    st.success(f"✅ Tải thành công: **{n_rows:,} dòng**, {len(df_raw.columns)} cột{' (có cột mục tiêu — sẽ hiển thị kết quả benchmark)' if has_target else ''}.")
+    st.success(f"✅ Tải thành công: **{n_rows:,} dòng**, {len(df_raw.columns)} cột từ `{source_note}`{' (có cột mục tiêu — sẽ hiển thị kết quả benchmark)' if has_target else ''}.")
 
     decision_threshold = st.slider(
-        "Ngưỡng quyết định từ chối cho tập này",
+        "Ngưỡng quyết định từ chối (dùng cho tập file này)",
         min_value=0.10,
         max_value=0.90,
         value=float(st.session_state.get('batch_threshold', THRESHOLD)),
         step=0.005,
-        help="Khách hàng có xác suất vỡ nợ >= ngưỡng này sẽ được gán quyết định REJECT.",
-    )
-    st.info(
-        "Ghi chú demo: app batch điền thiếu bằng trung vị để file upload chạy linh hoạt. "
-        "Pipeline nghiên cứu trong notebook dùng KNN Imputer và capping outlier trên tập train."
+        help="Khách hàng có xác suất vỡ nợ >= ngưỡng sẽ bị xếp vào nhóm từ chối.",
     )
 
     with st.expander("👀 Xem trước dữ liệu (10 dòng đầu)"):
@@ -107,7 +132,7 @@ def render(model) -> None:
         df_out['decision_threshold'] = decision_threshold
 
         st.session_state['batch_result'] = df_out
-        st.session_state['batch_raw'] = df_out.copy()
+        st.session_state['batch_raw'] = df_raw
         st.session_state['batch_feat'] = X_feat
         st.session_state['has_target'] = has_target
         st.session_state['batch_threshold'] = decision_threshold
@@ -123,7 +148,7 @@ def render(model) -> None:
 
         st.markdown("---")
         st.markdown("### 📈 Kết quả đánh giá")
-        st.caption(f"Ngưỡng quyết định đang dùng: **{threshold_cached:.3f}**")
+        st.caption(f"Ngưỡng quyết định đang dùng cho tập này: **{threshold_cached:.3f}**")
 
         # A. Tổng quan + đánh giá portfolio
         _render_overview(df_out, threshold_cached)
@@ -143,7 +168,7 @@ def render(model) -> None:
                 use_container_width=True, hide_index=True
             )
         with col_c:
-            st.plotly_chart(plot_prob_histogram(df_out, threshold=threshold_cached), use_container_width=True)
+            st.plotly_chart(plot_prob_histogram(df_out), use_container_width=True)
 
         st.markdown("---")
 
@@ -207,7 +232,7 @@ def render(model) -> None:
         st.caption(f"File kết quả gồm {len(df_download):,} dòng với 4 cột bổ sung: `probability`, `risk_tier`, `decision`, `decision_threshold`.")
 
         if st.button("🗑️ Xóa kết quả hiện tại", key="clear_results"):
-            for k in ['batch_result', 'batch_raw', 'batch_feat', 'has_target', 'batch_threshold']:
+            for k in ['batch_result', 'batch_raw', 'batch_feat', 'has_target']:
                 st.session_state.pop(k, None)
             st.rerun()
 
@@ -234,11 +259,32 @@ def _render_benchmark(model, X_feat: pd.DataFrame, y_true: pd.Series, threshold:
         sys.path.insert(0, str(Path(__file__).parent.parent / 'src'))
         from evaluation import evaluate_model, plot_confusion_matrix
 
-        y_arr = y_true.values if hasattr(y_true, 'values') else np.asarray(y_true)
-        probs = model.predict_proba(X_feat)[:, 1]
+        y_series = pd.to_numeric(pd.Series(y_true).reindex(X_feat.index), errors='coerce')
+        valid_mask = y_series.notna() & y_series.isin([0, 1])
+        n_invalid = int((~valid_mask).sum())
+        if n_invalid > 0:
+            st.info(
+                f"Benchmark bỏ qua {n_invalid:,} dòng có `{TARGET_COL}` trống hoặc không phải 0/1. "
+                "Dự đoán vẫn được giữ cho toàn bộ các dòng hợp lệ về feature."
+            )
+
+        X_eval = X_feat.loc[valid_mask].copy()
+        y_arr = y_series.loc[valid_mask].astype(int).to_numpy()
+
+        if len(y_arr) == 0:
+            st.warning(f"Không thể tính benchmark: cột `{TARGET_COL}` không có dòng target 0/1 hợp lệ.")
+            return
+        if len(np.unique(y_arr)) < 2:
+            st.warning(
+                f"Không thể tính AUC/ROC/PR vì `{TARGET_COL}` chỉ có một lớp trong các dòng hợp lệ. "
+                "Cần có cả 0 và 1 để đánh giá chất lượng phân biệt."
+            )
+            return
+
+        probs = model.predict_proba(X_eval)[:, 1]
 
         # 4 KPI chính
-        metrics = evaluate_model(model, X_feat, y_arr, threshold=threshold, name='XGBoost')
+        metrics = evaluate_model(model, X_eval, y_arr, threshold=threshold, name='XGBoost')
         col1, col2, col3, col4 = st.columns(4)
         col1.metric("AUC-ROC", f"{metrics['AUC-ROC']:.4f}",
                     help="Khả năng phân biệt — 0,5 = ngẫu nhiên, 1 = hoàn hảo")
@@ -258,6 +304,8 @@ def _render_benchmark(model, X_feat: pd.DataFrame, y_true: pd.Series, threshold:
                     help="Ngưỡng tại đó CDF khác nhau nhiều nhất")
 
         # Reference benchmark từ test set (báo cáo chính)
+        _render_business_impact(y_arr, probs, threshold)
+
         delta_auc = metrics['AUC-ROC'] - 0.8714
         if abs(delta_auc) < 0.01:
             st.success(
@@ -276,9 +324,12 @@ def _render_benchmark(model, X_feat: pd.DataFrame, y_true: pd.Series, threshold:
             )
 
         # ROC + PR
-        st.markdown("##### Đường cong ROC và Precision-Recall")
-        fig_rocpr = plot_roc_pr(y_arr, probs)
-        st.plotly_chart(fig_rocpr, use_container_width=True)
+        st.markdown("##### ROC và Precision-Recall (tách riêng để dễ đọc)")
+        col_r1, col_r2 = st.columns(2)
+        with col_r1:
+            st.plotly_chart(plot_roc_curve(y_arr, probs), use_container_width=True)
+        with col_r2:
+            st.plotly_chart(plot_pr_curve(y_arr, probs), use_container_width=True)
 
         # Lift + Gain
         st.markdown("##### Phân tích Lift và Cumulative Gain (theo decile rủi ro)")
@@ -288,6 +339,10 @@ def _render_benchmark(model, X_feat: pd.DataFrame, y_true: pd.Series, threshold:
         )
         fig_lg = plot_lift_gain(y_arr, probs, n_deciles=10)
         st.plotly_chart(fig_lg, use_container_width=True)
+
+        st.markdown("##### Trade-off theo ngưỡng")
+        st.caption("Giúp chọn ngưỡng phù hợp giữa Recall, Precision, F2 và tỷ lệ từ chối.")
+        st.plotly_chart(plot_threshold_tradeoff(y_arr, probs), use_container_width=True)
 
         # Calibration
         st.markdown("##### Hiệu chỉnh xác suất (Reliability Diagram)")
@@ -301,7 +356,7 @@ def _render_benchmark(model, X_feat: pd.DataFrame, y_true: pd.Series, threshold:
         # Confusion matrix
         st.markdown(f"##### Ma trận nhầm lẫn (ngưỡng = {threshold:.3f})")
         fig, ax = plt.subplots(figsize=(5, 4))
-        plot_confusion_matrix(model, X_feat, y_arr, threshold=threshold,
+        plot_confusion_matrix(model, X_eval, y_arr, threshold=threshold,
                               title=f'Ma trận nhầm lẫn (Ngưỡng={threshold:.3f})', ax=ax)
         plt.tight_layout()
         st.pyplot(fig, use_container_width=False)
@@ -312,6 +367,104 @@ def _render_benchmark(model, X_feat: pd.DataFrame, y_true: pd.Series, threshold:
         import traceback
         with st.expander("Chi tiết lỗi"):
             st.code(traceback.format_exc())
+
+
+def _render_business_impact(y_arr: np.ndarray, probs: np.ndarray, threshold: float) -> None:
+    """Quy đổi kết quả benchmark thành chi phí/lợi ích kinh doanh ước tính."""
+    st.markdown("##### Tác động kinh doanh ước tính")
+    st.caption(
+        "Đây là mô phỏng chi phí rủi ro để giải thích mô hình giúp giảm tổn thất như thế nào "
+        "trên lô dữ liệu có target, không phải lợi nhuận kế toán chính thức."
+    )
+
+    col_cfg1, col_cfg2 = st.columns(2)
+    with col_cfg1:
+        fn_cost = st.number_input(
+            "Tổn thất khi bỏ sót 1 hồ sơ vỡ nợ - FN (USD)",
+            min_value=0,
+            value=11250,
+            step=250,
+            key="batch_fn_cost",
+        )
+    with col_cfg2:
+        fp_cost = st.number_input(
+            "Chi phí cơ hội khi từ chối nhầm 1 hồ sơ tốt - FP (USD)",
+            min_value=0,
+            value=500,
+            step=50,
+            key="batch_fp_cost",
+        )
+
+    y_arr = np.asarray(y_arr).astype(int)
+    pred = (probs >= threshold).astype(int)
+
+    tp = int(((pred == 1) & (y_arr == 1)).sum())
+    fp = int(((pred == 1) & (y_arr == 0)).sum())
+    tn = int(((pred == 0) & (y_arr == 0)).sum())
+    fn = int(((pred == 0) & (y_arr == 1)).sum())
+
+    n = len(y_arr)
+    n_bad = int((y_arr == 1).sum())
+    rejected = int(pred.sum())
+    approved = n - rejected
+
+    approve_all_cost = n_bad * fn_cost
+    current_fn_cost = fn * fn_cost
+    current_fp_cost = fp * fp_cost
+    current_cost = current_fn_cost + current_fp_cost
+    avoided_loss = tp * fn_cost
+    savings_vs_approve_all = approve_all_cost - current_cost
+
+    thresholds = np.arange(0.01, 0.991, 0.005)
+    costs = []
+    reject_rates = []
+    for t in thresholds:
+        pred_t = (probs >= t).astype(int)
+        fp_t = int(((pred_t == 1) & (y_arr == 0)).sum())
+        fn_t = int(((pred_t == 0) & (y_arr == 1)).sum())
+        costs.append(fn_t * fn_cost + fp_t * fp_cost)
+        reject_rates.append(float(pred_t.mean()))
+
+    best_idx = int(np.argmin(costs))
+    best_threshold = float(thresholds[best_idx])
+    best_cost = float(costs[best_idx])
+    best_reject_rate = float(reject_rates[best_idx])
+
+    def money(value: float) -> str:
+        return f"{value:,.0f} USD"
+
+    col1, col2, col3, col4 = st.columns(4)
+    col1.metric("Chi phí tại ngưỡng hiện tại", money(current_cost))
+    col2.metric("Tiết kiệm so với duyệt tất cả", money(savings_vs_approve_all))
+    col3.metric("Tổn thất tránh được", money(avoided_loss))
+    col4.metric("Chi phí từ chối nhầm", money(current_fp_cost))
+
+    st.dataframe(
+        pd.DataFrame([
+            {"Nhóm": "Thực tế vỡ nợ", "Số hồ sơ": n_bad, "Diễn giải": "Target = 1 trong file upload"},
+            {"Nhóm": "Từ chối đúng (TP)", "Số hồ sơ": tp, "Diễn giải": "Chặn được hồ sơ thực sự vỡ nợ"},
+            {"Nhóm": "Từ chối nhầm (FP)", "Số hồ sơ": fp, "Diễn giải": "Hồ sơ tốt nhưng bị từ chối"},
+            {"Nhóm": "Bỏ sót nợ xấu (FN)", "Số hồ sơ": fn, "Diễn giải": "Hồ sơ vỡ nợ nhưng vẫn được duyệt"},
+            {"Nhóm": "Duyệt đúng (TN)", "Số hồ sơ": tn, "Diễn giải": "Hồ sơ tốt được duyệt"},
+            {"Nhóm": "Tổng bị từ chối", "Số hồ sơ": rejected, "Diễn giải": f"{rejected / n:.1%} toàn bộ lô"},
+            {"Nhóm": "Tổng được duyệt", "Số hồ sơ": approved, "Diễn giải": f"{approved / n:.1%} toàn bộ lô"},
+        ]),
+        use_container_width=True,
+        hide_index=True,
+    )
+
+    delta_best = current_cost - best_cost
+    if delta_best > 0:
+        st.info(
+            f"Với giả định chi phí hiện tại, ngưỡng tối ưu theo chi phí trên lô này khoảng "
+            f"**{best_threshold:.3f}**; chi phí ước tính **{money(best_cost)}**, thấp hơn ngưỡng đang dùng "
+            f"**{money(delta_best)}**. Tỷ lệ từ chối tại ngưỡng đó là **{best_reject_rate:.1%}**."
+        )
+    else:
+        st.success(
+            f"Ngưỡng hiện tại đang gần tối ưu theo giả định chi phí này. Ngưỡng tốt nhất quét được là "
+            f"**{best_threshold:.3f}** với chi phí **{money(best_cost)}**."
+        )
 
 
 def _render_portfolio_assessment(df_out: pd.DataFrame, threshold: float) -> None:
@@ -368,12 +521,12 @@ def _render_portfolio_assessment(df_out: pd.DataFrame, threshold: float) -> None
         f"**🟠 Hồ sơ cần thẩm định kỹ (HIGH)**\n\n{tier.get('HIGH', 0):.1%} ({int(tier.get('HIGH', 0) * n):,} người)\n\n_Yêu cầu xác minh thu nhập + tài sản đảm bảo bổ sung._"
     )
     cols[2].markdown(
-        f"**🔴 Hồ sơ từ chối (VERY HIGH)**\n\n{tier.get('VERY_HIGH', 0):.1%} ({int(tier.get('VERY_HIGH', 0) * n):,} người)\n\n_Vượt ngưỡng {threshold:.3f} — không cấp tín dụng._"
+        f"**🔴 Hồ sơ từ chối (VERY HIGH)**\n\n{tier.get('VERY_HIGH', 0):.1%} ({int(tier.get('VERY_HIGH', 0) * n):,} người)\n\n_Vượt ngưỡng triển khai {threshold:.3f} — không cấp tín dụng._"
     )
 
 
 def _render_segment_summary_table(df_raw: pd.DataFrame, df_out: pd.DataFrame) -> None:
-    """Bảng tóm tắt nhanh theo nhóm tuổi và thu nhập."""
+    """Bảng tóm tắt danh mục theo phân khúc để đọc nhanh."""
     st.markdown("##### Bảng tóm tắt theo phân khúc")
     combined = df_raw[['age', 'MonthlyIncome']].copy()
     combined['probability'] = df_out['probability'].values
@@ -396,33 +549,47 @@ def _render_segment_summary_table(df_raw: pd.DataFrame, df_out: pd.DataFrame) ->
     except ValueError:
         combined['Nhóm thu nhập'] = 'Không đủ biến thiên'
 
-    def _make_table(group_col: str) -> pd.DataFrame:
-        tbl = (
-            combined.groupby(group_col, observed=True)
-            .agg(
-                so_khach_hang=('probability', 'count'),
-                xac_suat_tb=('probability', 'mean'),
-                ty_le_tu_choi=('decision', lambda x: (x == 'REJECT').mean()),
-            )
-            .reset_index()
+    age_tbl = (
+        combined.groupby('Nhóm tuổi', observed=True)
+        .agg(
+            so_khach_hang=('probability', 'count'),
+            xac_suat_tb=('probability', 'mean'),
+            ty_le_tu_choi=('decision', lambda x: (x == 'REJECT').mean()),
         )
-        tbl = tbl.rename(columns={
-            group_col: 'Phân khúc',
-            'so_khach_hang': 'Số khách hàng',
-            'xac_suat_tb': 'Xác suất TB',
-            'ty_le_tu_choi': 'Tỷ lệ từ chối',
-        })
-        tbl['Xác suất TB'] = tbl['Xác suất TB'].map(lambda x: f"{x:.1%}")
-        tbl['Tỷ lệ từ chối'] = tbl['Tỷ lệ từ chối'].map(lambda x: f"{x:.1%}")
-        return tbl
+        .reset_index()
+    )
+    age_tbl = age_tbl.rename(columns={
+        'so_khach_hang': 'Số khách hàng',
+        'xac_suat_tb': 'Xác suất TB',
+        'ty_le_tu_choi': 'Tỷ lệ từ chối',
+    })
+    age_tbl['Xác suất TB'] = age_tbl['Xác suất TB'].map(lambda x: f"{x:.1%}")
+    age_tbl['Tỷ lệ từ chối'] = age_tbl['Tỷ lệ từ chối'].map(lambda x: f"{x:.1%}")
+
+    income_tbl = (
+        combined.groupby('Nhóm thu nhập', observed=True)
+        .agg(
+            so_khach_hang=('probability', 'count'),
+            xac_suat_tb=('probability', 'mean'),
+            ty_le_tu_choi=('decision', lambda x: (x == 'REJECT').mean()),
+        )
+        .reset_index()
+    )
+    income_tbl = income_tbl.rename(columns={
+        'so_khach_hang': 'Số khách hàng',
+        'xac_suat_tb': 'Xác suất TB',
+        'ty_le_tu_choi': 'Tỷ lệ từ chối',
+    })
+    income_tbl['Xác suất TB'] = income_tbl['Xác suất TB'].map(lambda x: f"{x:.1%}")
+    income_tbl['Tỷ lệ từ chối'] = income_tbl['Tỷ lệ từ chối'].map(lambda x: f"{x:.1%}")
 
     c1, c2 = st.columns(2)
     with c1:
         st.caption("Theo nhóm tuổi")
-        st.dataframe(_make_table('Nhóm tuổi'), use_container_width=True, hide_index=True)
+        st.dataframe(age_tbl, use_container_width=True, hide_index=True)
     with c2:
         st.caption("Theo nhóm thu nhập")
-        st.dataframe(_make_table('Nhóm thu nhập'), use_container_width=True, hide_index=True)
+        st.dataframe(income_tbl, use_container_width=True, hide_index=True)
 
 
 def _show_column_guide() -> None:

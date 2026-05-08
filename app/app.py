@@ -89,11 +89,14 @@ def _render_help() -> None:
     2. Tải file lên, xem trước dữ liệu.
     3. Chọn ngưỡng quyết định phù hợp cho tập hiện tại.
     4. Nhấn **Đánh giá toàn bộ** — ứng dụng tự động tính thêm 4 đặc trưng kỹ thuật.
-    5. Xem các biểu đồ: phân bố rủi ro, top khách hàng rủi ro cao, phân tích phân khúc và benchmark nếu file có nhãn.
+    5. Xem các biểu đồ: phân bố rủi ro, top khách hàng rủi ro cao, benchmark và trade-off theo ngưỡng.
     6. Tải CSV kết quả với 4 cột bổ sung: `probability`, `risk_tier`, `decision`, `decision_threshold`.
-    
-    Ghi chú: để upload linh hoạt, app demo điền thiếu bằng trung vị; pipeline nghiên cứu trong notebook dùng KNN Imputer và capping outlier.
     """)
+    st.info(
+        "Nếu file có cột `SeriousDlqin2yrs` dạng 0/1, app sẽ mô phỏng hậu kiểm theo lô và tính "
+        "AUC/Recall/Precision/F2. Với dữ liệu vận hành thật, target chỉ có sau kỳ quan sát; "
+        "`cs-test.csv` của Kaggle không có target thật nên chỉ dùng để tạo submission."
+    )
 
     st.markdown("### Giải thích các chỉ số")
     import pandas as pd
@@ -101,7 +104,7 @@ def _render_help() -> None:
         {"Chỉ số": "probability", "Ý nghĩa": "Xác suất vỡ nợ trong 2 năm tới (0 → 1)"},
         {"Chỉ số": "risk_tier", "Ý nghĩa": "Mức độ rủi ro: LOW / MEDIUM / HIGH / VERY_HIGH"},
         {"Chỉ số": "decision", "Ý nghĩa": "APPROVE nếu P < threshold, REJECT nếu P ≥ threshold"},
-        {"Chỉ số": "decision_threshold", "Ý nghĩa": "Ngưỡng quyết định đã dùng cho lần đánh giá batch"},
+        {"Chỉ số": "decision_threshold", "Ý nghĩa": "Ngưỡng quyết định đã dùng cho lần đánh giá batch hiện tại"},
         {"Chỉ số": "SHAP value", "Ý nghĩa": "Đóng góp của đặc trưng vào dự báo; đỏ = tăng rủi ro"},
     ]), hide_index=True, use_container_width=True)
 
@@ -110,7 +113,7 @@ def _render_help() -> None:
         {"Đặc trưng": "TotalDelinquencyScore", "Công thức": "3×(Trễ 90+) + 2×(Trễ 60-89) + 1×(Trễ 30-59)"},
         {"Đặc trưng": "FinancialStressIndex", "Công thức": "RevolvingUtil × TotalDelinquencyScore"},
         {"Đặc trưng": "AbsoluteMonthlyDebt", "Công thức": "DebtRatio × MonthlyIncome"},
-        {"Đặc trưng": "DelinquencyTrend", "Công thức": "Trễ30-59 − Trễ90+ (âm = xu hướng xấu đi)"},
+        {"Đặc trưng": "DelinquencySeverityBalance", "Công thức": "Trễ 30-59 − Trễ 90+ (cán cân mức độ trễ hạn)"},
     ]), hide_index=True, use_container_width=True)
 
 

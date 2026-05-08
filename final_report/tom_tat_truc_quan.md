@@ -11,10 +11,10 @@
 | Chỉ số | Giá trị |
 |---|---|
 | **AUC-ROC tốt nhất** | **0,8714** (XGBoost) |
-| **Recall ở ngưỡng triển khai 0,625** | **66,9%** — tăng từ 51,6% ở ngưỡng F1-optimal (0,77) |
-| **Ngưỡng từ chối** | **0,625** — tối ưu F2-score (ưu tiên Recall gấp đôi Precision) |
-| **Tiết kiệm ước tính** | **~$2 triệu USD/năm** trên 22.500 hồ sơ test, so với ngưỡng F1-optimal |
-| **Top features** | FinancialStressIndex, TotalDelinquencyScore — **2/3 đặc trưng quan trọng nhất là tự tạo** |
+| **Recall ở ngưỡng triển khai 0,625** | **66,9%** — tăng từ 51,6% ở ngưỡng F1-optimal |
+| **Ngưỡng từ chối** | **0,625** — tối ưu F2-score |
+| **Tiết kiệm ước tính** | **~2,01 triệu USD** so với ngưỡng F1-optimal trên test set |
+| **Top features** | FinancialStressIndex, TotalDelinquencyScore — **2/3 tự tạo** |
 
 ---
 
@@ -22,47 +22,47 @@
 
 Dự báo khách hàng có vỡ nợ trong **2 năm tới** hay không, dựa trên thông tin tài chính lịch sử.
 
-- **Dữ liệu:** 149.999 hồ sơ vay tiêu dùng Mỹ (Kaggle — Give Me Some Credit)
-- **Mất cân bằng:** Chỉ **6.68%** hồ sơ thực sự vỡ nợ → mô hình không thể chỉ dùng Accuracy
+- **Dữ liệu:** 149.999 hồ sơ vay (Kaggle — Give Me Some Credit)
+- **Mất cân bằng:** Chỉ **6.68%** vỡ nợ → không thể chỉ dùng Accuracy
 
 ![Phân bố lớp mục tiêu](../reports/fig_01_target_distribution.png)
 
 ---
 
-## Pipeline hoạt động ra sao?
+## Quy trình hoạt động ra sao?
 
 ![Sơ đồ pipeline](../reports/visual_summary/fig_vs_01_pipeline_overview.png)
 
-1. **Dữ liệu thô** — 10 đặc trưng tài chính (tỷ lệ nợ, lịch sử trễ hạn, thu nhập, tuổi, ...)
-2. **EDA** — phát hiện outlier, phân phối lệch, tương quan
-3. **Tiền xử lý** — KNN Imputer cho giá trị thiếu, tạo thêm 4 đặc trưng kỹ thuật
-4. **Mô hình** — so sánh 4 thuật toán: LR, Decision Tree, Random Forest, **XGBoost**
-5. **Giải thích** — SHAP TreeExplainer: feature nào quan trọng, vì sao mô hình quyết định như vậy
-6. **Ứng dụng** — Streamlit dashboard: dự báo + giải thích từng hồ sơ
+1. **Dữ liệu thô** — 10 đặc trưng tài chính
+2. **EDA** — phát hiện outlier, tương quan
+3. **Tiền xử lý** — KNN Imputer, feature engineering
+4. **Mô hình** — so sánh 4 thuật toán: LR, DT, RF, **XGBoost**
+5. **Giải thích** — SHAP TreeExplainer
+6. **Ứng dụng** — Streamlit dashboard
 
 ---
 
-## Điều gì quan trọng nhất khi mô hình ra quyết định?
+## Điều gì quan trọng nhất khi mô hình quyết định?
 
-![Tầm quan trọng đặc trưng (SHAP)](../reports/fig_26a_shap_bar.png)
+![Tầm quan trọng (SHAP)](../reports/fig_26a_shap_bar.png)
 
-- **FinancialStressIndex** = Tỷ lệ sử dụng hạn mức × Điểm trễ hạn tổng hợp → đặc trưng **tự tạo**
+- **FinancialStressIndex** = Tỷ lệ sử dụng × Điểm trễ hạn → **tự tạo**
 - **TotalDelinquencyScore** = 3×(trễ 90+) + 2×(trễ 60-89) + 1×(trễ 30-59) → **tự tạo**
-- **RevolvingUtilizationOfUnsecuredLines** — tỷ lệ sử dụng hạn mức tín dụng → từ dataset gốc
+- **RevolvingUtilizationOfUnsecuredLines** — tỷ lệ sử dụng hạn mức → gốc
 
-→ **2 trong 3 yếu tố quan trọng nhất là features tự thiết kế**, không có sẵn trong dataset.
+→ **2 trong 3 yếu tố quan trọng nhất là features tự thiết kế**
 
 ---
 
 ## Mô hình "nhìn" khách hàng như thế nào?
 
-![Các tình huống khách hàng điển hình](../reports/visual_summary/fig_vs_03_what_if_scenarios.png)
+![Tình huống điển hình](../reports/visual_summary/fig_vs_03_what_if_scenarios.png)
 
-| Hồ sơ | Đặc điểm | Xác suất vỡ nợ | Quyết định |
+| Hồ sơ | Đặc điểm | Xác suất vỡ | Quyết định |
 |---|---|---|---|
-| **Khách hàng A (An toàn)** | Tuổi 45, thu nhập $5.000, không trễ hạn bao giờ, tỷ lệ nợ 0,30 | ~5% | ✅ DUYỆT |
-| **Khách hàng B (Cảnh báo)** | Tuổi 35, thu nhập $3.000, trễ 1 lần 30-59 ngày, tỷ lệ nợ 0,55 | ~40% | ⚠️ DUYỆT (cảnh báo) |
-| **Khách hàng C (Rủi ro cao)** | Tuổi 28, thu nhập $2.000, trễ 2 lần >90 ngày, tỷ lệ nợ 0,85 | ~80% | ❌ TỪ CHỐI |
+| **An toàn** | Tuổi 45, thu nhập $5K, không trễ, nợ 30% | ~5% | ✅ DUYỆT |
+| **Cảnh báo** | Tuổi 35, thu nhập $3K, trễ 1 lần, nợ 55% | ~40% | ⚠️ CẢNH BÁO |
+| **Rủi ro cao** | Tuổi 28, thu nhập $2K, trễ 2+ lần, nợ 85% | ~80% | ❌ TỪ CHỐI |
 
 ---
 
@@ -70,23 +70,48 @@ Dự báo khách hàng có vỡ nợ trong **2 năm tới** hay không, dựa tr
 
 ![Tối ưu hóa ngưỡng](../reports/fig_25_threshold_optimization.png)
 
-Trong tín dụng: **bỏ sót 1 người sẽ vỡ nợ** (FN — False Negative) tốn kém hơn nhiều so với **từ chối nhầm 1 người tốt** (FP — False Positive).
+Trong tín dụng: **bỏ sót 1 người sẽ vỡ nợ (FN)** tốn kém hơn nhiều so với **từ chối nhầm người tốt (FP)**.
 
-- Ngưỡng F1-optimal (0,77): Recall = 51,6%, F1 = 0,447 (tối đa F1 nhưng bỏ sót 48,4% người vỡ nợ)
-- Ngưỡng F2-optimal **(0,625): Recall = 66,9%, F2 = 0,537 — tiết kiệm thêm ~$2 triệu so với 0,77**
+- Ngưỡng F1-optimal (0,77): Recall = 51,6% → bỏ sót 48,4%
+- Ngưỡng F2-optimal **(0,625): Recall = 66,9% → giảm khoảng 2,01 triệu USD so với ngưỡng F1-optimal**
 
-F2-score ưu tiên Recall gấp đôi Precision — phù hợp với logic kinh doanh tín dụng.
-
-> **Diễn giải nhanh:** Nếu thẩm định 22.500 hồ sơ với chi phí trung bình $11.250/khoản nợ xấu (FN) và $500/khoản từ chối nhầm (FP), ngưỡng 0,625 cho tổng chi phí thấp hơn ~$2 triệu so với ngưỡng F1-optimal 0,77.
+F2-score ưu tiên Recall gấp đôi Precision — phù hợp logic kinh doanh.
 
 ---
 
-## Liên kết tài liệu
+## Demo batch và kiểm tra Kaggle
+
+Streamlit có thể upload CSV/XLSX để dự báo theo lô. Nếu file có thêm cột `SeriousDlqin2yrs` dạng 0/1, app sẽ mô phỏng hậu kiểm và tính AUC/Recall/Precision/F2 cùng tác động chi phí.
+
+**Lưu ý khi demo:** Đây là mô phỏng hậu kiểm theo lô bằng dữ liệu có nhãn từ tập training gốc. Với dữ liệu vận hành thật, target sẽ được bổ sung sau kỳ quan sát để đo lại AUC/Recall/Precision/F2.
+
+Kết quả chạy thật trên file demo 5.000 hồ sơ:
+
+| Chỉ số | Giá trị |
+|---|---:|
+| AUC / Recall / Precision / F2 | 0,8780 / 68,26% / 29,53% / 0,5408 |
+| TP / FP / FN / TN | 228 / 544 / 106 / 4122 |
+| Tỷ lệ từ chối | 15,44% |
+| Chi phí dùng mô hình | 1.464.500 USD |
+| Tiết kiệm so với duyệt tất cả | 2.293.000 USD |
+
+![Phân bố batch demo](../reports/fig_33_batch_demo_distribution.png)
+
+![Chi phí batch demo](../reports/fig_35_batch_demo_cost.png)
+
+Với Kaggle, `cs-test.csv` không có target thật nên không dùng để benchmark. File `submission_xgb_project_i.csv` đã được nộp thử và đạt **Public Score = 0,85785**, **Private Score = 0,86482**.
+
+![Kết quả Kaggle](../reports/fig_36_kaggle_submission_result.png)
+
+---
+
+## Các tài liệu liên quan
 
 | Tài liệu | Mô tả |
 |---|---|
-| [`final_report/bao_cao_chinh.md`](bao_cao_chinh.md) | Báo cáo đầy đủ 7 chương (~800 dòng) |
-| [`presentation/slide.md`](../presentation/slide.md) | 29 slides defense kỹ thuật (Marp) |
-| [`presentation/slide_executive_summary.md`](../presentation/slide_executive_summary.md) | 7 slides tóm tắt cho người không chuyên |
-| [`presentation/defense_guide.md`](../presentation/defense_guide.md) | Q&A + toán học chi tiết để chuẩn bị bảo vệ |
-| [`app/app.py`](../app/app.py) — `streamlit run app/app.py` | Dashboard tương tác: dự báo đơn lẻ + đánh giá theo lô CSV/XLSX |
+| `final_report/bao_cao_chinh.md` | Báo cáo đầy đủ 6 chương (~800 dòng) |
+| `presentation/slide_executive_summary.md` | 7 slides cho người không chuyên |
+| `presentation/defense_guide.md` | Q&A + toán học chi tiết bảo vệ |
+| `app/app.py` — `streamlit run app/app.py` | Dashboard tương tác |
+- Defense/Q&A kỹ thuật: `presentation/defense_guide.md`
+- Demo app: `streamlit run app/app.py`
