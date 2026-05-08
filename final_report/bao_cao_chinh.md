@@ -292,7 +292,13 @@ Tuy nhiên quá thấp (~74% từ chối).
 
 **Ghi chú về demo dữ liệu thực tế khi chạy thử:** Đây là mô phỏng hậu kiểm theo lô bằng dữ liệu có nhãn từ tập training gốc. Với dữ liệu vận hành thật, target sẽ được bổ sung sau kỳ quan sát để đo lại AUC/Recall/Precision/F2. Không sử dụng tập test Kaggle để benchmark vì tập này không có target thật; file mẫu của cuộc thi chỉ là mẫu nộp xác suất dự đoán, không phải nhãn đúng 0/1.
 
-## 5.2 Chạy thử hậu kiểm theo lô
+## 5.2 Truy cập nhanh ứng dụng
+
+Ứng dụng có thể chạy trực tiếp tại: <https://doandanhlong-loan-prediction.streamlit.app>. Link này giúp người đọc kiểm tra nhanh dự báo đơn lẻ, đánh giá theo lô và các biểu đồ benchmark mà không cần tự host local.
+
+![Link truy cập nhanh ứng dụng Streamlit](../reports/fig_37_streamlit_quick_access.png)
+
+## 5.3 Chạy thử hậu kiểm theo lô
 
 Để kiểm tra chức năng benchmark của Streamlit bằng dữ liệu có nhãn, đồ án tạo file `data/raw/batch_demo_from_training_5000.csv` từ `cs-training.csv`. File này gồm 5.000 hồ sơ, trong đó 334 hồ sơ vỡ nợ, giữ đúng tỷ lệ dương 6,68% của bộ dữ liệu gốc.
 
@@ -321,19 +327,19 @@ Diễn giải theo ma trận nhầm lẫn: TP = 228 hồ sơ vỡ nợ được 
 
 ![Tác động chi phí trên batch demo](../reports/fig_35_batch_demo_cost.png)
 
-## 5.3 Kết quả thử nộp Kaggle
+## 5.4 Kết quả thử nộp Kaggle
 
 Kết quả thử nộp đạt Public AUC = 0,85785 và Private AUC = 0,86482, khá gần AUC kiểm tra nội bộ 0,8714; điều này cho thấy mô hình tổng quát hóa tương đối ổn trên tập đánh giá ngoài.
 
 ![Kết quả submission Kaggle](../reports/fig_36_kaggle_submission_result.png)
 
-## 5.4 Công nghệ
+## 5.5 Công nghệ
 
 - Streamlit 1.45.0
 - scikit-learn, XGBoost, SHAP
 - Cache dữ liệu + SHAP TreeExplainer (tối ưu hiệu năng)
 
-## 5.5 Giá trị sử dụng trong thực tế
+## 5.6 Giá trị sử dụng trong thực tế
 
 1. **Đối với thẩm định viên:** có xác suất rủi ro + giải thích đặc trưng để quyết định nhanh hơn.
 2. **Đối với quản trị rủi ro:** theo dõi chất lượng mô hình qua batch evaluation và threshold tuning.

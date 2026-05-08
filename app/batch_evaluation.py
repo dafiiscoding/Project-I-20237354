@@ -25,18 +25,27 @@ except ImportError:
                      compute_ks_stat, plot_threshold_tradeoff)
 
 
-def _get_local_demo_files() -> list[tuple[str, Path]]:
-    """Trả về các file demo có sẵn, ưu tiên data/raw local rồi đến sample đi kèm app."""
+def _get_demo_sources() -> list[tuple[str, Path]]:
+    """Trả về nguồn dữ liệu đề xuất, luôn có sample đi kèm app khi deploy."""
     root_dir = Path(__file__).parent.parent
     raw_dir = root_dir / 'data' / 'raw'
     sample_dir = Path(__file__).parent / 'sample_data'
-    candidates = [
-        ("Demo benchmark có target (5.000 dòng local)", raw_dir / 'batch_demo_from_training_5000.csv'),
-        ("Demo dự đoán không target (Kaggle test local)", raw_dir / 'cs-test.csv'),
-        ("Demo benchmark có target (mẫu nhỏ)", sample_dir / 'batch_demo_sample.csv'),
-        ("Demo dự đoán không target (mẫu nhỏ)", sample_dir / 'kaggle_test_sample.csv'),
-    ]
-    return [(label, path) for label, path in candidates if path.exists()]
+    batch_full = raw_dir / 'batch_demo_from_training_5000.csv'
+    batch_sample = sample_dir / 'batch_demo_from_training_5000.csv'
+    kaggle_sample = sample_dir / 'kaggle_test_sample.csv'
+    kaggle_full = raw_dir / 'cs-test.csv'
+
+    sources = []
+    if batch_full.exists():
+        sources.append(("Demo hậu kiểm 5.000 dòng từ training (có target)", batch_full))
+    elif batch_sample.exists():
+        sources.append(("Demo hậu kiểm 5.000 dòng từ training (có target)", batch_sample))
+
+    if kaggle_sample.exists():
+        sources.append(("Demo dự đoán Kaggle test mẫu (không target)", kaggle_sample))
+    if kaggle_full.exists():
+        sources.append(("Kaggle cs-test đầy đủ local (không target)", kaggle_full))
+    return sources
 
 
 def render(model) -> None:
@@ -46,15 +55,19 @@ def render(model) -> None:
     st.caption("Tải lên file riêng hoặc chọn dữ liệu đề xuất để thử nhanh chức năng đánh giá hàng loạt.")
 
     # ── Step 1: Upload ──
-    local_files = _get_local_demo_files()
-    source_options = ["Upload file mới"] + [label for label, _ in local_files]
-    default_source = 1 if local_files else 0
-    source_choice = st.selectbox(
-        "Nguồn dữ liệu",
+    demo_sources = _get_demo_sources()
+    source_options = [label for label, _ in demo_sources] + ["Upload file mới"]
+    source_choice = st.radio(
+        "Chọn dữ liệu để đánh giá",
         options=source_options,
-        index=default_source,
-        help="Bản deploy luôn có mẫu nhỏ đi kèm; nếu chạy local có data/raw thì app sẽ ưu tiên file đầy đủ.",
+        index=0 if demo_sources else len(source_options) - 1,
+        horizontal=True,
+        help="Demo 5.000 dòng có target dùng để benchmark; Kaggle test không có target nên chỉ dùng để dự đoán.",
     )
+    if source_choice.startswith("Demo hậu kiểm"):
+        st.info("Dữ liệu demo 5.000 dòng được tách từ training gốc, có target 0/1 để mô phỏng hậu kiểm AUC/Recall/Precision/F2.")
+    elif "Kaggle" in source_choice:
+        st.info("Dữ liệu Kaggle test không có target thật, app chỉ dự đoán xác suất và không tính benchmark.")
 
     col_upload, col_template = st.columns([3, 1])
     with col_upload:
@@ -84,7 +97,7 @@ def render(model) -> None:
             df_raw = read_uploaded_table(uploaded)
             source_note = getattr(uploaded, 'name', 'file upload')
         else:
-            local_path = dict(local_files)[source_choice]
+            local_path = dict(demo_sources)[source_choice]
             df_raw = pd.read_csv(local_path)
             source_note = str(local_path)
     except ValueError as e:

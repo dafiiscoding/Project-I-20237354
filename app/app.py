@@ -45,6 +45,7 @@ st.set_page_config(
 with st.sidebar:
     st.title("🏦 Dự báo Rủi ro Vỡ nợ")
     st.caption("Đồ án I — Toán Tin, Đại học Bách Khoa")
+    st.caption("Bản app: sample-data-selector")
     st.markdown("---")
     st.markdown("**Thông tin mô hình**")
     st.markdown("""
