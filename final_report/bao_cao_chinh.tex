@@ -2,10 +2,9 @@
 \PassOptionsToPackage{unicode}{hyperref}
 \PassOptionsToPackage{hyphens}{url}
 \documentclass[
-  12pt,
-]{report}
+]{article}
 \usepackage{xcolor}
-\usepackage[margin=2.5cm]{geometry}
+\usepackage[margin=1in]{geometry}
 \usepackage{amsmath,amssymb}
 \setcounter{secnumdepth}{-\maxdimen} % remove section numbering
 \usepackage{iftex}
@@ -22,6 +21,8 @@
 \ifPDFTeX\else
   % xetex/luatex font selection
   \setmainfont[]{Times New Roman}
+  \setmonofont[]{Cascadia Mono}
+\newfontfamily\EmojiFont{Segoe UI Emoji}
 \fi
 % Use upquote if available, for straight quotes in verbatim environments
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
@@ -116,13 +117,21 @@
 \author{}
 \date{}
 
+
+\usepackage{float}
+\usepackage{placeins}
+\usepackage{needspace}
+\usepackage{caption}
+\captionsetup{font=small,labelfont=bf,skip=6pt}
+\setkeys{Gin}{width=\linewidth,height=0.72\textheight,keepaspectratio}
+\setlength{\LTpre}{6pt}
+\setlength{\LTpost}{6pt}
+\renewcommand{\arraystretch}{1.08}
+\sloppy
+
 \begin{document}
 
-{
-\setcounter{tocdepth}{2}
-\tableofcontents
-}
-\chapter{DỰ BÁO RỦI RO VỠ NỢ TÍN DỤNG BẰNG MACHINE
+\section{DỰ BÁO RỦI RO VỠ NỢ TÍN DỤNG BẰNG MACHINE
 LEARNING}\label{dux1ef1-buxe1o-rux1ee7i-ro-vux1ee1-nux1ee3-tuxedn-dux1ee5ng-bux1eb1ng-machine-learning}
 
 \textbf{Sinh viên thực hiện:} Đoàn Danh Long\\
@@ -132,7 +141,9 @@ LEARNING}\label{dux1ef1-buxe1o-rux1ee7i-ro-vux1ee1-nux1ee3-tuxedn-dux1ee5ng-bux1
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
-\section{LỜI CẢM ƠN}\label{lux1eddi-cux1ea3m-ux1a1n}
+\FloatBarrier
+\Needspace{8\baselineskip}
+\subsection{LỜI CẢM ƠN}\label{lux1eddi-cux1ea3m-ux1a1n}
 
 Em xin gửi lời cảm ơn chân thành đến Giảng viên hướng dẫn - Thầy Nguyễn
 Cảnh Nam, Khoa Toán--Tin, Trường Đại học Bách Khoa Hà Nội - đã tận tình
@@ -149,7 +160,9 @@ những nghiên cứu tiếp theo.
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
-\section{TÓM TẮT}\label{tuxf3m-tux1eaft}
+\FloatBarrier
+\Needspace{8\baselineskip}
+\subsection{TÓM TẮT}\label{tuxf3m-tux1eaft}
 
 Báo cáo trình bày nghiên cứu ứng dụng Machine Learning vào bài toán dự
 báo rủi ro vỡ nợ tín dụng, sử dụng bộ dữ liệu \emph{Give Me Some Credit}
@@ -165,7 +178,9 @@ tính khoảng 2,01 triệu USD so với ngưỡng F1-optimal. Sản phẩm cu�
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
-\section{BẢNG THUẬT NGỮ VIẾT
+\FloatBarrier
+\Needspace{8\baselineskip}
+\subsection{BẢNG THUẬT NGỮ VIẾT
 TẮT}\label{bux1ea3ng-thuux1eadt-ngux1eef-viux1ebft-tux1eaft}
 
 {\def\LTcaptype{none} % do not increment counter
@@ -204,7 +219,9 @@ variance), Boosting tuần tự (giảm bias). \\
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
-\section{MỤC LỤC}\label{mux1ee5c-lux1ee5c}
+\FloatBarrier
+\Needspace{8\baselineskip}
+\subsection{MỤC LỤC}\label{mux1ee5c-lux1ee5c}
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
@@ -229,10 +246,14 @@ variance), Boosting tuần tự (giảm bias). \\
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
-\chapter{CHƯƠNG 1: GIỚI
+\clearpage
+\FloatBarrier
+\section{CHƯƠNG 1: GIỚI
 THIỆU}\label{chux1b0ux1a1ng-1-giux1edbi-thiux1ec7u}
 
-\section{1.1 Tính cấp thiết}\label{tuxednh-cux1ea5p-thiux1ebft}
+\FloatBarrier
+\Needspace{8\baselineskip}
+\subsection{1.1 Tính cấp thiết}\label{tuxednh-cux1ea5p-thiux1ebft}
 
 Tỷ lệ nợ xấu Việt Nam cuối 2023 là 4,55\%. Quy trình thẩm định thủ công
 không mở rộng được quy mô; mô hình FICO tuyến tính bỏ qua tương tác phi
@@ -240,7 +261,9 @@ tuyến. ML học từ hàng triệu hồ sơ, nắm bắt tương tác phi tuy�
 giải quyết yêu cầu ``black-box'' --- ngân hàng buộc phải giải thích lý
 do từ chối (Basel III Điều 431).
 
-\section{1.2 Mục tiêu SMART}\label{mux1ee5c-tiuxeau-smart}
+\FloatBarrier
+\Needspace{8\baselineskip}
+\subsection{1.2 Mục tiêu SMART}\label{mux1ee5c-tiuxeau-smart}
 
 {\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
@@ -268,7 +291,9 @@ Demo sản phẩm & Streamlit + SHAP & Đạt \\
 \end{longtable}
 }
 
-\section{1.3 Phạm vi}\label{phux1ea1m-vi}
+\FloatBarrier
+\Needspace{8\baselineskip}
+\subsection{1.3 Phạm vi}\label{phux1ea1m-vi}
 
 \begin{itemize}
 \tightlist
@@ -286,7 +311,9 @@ Demo sản phẩm & Streamlit + SHAP & Đạt \\
   SHAP 0.51.0
 \end{itemize}
 
-\section{1.4 Đóng góp chính của đồ
+\FloatBarrier
+\Needspace{8\baselineskip}
+\subsection{1.4 Đóng góp chính của đồ
 án}\label{ux111uxf3ng-guxf3p-chuxednh-cux1ee7a-ux111ux1ed3-uxe1n}
 
 \begin{enumerate}
@@ -309,23 +336,30 @@ Demo sản phẩm & Streamlit + SHAP & Đạt \\
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
-\chapter{CHƯƠNG 2: CƠ SỞ LÝ
+\clearpage
+\FloatBarrier
+\section{CHƯƠNG 2: CƠ SỞ LÝ
 THUYẾT}\label{chux1b0ux1a1ng-2-cux1a1-sux1edf-luxfd-thuyux1ebft}
 
-\section{2.1 Binary Classification}\label{binary-classification}
+\FloatBarrier
+\Needspace{8\baselineskip}
+\subsection{2.1 Binary Classification}\label{binary-classification}
 
-\subsection{2.1.1 Định nghĩa}\label{ux111ux1ecbnh-nghux129a}
+\Needspace{6\baselineskip}
+\subsubsection{2.1.1 Định nghĩa}\label{ux111ux1ecbnh-nghux129a}
 
 Học hàm \(f: \mathbb{R}^p \to [0,1]\) với
 \(f(\mathbf{x}) = P(y=1|\mathbf{x})\). Quyết định:
 \(\hat{y} = \mathbb{1}[f(\mathbf{x}) \geq t]\).
 
-\subsection{2.1.2 Class Imbalance}\label{class-imbalance}
+\Needspace{6\baselineskip}
+\subsubsection{2.1.2 Class Imbalance}\label{class-imbalance}
 
 Tỷ lệ vỡ nợ 6,68\% → imbalance 1:14. Hệ quả: (1) Accuracy không phù hợp,
 (2) Ngưỡng tối ưu ≠ 0,5.
 
-\subsection{2.1.3 Metrics}\label{metrics}
+\Needspace{6\baselineskip}
+\subsubsection{2.1.3 Metrics}\label{metrics}
 
 \begin{itemize}
 \tightlist
@@ -341,10 +375,13 @@ Tỷ lệ vỡ nợ 6,68\% → imbalance 1:14. Hệ quả: (1) Accuracy không p
 
 F2 ưu tiên Recall gấp đôi Precision --- phù hợp tín dụng.
 
-\section{2.2 Cơ sở của các mô hình sử
+\FloatBarrier
+\Needspace{8\baselineskip}
+\subsection{2.2 Cơ sở của các mô hình sử
 dụng}\label{cux1a1-sux1edf-cux1ee7a-cuxe1c-muxf4-huxecnh-sux1eed-dux1ee5ng}
 
-\subsection{2.2.1 Logistic Regression (mô hình tuyến tính
+\Needspace{6\baselineskip}
+\subsubsection{2.2.1 Logistic Regression (mô hình tuyến tính
 chuẩn)}\label{logistic-regression-muxf4-huxecnh-tuyux1ebfn-tuxednh-chuux1ea9n}
 
 Logistic Regression mô hình hóa xác suất: \[
@@ -352,7 +389,8 @@ P(y=1|x)=\sigma(w^\top x + b)=\frac{1}{1+e^{-(w^\top x+b)}}
 \] Ưu điểm: nhanh, dễ giải thích, làm baseline tốt. Hạn chế: khó nắm bắt
 quan hệ phi tuyến mạnh.
 
-\subsection{2.2.2 Decision Tree CART (mô hình luật rẽ
+\Needspace{6\baselineskip}
+\subsubsection{2.2.2 Decision Tree CART (mô hình luật rẽ
 nhánh)}\label{decision-tree-cart-muxf4-huxecnh-luux1eadt-rux1ebd-nhuxe1nh}
 
 Cây quyết định chia không gian đặc trưng thành các vùng dựa trên tiêu
@@ -360,7 +398,8 @@ chí giảm độ hỗn loạn (Gini/Entropy).\\
 Ưu điểm: trực quan, mô tả logic quyết định rõ. Hạn chế: dễ overfit nếu
 không regularize.
 
-\subsection{2.2.3 Random Forest (ensemble giảm phương
+\Needspace{6\baselineskip}
+\subsubsection{2.2.3 Random Forest (ensemble giảm phương
 sai)}\label{random-forest-ensemble-giux1ea3m-phux1b0ux1a1ng-sai}
 
 Random Forest huấn luyện nhiều cây trên các mẫu bootstrap khác nhau rồi
@@ -368,7 +407,8 @@ lấy trung bình/xấp xỉ biểu quyết.\\
 Ưu điểm: ổn định hơn cây đơn, kháng nhiễu tốt. Hạn chế: khó diễn giải
 trực tiếp hơn LR/DT.
 
-\subsection{2.2.4 XGBoost (boosting bậc
+\Needspace{6\baselineskip}
+\subsubsection{2.2.4 XGBoost (boosting bậc
 hai)}\label{xgboost-boosting-bux1eadc-hai}
 
 XGBoost xây mô hình theo chuỗi cây, mỗi cây mới sửa sai số còn lại của
@@ -376,7 +416,9 @@ toàn bộ cây trước.\\
 Điểm mạnh là dùng gradient + hessian (Taylor bậc hai), regularization và
 kiểm soát phức tạp mô hình hiệu quả.
 
-\section{2.3 Lý do chọn F2-score làm mục tiêu vận
+\FloatBarrier
+\Needspace{8\baselineskip}
+\subsection{2.3 Lý do chọn F2-score làm mục tiêu vận
 hành}\label{luxfd-do-chux1ecdn-f2-score-luxe0m-mux1ee5c-tiuxeau-vux1eadn-huxe0nh}
 
 Trong tín dụng, chi phí \textbf{FN (bỏ sót người sẽ vỡ nợ)} thường lớn
@@ -386,10 +428,14 @@ kinh doanh là giảm nợ xấu.
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
-\chapter{CHƯƠNG 3: DỮ LIỆU VÀ TIỀN XỬ
+\clearpage
+\FloatBarrier
+\section{CHƯƠNG 3: DỮ LIỆU VÀ TIỀN XỬ
 LÝ}\label{chux1b0ux1a1ng-3-dux1eef-liux1ec7u-vuxe0-tiux1ec1n-xux1eed-luxfd}
 
-\section{3.1 Khám phá dữ liệu
+\FloatBarrier
+\Needspace{8\baselineskip}
+\subsection{3.1 Khám phá dữ liệu
 (EDA)}\label{khuxe1m-phuxe1-dux1eef-liux1ec7u-eda}
 
 Dataset gồm: - \textbf{Kích thước:} 149.999 hồ sơ, 10 đặc trưng gốc + 4
@@ -409,7 +455,9 @@ hồ sơ - \textbf{Thu nhập:} Trung bình \$6.670, phạm vi \$0--\$3M
 \caption{Tổng quan giá trị thiếu}
 \end{figure}
 
-\section{3.2 Tiền xử lý}\label{tiux1ec1n-xux1eed-luxfd}
+\FloatBarrier
+\Needspace{8\baselineskip}
+\subsection{3.2 Tiền xử lý}\label{tiux1ec1n-xux1eed-luxfd}
 
 \textbf{Xử lý giá trị thiếu:} - DelinquencyStatus: 33.375 thiếu (22,3\%)
 → KNN Imputer (k=5) - MonthlyIncome: 29.731 thiếu (19,8\%) → KNN Imputer
@@ -417,7 +465,9 @@ hồ sơ - \textbf{Thu nhập:} Trung bình \$6.670, phạm vi \$0--\$3M
 \textbf{Scaling \& Normalization:} - StandardScaler cho LR (yêu cầu
 gradient descent ổn định) - Không cần cho tree-based
 
-\section{3.3 Feature Engineering}\label{feature-engineering}
+\FloatBarrier
+\Needspace{8\baselineskip}
+\subsection{3.3 Feature Engineering}\label{feature-engineering}
 
 \textbf{4 đặc trưng tự thiết kế:} 1. \texttt{TotalDelinquencyScore} =
 3×(90+) + 2×(60-89) + 1×(30-59) 2. \texttt{FinancialStressIndex} =
@@ -430,7 +480,9 @@ phát hiện nợ kinh niên. Biến \texttt{DelinquencySeverityBalance} chỉ l
 chỉ báo cân bằng mức độ trễ hạn trên snapshot dữ liệu tĩnh, không phải
 xu hướng thời gian.
 
-\section{3.4 Insight quan trọng từ
+\FloatBarrier
+\Needspace{8\baselineskip}
+\subsection{3.4 Insight quan trọng từ
 EDA}\label{insight-quan-trux1ecdng-tux1eeb-eda}
 
 \begin{enumerate}
@@ -461,17 +513,23 @@ EDA}\label{insight-quan-trux1ecdng-tux1eeb-eda}
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
-\chapter{CHƯƠNG 4: THỰC NGHIỆM VÀ ĐÁNH
+\clearpage
+\FloatBarrier
+\section{CHƯƠNG 4: THỰC NGHIỆM VÀ ĐÁNH
 GIÁ}\label{chux1b0ux1a1ng-4-thux1ef1c-nghiux1ec7m-vuxe0-ux111uxe1nh-giuxe1}
 
-\section{4.1 Thiết kế thử
+\FloatBarrier
+\Needspace{8\baselineskip}
+\subsection{4.1 Thiết kế thử
 nghiệm}\label{thiux1ebft-kux1ebf-thux1eed-nghiux1ec7m}
 
 \textbf{Chiến lược tách tập:} - Train: 104.999 (70\%) - Validation:
 22.500 (15\%) - Test: 22.500 (15\%) - Stratified K-Fold (k=5) để cân
 bằng lớp
 
-\section{4.2 So sánh mô hình}\label{so-suxe1nh-muxf4-huxecnh}
+\FloatBarrier
+\Needspace{8\baselineskip}
+\subsection{4.2 So sánh mô hình}\label{so-suxe1nh-muxf4-huxecnh}
 
 \emph{Bảng 4.1 --- Kết quả tổng hợp}
 
@@ -518,7 +576,9 @@ AUC≥0,87).
 \caption{So sánh tổng hợp các mô hình}
 \end{figure}
 
-\section{4.3 Phân tích SHAP}\label{phuxe2n-tuxedch-shap}
+\FloatBarrier
+\Needspace{8\baselineskip}
+\subsection{4.3 Phân tích SHAP}\label{phuxe2n-tuxedch-shap}
 
 TreeExplainer trên XGBoost:
 
@@ -554,7 +614,9 @@ Rank & Đặc trưng & SHAP \\
 \caption{SHAP dependence cho đặc trưng chính}
 \end{figure}
 
-\section{4.4 Tối ưu ngưỡng
+\FloatBarrier
+\Needspace{8\baselineskip}
+\subsection{4.4 Tối ưu ngưỡng
 (F2-optimal)}\label{tux1ed1i-ux1b0u-ngux1b0ux1ee1ng-f2-optimal}
 
 Ngưỡng Bayes tối ưu (chi phí Fraud=1, Decile=14):
@@ -608,7 +670,9 @@ trong khi vẫn ưu tiên phát hiện hồ sơ rủi ro hơn so với ngưỡng
 \caption{Tối ưu ngưỡng vận hành}
 \end{figure}
 
-\section{4.5 Phân tích lỗi và phân bố điểm rủi
+\FloatBarrier
+\Needspace{8\baselineskip}
+\subsection{4.5 Phân tích lỗi và phân bố điểm rủi
 ro}\label{phuxe2n-tuxedch-lux1ed7i-vuxe0-phuxe2n-bux1ed1-ux111iux1ec3m-rux1ee7i-ro}
 
 \begin{itemize}
@@ -633,7 +697,9 @@ ro}\label{phuxe2n-tuxedch-lux1ed7i-vuxe0-phuxe2n-bux1ed1-ux111iux1ec3m-rux1ee7i-
 \caption{Hồ sơ sai số theo phân phối}
 \end{figure}
 
-\section{4.6 Hiệu chỉnh xác suất và độ tin cậy thống
+\FloatBarrier
+\Needspace{8\baselineskip}
+\subsection{4.6 Hiệu chỉnh xác suất và độ tin cậy thống
 kê}\label{hiux1ec7u-chux1ec9nh-xuxe1c-suux1ea5t-vuxe0-ux111ux1ed9-tin-cux1eady-thux1ed1ng-kuxea}
 
 \begin{itemize}
@@ -660,10 +726,14 @@ kê}\label{hiux1ec7u-chux1ec9nh-xuxe1c-suux1ea5t-vuxe0-ux111ux1ed9-tin-cux1eady-
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
-\chapter{CHƯƠNG 5: SẢN PHẨM --- STREAMLIT
+\clearpage
+\FloatBarrier
+\section{CHƯƠNG 5: SẢN PHẨM --- STREAMLIT
 DASHBOARD}\label{chux1b0ux1a1ng-5-sux1ea3n-phux1ea9m-streamlit-dashboard}
 
-\section{5.1 Tính năng chính}\label{tuxednh-nux103ng-chuxednh}
+\FloatBarrier
+\Needspace{8\baselineskip}
+\subsection{5.1 Tính năng chính}\label{tuxednh-nux103ng-chuxednh}
 
 \begin{itemize}
 \tightlist
@@ -704,7 +774,9 @@ AUC/Recall/Precision/F2. Không sử dụng \texttt{cs-test.csv} của Kaggle
 để benchmark vì tập này không có target thật; \texttt{sampleEntry.csv}
 chỉ là mẫu nộp xác suất dự đoán, không phải nhãn đúng 0/1.
 
-\section{5.2 Chạy thử hậu kiểm theo
+\FloatBarrier
+\Needspace{8\baselineskip}
+\subsection{5.2 Chạy thử hậu kiểm theo
 lô}\label{chux1ea1y-thux1eed-hux1eadu-kiux1ec3m-theo-luxf4}
 
 Để kiểm tra chức năng benchmark của Streamlit bằng dữ liệu có nhãn, đồ
@@ -763,7 +835,9 @@ Diễn giải theo ma trận nhầm lẫn: TP = 228 hồ sơ vỡ nợ được 
 \caption{Tác động chi phí trên batch demo}
 \end{figure}
 
-\section{5.3 Thử nộp kết quả lên
+\FloatBarrier
+\Needspace{8\baselineskip}
+\subsection{5.3 Thử nộp kết quả lên
 Kaggle}\label{thux1eed-nux1ed9p-kux1ebft-quux1ea3-luxean-kaggle}
 
 Để kiểm tra mô hình trên leaderboard Kaggle, sử dụng
@@ -790,7 +864,10 @@ Kaggle}\label{thux1eed-nux1ed9p-kux1ebft-quux1ea3-luxean-kaggle}
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{kaggle competitions submit }\OperatorTok{{-}}\NormalTok{c GiveMeSomeCredit }\OperatorTok{{-}}\NormalTok{f }\KeywordTok{data}\OperatorTok{/}\NormalTok{raw}\OperatorTok{/}\NormalTok{submission\_xgb\_project\_i}\OperatorTok{.}\FunctionTok{csv} \OperatorTok{{-}}\NormalTok{m }\StringTok{"XGBoost Project I submission"}
+\NormalTok{kaggle competitions submit \textasciigrave{}}
+  \OperatorTok{{-}}\NormalTok{c GiveMeSomeCredit \textasciigrave{}}
+  \OperatorTok{{-}}\NormalTok{f }\KeywordTok{data}\OperatorTok{/}\NormalTok{raw}\OperatorTok{/}\NormalTok{submission\_xgb\_project\_i}\OperatorTok{.}\FunctionTok{csv}\NormalTok{ \textasciigrave{}}
+  \OperatorTok{{-}}\NormalTok{m }\StringTok{"XGBoost Project I submission"}
 \end{Highlighting}
 \end{Shaded}
 
@@ -808,7 +885,9 @@ Kaggle, kết quả đạt Public Score = 0,85785 và Private Score = 0,86482.
 Kết quả leaderboard chỉ dùng để tham khảo ngoài báo cáo, vì Kaggle không
 công bố target thật của \texttt{cs-test.csv}.
 
-\section{5.4 Công nghệ}\label{cuxf4ng-nghux1ec7}
+\FloatBarrier
+\Needspace{8\baselineskip}
+\subsection{5.4 Công nghệ}\label{cuxf4ng-nghux1ec7}
 
 \begin{itemize}
 \tightlist
@@ -820,7 +899,9 @@ công bố target thật của \texttt{cs-test.csv}.
   Cache dữ liệu + SHAP TreeExplainer (tối ưu hiệu năng)
 \end{itemize}
 
-\section{5.5 Giá trị sử dụng trong thực
+\FloatBarrier
+\Needspace{8\baselineskip}
+\subsection{5.5 Giá trị sử dụng trong thực
 tế}\label{giuxe1-trux1ecb-sux1eed-dux1ee5ng-trong-thux1ef1c-tux1ebf}
 
 \begin{enumerate}
@@ -845,10 +926,14 @@ tế}\label{giuxe1-trux1ecb-sux1eed-dux1ee5ng-trong-thux1ef1c-tux1ebf}
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
-\chapter{CHƯƠNG 6: KẾT LUẬN VÀ HƯỚNG PHÁT
+\clearpage
+\FloatBarrier
+\section{CHƯƠNG 6: KẾT LUẬN VÀ HƯỚNG PHÁT
 TRIỂN}\label{chux1b0ux1a1ng-6-kux1ebft-luux1eadn-vuxe0-hux1b0ux1edbng-phuxe1t-triux1ec3n}
 
-\section{6.1 Kết luận chính}\label{kux1ebft-luux1eadn-chuxednh}
+\FloatBarrier
+\Needspace{8\baselineskip}
+\subsection{6.1 Kết luận chính}\label{kux1ebft-luux1eadn-chuxednh}
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
@@ -865,7 +950,10 @@ TRIỂN}\label{chux1b0ux1a1ng-6-kux1ebft-luux1eadn-vuxe0-hux1b0ux1edbng-phuxe1t-
   SHAP giải thích từng quyết định, tuân thủ quy định (Basel III, GDPR)
 \end{enumerate}
 
-\section{6.2 Hướng phát triển}\label{hux1b0ux1edbng-phuxe1t-triux1ec3n}
+\FloatBarrier
+\Needspace{8\baselineskip}
+\subsection{6.2 Hướng phát
+triển}\label{hux1b0ux1edbng-phuxe1t-triux1ec3n}
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
@@ -918,7 +1006,9 @@ TRIỂN}\label{chux1b0ux1a1ng-6-kux1ebft-luux1eadn-vuxe0-hux1b0ux1edbng-phuxe1t-
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
-\chapter{TÀI LIỆU THAM KHẢO}\label{tuxe0i-liux1ec7u-tham-khux1ea3o}
+\clearpage
+\FloatBarrier
+\section{TÀI LIỆU THAM KHẢO}\label{tuxe0i-liux1ec7u-tham-khux1ea3o}
 
 {[}1{]} Ngân hàng Nhà nước Việt Nam (2024). ``Báo cáo tình hình ngân
 hàng 2023''. https://www.sbv.gov.vn {[}2{]} BCBS (2018). ``Basel III:
@@ -941,9 +1031,13 @@ Guide''. Christoph Molnar.
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
-\chapter{PHỤ LỤC}\label{phux1ee5-lux1ee5c}
+\clearpage
+\FloatBarrier
+\section{PHỤ LỤC}\label{phux1ee5-lux1ee5c}
 
-\section{A. Chi tiết tính toán Feature
+\FloatBarrier
+\Needspace{8\baselineskip}
+\subsection{A. Chi tiết tính toán Feature
 Engineering}\label{a.-chi-tiux1ebft-tuxednh-touxe1n-feature-engineering}
 
 \textbf{TotalDelinquencyScore:} - Input: DelinquencyStatus với 7 giá trị
@@ -957,7 +1051,10 @@ dùng hết hạn mức + trễ hạn = stress cao
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
-\section{B. Siêu tham số XGBoost}\label{b.-siuxeau-tham-sux1ed1-xgboost}
+\FloatBarrier
+\Needspace{8\baselineskip}
+\subsection{B. Siêu tham số
+XGBoost}\label{b.-siuxeau-tham-sux1ed1-xgboost}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -976,7 +1073,9 @@ dùng hết hạn mức + trễ hạn = stress cao
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
-\section{C. Ghi chú về benchmark theo lô và
+\FloatBarrier
+\Needspace{8\baselineskip}
+\subsection{C. Ghi chú về benchmark theo lô và
 Kaggle}\label{c.-ghi-chuxfa-vux1ec1-benchmark-theo-luxf4-vuxe0-kaggle}
 
 Benchmark theo lô trong Streamlit cần file có target
@@ -991,7 +1090,10 @@ dự đoán, không phải nhãn đúng.
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
-\section{D. Probability Calibration}\label{d.-probability-calibration}
+\FloatBarrier
+\Needspace{8\baselineskip}
+\subsection{D. Probability
+Calibration}\label{d.-probability-calibration}
 
 Brier Score trên test set: - XGBoost thô: 0,0582 - Sau Platt Scaling:
 0,0478 (cải thiện 17,9\%)
@@ -1003,7 +1105,9 @@ Scaling: 1,9\%
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
-\section{E. Danh mục hình trọng yếu trong báo
+\FloatBarrier
+\Needspace{8\baselineskip}
+\subsection{E. Danh mục hình trọng yếu trong báo
 cáo}\label{e.-danh-mux1ee5c-huxecnh-trux1ecdng-yux1ebfu-trong-buxe1o-cuxe1o}
 
 {\def\LTcaptype{none} % do not increment counter

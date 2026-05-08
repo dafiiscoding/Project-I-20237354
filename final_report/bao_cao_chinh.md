@@ -331,7 +331,10 @@ Diễn giải theo ma trận nhầm lẫn: TP = 228 hồ sơ vỡ nợ được 
 4. Nộp file lên Kaggle bằng giao diện web hoặc lệnh:
 
 ```powershell
-kaggle competitions submit -c GiveMeSomeCredit -f data/raw/submission_xgb_project_i.csv -m "XGBoost Project I submission"
+kaggle competitions submit `
+  -c GiveMeSomeCredit `
+  -f data/raw/submission_xgb_project_i.csv `
+  -m "XGBoost Project I submission"
 ```
 
 File submission được tạo từ mô hình chính có 101.503 dòng, đúng số dòng của `cs-test.csv` và `sampleEntry.csv`; xác suất dự báo có min/mean/max lần lượt là 0,016970 / 0,330504 / 0,986541. Sau khi nộp lên Kaggle, kết quả đạt Public Score = 0,85785 và Private Score = 0,86482.
