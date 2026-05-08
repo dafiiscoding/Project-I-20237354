@@ -449,11 +449,8 @@ hồ sơ - \textbf{Thu nhập:} Trung bình \$6.670, phạm vi \$0--\$3M
 \caption{Phân bố lớp mục tiêu}
 \end{figure}
 
-\begin{figure}
-\centering
-\pandocbounded{\includegraphics[keepaspectratio,alt={Tổng quan giá trị thiếu}]{../reports/fig_02_missing_values.png}}
-\caption{Tổng quan giá trị thiếu}
-\end{figure}
+Các biểu đồ chi tiết về giá trị thiếu, tương quan và nhóm trễ hạn được
+đặt ở Phụ lục E để phần chính tập trung vào kết luận.
 
 \FloatBarrier
 \Needspace{8\baselineskip}
@@ -499,17 +496,7 @@ EDA}\label{insight-quan-trux1ecdng-tux1eeb-eda}
   mô hình phi tuyến học tốt hơn.
 \end{enumerate}
 
-\begin{figure}
-\centering
-\pandocbounded{\includegraphics[keepaspectratio,alt={Heatmap tương quan}]{../reports/fig_05_correlation_heatmap.png}}
-\caption{Heatmap tương quan}
-\end{figure}
-
-\begin{figure}
-\centering
-\pandocbounded{\includegraphics[keepaspectratio,alt={Phân tích nhóm trễ hạn}]{../reports/fig_07_delinquency_analysis.png}}
-\caption{Phân tích nhóm trễ hạn}
-\end{figure}
+Chi tiết trực quan về tương quan và nhóm trễ hạn xem Phụ lục E.
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
@@ -608,11 +595,8 @@ Rank & Đặc trưng & SHAP \\
 \caption{Tầm quan trọng đặc trưng theo SHAP}
 \end{figure}
 
-\begin{figure}
-\centering
-\pandocbounded{\includegraphics[keepaspectratio,alt={SHAP dependence cho đặc trưng chính}]{../reports/fig_27_shap_dependence.png}}
-\caption{SHAP dependence cho đặc trưng chính}
-\end{figure}
+Biểu đồ phụ thuộc SHAP chi tiết được đặt ở Phụ lục E để tránh làm rối
+phần kết quả chính.
 
 \FloatBarrier
 \Needspace{8\baselineskip}
@@ -664,11 +648,8 @@ Bayes-optimal (0,043) & 99,2\% & 6,9\% & 0,265 & 34,50 \\
 → \textbf{Giảm khoảng 2,01 triệu USD so với ngưỡng F1-optimal (0,77)},
 trong khi vẫn ưu tiên phát hiện hồ sơ rủi ro hơn so với ngưỡng F1.
 
-\begin{figure}
-\centering
-\pandocbounded{\includegraphics[keepaspectratio,alt={Tối ưu ngưỡng vận hành}]{../reports/fig_25_threshold_optimization.png}}
-\caption{Tối ưu ngưỡng vận hành}
-\end{figure}
+Biểu đồ chi tiết quá trình tối ưu ngưỡng được đặt ở Phụ lục E; phần
+chính giữ bảng quyết định vận hành.
 
 \FloatBarrier
 \Needspace{8\baselineskip}
@@ -685,17 +666,8 @@ ro}\label{phuxe2n-tuxedch-lux1ed7i-vuxe0-phuxe2n-bux1ed1-ux111iux1ec3m-rux1ee7i-
   không làm tăng mạnh FN.
 \end{itemize}
 
-\begin{figure}
-\centering
-\pandocbounded{\includegraphics[keepaspectratio,alt={Phân bố điểm rủi ro}]{../reports/fig_24_score_distribution.png}}
-\caption{Phân bố điểm rủi ro}
-\end{figure}
-
-\begin{figure}
-\centering
-\pandocbounded{\includegraphics[keepaspectratio,alt={Hồ sơ sai số theo phân phối}]{../reports/fig_22_error_profile_hist.png}}
-\caption{Hồ sơ sai số theo phân phối}
-\end{figure}
+Các biểu đồ phân bố điểm rủi ro và hồ sơ sai số được đặt ở Phụ lục E để
+phục vụ phân tích sâu khi cần.
 
 \FloatBarrier
 \Needspace{8\baselineskip}
@@ -712,17 +684,8 @@ kê}\label{hiux1ec7u-chux1ec9nh-xuxe1c-suux1ea5t-vuxe0-ux111ux1ed9-tin-cux1eady-
   ý nghĩa thống kê hay không.
 \end{itemize}
 
-\begin{figure}
-\centering
-\pandocbounded{\includegraphics[keepaspectratio,alt={Biểu đồ calibration}]{../reports/fig_31_calibration.png}}
-\caption{Biểu đồ calibration}
-\end{figure}
-
-\begin{figure}
-\centering
-\pandocbounded{\includegraphics[keepaspectratio,alt={Tóm tắt DeLong test}]{../reports/fig_32_delong_summary.png}}
-\caption{Tóm tắt DeLong test}
-\end{figure}
+Biểu đồ calibration và tóm tắt DeLong được đặt ở Phụ lục E; phần chính
+chỉ giữ kết luận về độ tin cậy.
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
@@ -770,9 +733,9 @@ DASHBOARD}\label{chux1b0ux1a1ng-5-sux1ea3n-phux1ea9m-streamlit-dashboard}
 \textbf{Ghi chú về demo dữ liệu thực tế khi chạy thử:} Đây là mô phỏng
 hậu kiểm theo lô bằng dữ liệu có nhãn từ tập training gốc. Với dữ liệu
 vận hành thật, target sẽ được bổ sung sau kỳ quan sát để đo lại
-AUC/Recall/Precision/F2. Không sử dụng \texttt{cs-test.csv} của Kaggle
-để benchmark vì tập này không có target thật; \texttt{sampleEntry.csv}
-chỉ là mẫu nộp xác suất dự đoán, không phải nhãn đúng 0/1.
+AUC/Recall/Precision/F2. Không sử dụng tập test Kaggle để benchmark vì
+tập này không có target thật; file mẫu của cuộc thi chỉ là mẫu nộp xác
+suất dự đoán, không phải nhãn đúng 0/1.
 
 \FloatBarrier
 \Needspace{8\baselineskip}
@@ -819,12 +782,6 @@ Diễn giải theo ma trận nhầm lẫn: TP = 228 hồ sơ vỡ nợ được 
 
 \begin{figure}
 \centering
-\pandocbounded{\includegraphics[keepaspectratio,alt={Phân bố xác suất và nhóm rủi ro trên batch demo}]{../reports/fig_33_batch_demo_distribution.png}}
-\caption{Phân bố xác suất và nhóm rủi ro trên batch demo}
-\end{figure}
-
-\begin{figure}
-\centering
 \pandocbounded{\includegraphics[keepaspectratio,alt={Ma trận nhầm lẫn trên batch demo}]{../reports/fig_34_batch_demo_confusion.png}}
 \caption{Ma trận nhầm lẫn trên batch demo}
 \end{figure}
@@ -837,53 +794,18 @@ Diễn giải theo ma trận nhầm lẫn: TP = 228 hồ sơ vỡ nợ được 
 
 \FloatBarrier
 \Needspace{8\baselineskip}
-\subsection{5.3 Thử nộp kết quả lên
-Kaggle}\label{thux1eed-nux1ed9p-kux1ebft-quux1ea3-luxean-kaggle}
+\subsection{5.3 Kết quả thử nộp
+Kaggle}\label{kux1ebft-quux1ea3-thux1eed-nux1ed9p-kaggle}
 
-Để kiểm tra mô hình trên leaderboard Kaggle, sử dụng
-\texttt{cs-test.csv} làm tập dự đoán và tạo file submission theo đúng
-định dạng \texttt{sampleEntry.csv}:
-
-\begin{enumerate}
-\def\labelenumi{\arabic{enumi}.}
-\tightlist
-\item
-  Tải \texttt{cs-test.csv} và \texttt{sampleEntry.csv} từ competition
-  \emph{Give Me Some Credit}.
-\item
-  Chạy pipeline tiền xử lý/dự báo bằng mô hình
-  \texttt{models/best\_model.pkl} để tạo xác suất vỡ nợ cho từng dòng
-  trong \texttt{cs-test.csv}.
-\item
-  Tạo file CSV gồm hai cột \texttt{Id} và \texttt{Probability}; cột
-  \texttt{Id} lấy từ \texttt{sampleEntry.csv}, cột \texttt{Probability}
-  là xác suất mô hình dự báo.
-\item
-  Nộp file lên Kaggle bằng giao diện web hoặc lệnh:
-\end{enumerate}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{kaggle competitions submit \textasciigrave{}}
-  \OperatorTok{{-}}\NormalTok{c GiveMeSomeCredit \textasciigrave{}}
-  \OperatorTok{{-}}\NormalTok{f }\KeywordTok{data}\OperatorTok{/}\NormalTok{raw}\OperatorTok{/}\NormalTok{submission\_xgb\_project\_i}\OperatorTok{.}\FunctionTok{csv}\NormalTok{ \textasciigrave{}}
-  \OperatorTok{{-}}\NormalTok{m }\StringTok{"XGBoost Project I submission"}
-\end{Highlighting}
-\end{Shaded}
-
-File submission được tạo từ mô hình chính có 101.503 dòng, đúng số dòng
-của \texttt{cs-test.csv} và \texttt{sampleEntry.csv}; xác suất dự báo có
-min/mean/max lần lượt là 0,016970 / 0,330504 / 0,986541. Sau khi nộp lên
-Kaggle, kết quả đạt Public Score = 0,85785 và Private Score = 0,86482.
+Kết quả thử nộp đạt Public AUC = 0,85785 và Private AUC = 0,86482, khá
+gần AUC kiểm tra nội bộ 0,8714; điều này cho thấy mô hình tổng quát hóa
+tương đối ổn trên tập đánh giá ngoài.
 
 \begin{figure}
 \centering
 \pandocbounded{\includegraphics[keepaspectratio,alt={Kết quả submission Kaggle}]{../reports/fig_36_kaggle_submission_result.png}}
 \caption{Kết quả submission Kaggle}
 \end{figure}
-
-Kết quả leaderboard chỉ dùng để tham khảo ngoài báo cáo, vì Kaggle không
-công bố target thật của \texttt{cs-test.csv}.
 
 \FloatBarrier
 \Needspace{8\baselineskip}
@@ -918,11 +840,8 @@ tế}\label{giuxe1-trux1ecb-sux1eed-dux1ee5ng-trong-thux1ef1c-tux1ebf}
   căn cứ dữ liệu và có thể giải thích.
 \end{enumerate}
 
-\begin{figure}
-\centering
-\pandocbounded{\includegraphics[keepaspectratio,alt={Dashboard phân tích tổng hợp}]{../reports/fig_30_analysis_dashboard.png}}
-\caption{Dashboard phân tích tổng hợp}
-\end{figure}
+Ảnh dashboard tổng hợp được đặt ở Phụ lục E để phần chính không bị dàn
+trải.
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
@@ -1084,9 +1003,9 @@ bằng dữ liệu có nhãn từ tập training gốc. Với dữ liệu vận 
 target sẽ được bổ sung sau kỳ quan sát để đo lại
 AUC/Recall/Precision/F2.
 
-Tập \texttt{cs-test.csv} của Kaggle không có target thật nên chỉ dùng để
-tạo file submission. File \texttt{sampleEntry.csv} là mẫu nộp xác suất
-dự đoán, không phải nhãn đúng.
+Tập test Kaggle không có target thật nên chỉ dùng để tạo file nộp dự
+đoán. File mẫu của cuộc thi là mẫu nộp xác suất dự đoán, không phải nhãn
+đúng.
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
@@ -1107,50 +1026,78 @@ Scaling: 1,9\%
 
 \FloatBarrier
 \Needspace{8\baselineskip}
-\subsection{E. Danh mục hình trọng yếu trong báo
-cáo}\label{e.-danh-mux1ee5c-huxecnh-trux1ecdng-yux1ebfu-trong-buxe1o-cuxe1o}
+\subsection{E. Hình kỹ thuật chi
+tiết}\label{e.-huxecnh-kux1ef9-thuux1eadt-chi-tiux1ebft}
 
-{\def\LTcaptype{none} % do not increment counter
-\begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
-\toprule\noalign{}
-\begin{minipage}[b]{\linewidth}\raggedright
-Nhóm
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Hình
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Ý nghĩa
-\end{minipage} \\
-\midrule\noalign{}
-\endhead
-\bottomrule\noalign{}
-\endlastfoot
-Dữ liệu & \texttt{fig\_01\_target\_distribution} & Mức mất cân bằng
-lớp \\
-Dữ liệu & \texttt{fig\_02\_missing\_values} & Bức tranh missing
-values \\
-EDA & \texttt{fig\_05\_correlation\_heatmap} & Quan hệ giữa các biến \\
-Mô hình & \texttt{fig\_20\_model\_comparison} & So sánh LR/DT/RF/XGB \\
-Ngưỡng & \texttt{fig\_25\_threshold\_optimization} & Chọn threshold theo
-F2 \\
-Chạy thử & \texttt{fig\_33\_batch\_demo\_distribution} & Phân bố score
-và nhóm rủi ro batch demo \\
-Chạy thử & \texttt{fig\_34\_batch\_demo\_confusion} & Ma trận nhầm lẫn
-batch demo \\
-Chạy thử & \texttt{fig\_35\_batch\_demo\_cost} & Chi phí mô phỏng khi
-dùng mô hình \\
-Kaggle & \texttt{fig\_36\_kaggle\_submission\_result} & Public/Private
-score sau khi nộp \\
-Diễn giải & \texttt{fig\_26a\_shap\_bar} & Đặc trưng ảnh hưởng mạnh
-nhất \\
-Độ tin cậy & \texttt{fig\_31\_calibration} & Chất lượng xác suất dự
-báo \\
-Dashboard & \texttt{fig\_30\_analysis\_dashboard} & Trải nghiệm sản phẩm
-cuối \\
-\end{longtable}
-}
+Các hình dưới đây được chuyển xuống phụ lục để người đọc có thể kiểm tra
+kỹ khi cần, trong khi thân báo cáo chỉ giữ các hình phục vụ kết luận
+chính.
+
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio,alt={Tổng quan giá trị thiếu}]{../reports/fig_02_missing_values.png}}
+\caption{Tổng quan giá trị thiếu}
+\end{figure}
+
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio,alt={Heatmap tương quan}]{../reports/fig_05_correlation_heatmap.png}}
+\caption{Heatmap tương quan}
+\end{figure}
+
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio,alt={Phân tích nhóm trễ hạn}]{../reports/fig_07_delinquency_analysis.png}}
+\caption{Phân tích nhóm trễ hạn}
+\end{figure}
+
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio,alt={SHAP dependence cho đặc trưng chính}]{../reports/fig_27_shap_dependence.png}}
+\caption{SHAP dependence cho đặc trưng chính}
+\end{figure}
+
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio,alt={Tối ưu ngưỡng vận hành}]{../reports/fig_25_threshold_optimization.png}}
+\caption{Tối ưu ngưỡng vận hành}
+\end{figure}
+
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio,alt={Phân bố điểm rủi ro}]{../reports/fig_24_score_distribution.png}}
+\caption{Phân bố điểm rủi ro}
+\end{figure}
+
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio,alt={Hồ sơ sai số theo phân phối}]{../reports/fig_22_error_profile_hist.png}}
+\caption{Hồ sơ sai số theo phân phối}
+\end{figure}
+
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio,alt={Biểu đồ calibration}]{../reports/fig_31_calibration.png}}
+\caption{Biểu đồ calibration}
+\end{figure}
+
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio,alt={Tóm tắt DeLong test}]{../reports/fig_32_delong_summary.png}}
+\caption{Tóm tắt DeLong test}
+\end{figure}
+
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio,alt={Phân bố xác suất và nhóm rủi ro trên batch demo}]{../reports/fig_33_batch_demo_distribution.png}}
+\caption{Phân bố xác suất và nhóm rủi ro trên batch demo}
+\end{figure}
+
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio,alt={Dashboard phân tích tổng hợp}]{../reports/fig_30_analysis_dashboard.png}}
+\caption{Dashboard phân tích tổng hợp}
+\end{figure}
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 

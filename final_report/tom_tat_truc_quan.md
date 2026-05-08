@@ -99,7 +99,7 @@ Kết quả chạy thật trên file demo 5.000 hồ sơ:
 
 ![Chi phí batch demo](../reports/fig_35_batch_demo_cost.png)
 
-Với Kaggle, `cs-test.csv` không có target thật nên không dùng để benchmark. File `submission_xgb_project_i.csv` đã được nộp thử và đạt **Public Score = 0,85785**, **Private Score = 0,86482**.
+Với Kaggle, tập test không có target thật nên không dùng để benchmark. Kết quả nộp thử đạt **Public Score = 0,85785**, **Private Score = 0,86482**.
 
 ![Kết quả Kaggle](../reports/fig_36_kaggle_submission_result.png)
 

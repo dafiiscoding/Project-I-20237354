@@ -152,7 +152,7 @@ Dataset gồm:
 
 ![Phân bố lớp mục tiêu](../reports/fig_01_target_distribution.png)
 
-![Tổng quan giá trị thiếu](../reports/fig_02_missing_values.png)
+Các biểu đồ chi tiết về giá trị thiếu, tương quan và nhóm trễ hạn được đặt ở Phụ lục E để phần chính tập trung vào kết luận.
 
 ## 3.2 Tiền xử lý
 
@@ -180,9 +180,7 @@ Dataset gồm:
 2. `RevolvingUtilizationOfUnsecuredLines` và `DebtRatio` có phân phối lệch, cần theo dõi ngưỡng cực trị.
 3. Tương quan tuyến tính chỉ phản ánh một phần; đặc trưng tương tác giúp mô hình phi tuyến học tốt hơn.
 
-![Heatmap tương quan](../reports/fig_05_correlation_heatmap.png)
-
-![Phân tích nhóm trễ hạn](../reports/fig_07_delinquency_analysis.png)
+Chi tiết trực quan về tương quan và nhóm trễ hạn xem Phụ lục E.
 
 ---
 
@@ -229,7 +227,7 @@ TreeExplainer trên XGBoost:
 
 ![Tầm quan trọng đặc trưng theo SHAP](../reports/fig_26a_shap_bar.png)
 
-![SHAP dependence cho đặc trưng chính](../reports/fig_27_shap_dependence.png)
+Biểu đồ phụ thuộc SHAP chi tiết được đặt ở Phụ lục E để tránh làm rối phần kết quả chính.
 
 ## 4.4 Tối ưu ngưỡng (F2-optimal)
 
@@ -253,25 +251,21 @@ Tuy nhiên quá thấp (~74% từ chối).
 
 → **Giảm khoảng 2,01 triệu USD so với ngưỡng F1-optimal (0,77)**, trong khi vẫn ưu tiên phát hiện hồ sơ rủi ro hơn so với ngưỡng F1.
 
-![Tối ưu ngưỡng vận hành](../reports/fig_25_threshold_optimization.png)
+Biểu đồ chi tiết quá trình tối ưu ngưỡng được đặt ở Phụ lục E; phần chính giữ bảng quyết định vận hành.
 
 ## 4.5 Phân tích lỗi và phân bố điểm rủi ro
 
 - Nhóm lỗi chính nằm ở vùng điểm rủi ro trung gian (near-threshold), phản ánh các hồ sơ có tín hiệu mâu thuẫn.
 - Việc kiểm soát vùng này bằng quy trình “manual review” giúp giảm FP không làm tăng mạnh FN.
 
-![Phân bố điểm rủi ro](../reports/fig_24_score_distribution.png)
-
-![Hồ sơ sai số theo phân phối](../reports/fig_22_error_profile_hist.png)
+Các biểu đồ phân bố điểm rủi ro và hồ sơ sai số được đặt ở Phụ lục E để phục vụ phân tích sâu khi cần.
 
 ## 4.6 Hiệu chỉnh xác suất và độ tin cậy thống kê
 
 - Calibration cho thấy xác suất dự báo của mô hình sau hiệu chỉnh gần xác suất thực hơn.
 - DeLong test được dùng để kiểm tra khác biệt AUC giữa các mô hình có đủ ý nghĩa thống kê hay không.
 
-![Biểu đồ calibration](../reports/fig_31_calibration.png)
-
-![Tóm tắt DeLong test](../reports/fig_32_delong_summary.png)
+Biểu đồ calibration và tóm tắt DeLong được đặt ở Phụ lục E; phần chính chỉ giữ kết luận về độ tin cậy.
 
 ---
 
@@ -290,7 +284,7 @@ Tuy nhiên quá thấp (~74% từ chối).
   - Nếu file có target `SeriousDlqin2yrs` dạng 0/1: tính AUC, Recall, Precision, F2, ROC, PR, calibration, ma trận nhầm lẫn và tác động chi phí
   - Segment summary (Income quartile, Age group)
 
-**Ghi chú về demo dữ liệu thực tế khi chạy thử:** Đây là mô phỏng hậu kiểm theo lô bằng dữ liệu có nhãn từ tập training gốc. Với dữ liệu vận hành thật, target sẽ được bổ sung sau kỳ quan sát để đo lại AUC/Recall/Precision/F2. Không sử dụng `cs-test.csv` của Kaggle để benchmark vì tập này không có target thật; `sampleEntry.csv` chỉ là mẫu nộp xác suất dự đoán, không phải nhãn đúng 0/1.
+**Ghi chú về demo dữ liệu thực tế khi chạy thử:** Đây là mô phỏng hậu kiểm theo lô bằng dữ liệu có nhãn từ tập training gốc. Với dữ liệu vận hành thật, target sẽ được bổ sung sau kỳ quan sát để đo lại AUC/Recall/Precision/F2. Không sử dụng tập test Kaggle để benchmark vì tập này không có target thật; file mẫu của cuộc thi chỉ là mẫu nộp xác suất dự đoán, không phải nhãn đúng 0/1.
 
 ## 5.2 Chạy thử hậu kiểm theo lô
 
@@ -315,33 +309,15 @@ Kết quả này cho thấy batch benchmark trong app không chỉ hiển thị 
 
 Diễn giải theo ma trận nhầm lẫn: TP = 228 hồ sơ vỡ nợ được chặn đúng, FP = 544 hồ sơ tốt bị từ chối nhầm, FN = 106 hồ sơ vỡ nợ bị bỏ sót, và TN = 4122 hồ sơ tốt được duyệt đúng.
 
-![Phân bố xác suất và nhóm rủi ro trên batch demo](../reports/fig_33_batch_demo_distribution.png)
-
 ![Ma trận nhầm lẫn trên batch demo](../reports/fig_34_batch_demo_confusion.png)
 
 ![Tác động chi phí trên batch demo](../reports/fig_35_batch_demo_cost.png)
 
-## 5.3 Thử nộp kết quả lên Kaggle
+## 5.3 Kết quả thử nộp Kaggle
 
-Để kiểm tra mô hình trên leaderboard Kaggle, sử dụng `cs-test.csv` làm tập dự đoán và tạo file submission theo đúng định dạng `sampleEntry.csv`:
-
-1. Tải `cs-test.csv` và `sampleEntry.csv` từ competition *Give Me Some Credit*.
-2. Chạy pipeline tiền xử lý/dự báo bằng mô hình `models/best_model.pkl` để tạo xác suất vỡ nợ cho từng dòng trong `cs-test.csv`.
-3. Tạo file CSV gồm hai cột `Id` và `Probability`; cột `Id` lấy từ `sampleEntry.csv`, cột `Probability` là xác suất mô hình dự báo.
-4. Nộp file lên Kaggle bằng giao diện web hoặc lệnh:
-
-```powershell
-kaggle competitions submit `
-  -c GiveMeSomeCredit `
-  -f data/raw/submission_xgb_project_i.csv `
-  -m "XGBoost Project I submission"
-```
-
-File submission được tạo từ mô hình chính có 101.503 dòng, đúng số dòng của `cs-test.csv` và `sampleEntry.csv`; xác suất dự báo có min/mean/max lần lượt là 0,016970 / 0,330504 / 0,986541. Sau khi nộp lên Kaggle, kết quả đạt Public Score = 0,85785 và Private Score = 0,86482.
+Kết quả thử nộp đạt Public AUC = 0,85785 và Private AUC = 0,86482, khá gần AUC kiểm tra nội bộ 0,8714; điều này cho thấy mô hình tổng quát hóa tương đối ổn trên tập đánh giá ngoài.
 
 ![Kết quả submission Kaggle](../reports/fig_36_kaggle_submission_result.png)
-
-Kết quả leaderboard chỉ dùng để tham khảo ngoài báo cáo, vì Kaggle không công bố target thật của `cs-test.csv`.
 
 ## 5.4 Công nghệ
 
@@ -355,7 +331,7 @@ Kết quả leaderboard chỉ dùng để tham khảo ngoài báo cáo, vì Kagg
 2. **Đối với quản trị rủi ro:** theo dõi chất lượng mô hình qua batch evaluation và threshold tuning.
 3. **Đối với khách hàng cuối:** tăng tính minh bạch vì quyết định có căn cứ dữ liệu và có thể giải thích.
 
-![Dashboard phân tích tổng hợp](../reports/fig_30_analysis_dashboard.png)
+Ảnh dashboard tổng hợp được đặt ở Phụ lục E để phần chính không bị dàn trải.
 
 ---
 
@@ -445,7 +421,7 @@ Kết quả leaderboard chỉ dùng để tham khảo ngoài báo cáo, vì Kagg
 
 Benchmark theo lô trong Streamlit cần file có target `SeriousDlqin2yrs` dạng 0/1. Đây là mô phỏng hậu kiểm theo lô bằng dữ liệu có nhãn từ tập training gốc. Với dữ liệu vận hành thật, target sẽ được bổ sung sau kỳ quan sát để đo lại AUC/Recall/Precision/F2.
 
-Tập `cs-test.csv` của Kaggle không có target thật nên chỉ dùng để tạo file submission. File `sampleEntry.csv` là mẫu nộp xác suất dự đoán, không phải nhãn đúng.
+Tập test Kaggle không có target thật nên chỉ dùng để tạo file nộp dự đoán. File mẫu của cuộc thi là mẫu nộp xác suất dự đoán, không phải nhãn đúng.
 
 ---
 
@@ -463,22 +439,31 @@ Expected Calibration Error (ECE):
 
 ---
 
-## E. Danh mục hình trọng yếu trong báo cáo
+## E. Hình kỹ thuật chi tiết
 
-| Nhóm | Hình | Ý nghĩa |
-|---|---|---|
-| Dữ liệu | `fig_01_target_distribution` | Mức mất cân bằng lớp |
-| Dữ liệu | `fig_02_missing_values` | Bức tranh missing values |
-| EDA | `fig_05_correlation_heatmap` | Quan hệ giữa các biến |
-| Mô hình | `fig_20_model_comparison` | So sánh LR/DT/RF/XGB |
-| Ngưỡng | `fig_25_threshold_optimization` | Chọn threshold theo F2 |
-| Chạy thử | `fig_33_batch_demo_distribution` | Phân bố score và nhóm rủi ro batch demo |
-| Chạy thử | `fig_34_batch_demo_confusion` | Ma trận nhầm lẫn batch demo |
-| Chạy thử | `fig_35_batch_demo_cost` | Chi phí mô phỏng khi dùng mô hình |
-| Kaggle | `fig_36_kaggle_submission_result` | Public/Private score sau khi nộp |
-| Diễn giải | `fig_26a_shap_bar` | Đặc trưng ảnh hưởng mạnh nhất |
-| Độ tin cậy | `fig_31_calibration` | Chất lượng xác suất dự báo |
-| Dashboard | `fig_30_analysis_dashboard` | Trải nghiệm sản phẩm cuối |
+Các hình dưới đây được chuyển xuống phụ lục để người đọc có thể kiểm tra kỹ khi cần, trong khi thân báo cáo chỉ giữ các hình phục vụ kết luận chính.
+
+![Tổng quan giá trị thiếu](../reports/fig_02_missing_values.png)
+
+![Heatmap tương quan](../reports/fig_05_correlation_heatmap.png)
+
+![Phân tích nhóm trễ hạn](../reports/fig_07_delinquency_analysis.png)
+
+![SHAP dependence cho đặc trưng chính](../reports/fig_27_shap_dependence.png)
+
+![Tối ưu ngưỡng vận hành](../reports/fig_25_threshold_optimization.png)
+
+![Phân bố điểm rủi ro](../reports/fig_24_score_distribution.png)
+
+![Hồ sơ sai số theo phân phối](../reports/fig_22_error_profile_hist.png)
+
+![Biểu đồ calibration](../reports/fig_31_calibration.png)
+
+![Tóm tắt DeLong test](../reports/fig_32_delong_summary.png)
+
+![Phân bố xác suất và nhóm rủi ro trên batch demo](../reports/fig_33_batch_demo_distribution.png)
+
+![Dashboard phân tích tổng hợp](../reports/fig_30_analysis_dashboard.png)
 
 ---
 
