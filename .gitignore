@@ -35,6 +35,10 @@ final_report/*.out
 final_report/*.synctex.gz
 final_report/*.fls
 final_report/*.fdb_latexmk
+final_report/*.bbl
+final_report/*.blg
+final_report/*.bcf
+final_report/*.run.xml
 
 # ─── Legacy/duplicate report artifact ─────────────────────────────────────────
 reports/fig_26_shap_bar.png
@@ -61,6 +65,7 @@ presentation/
 # ─── IDE / OS ─────────────────────────────────────────────────────────────────
 .vscode/
 .idea/
+*.code-workspace
 *.swp
 *.swo
 *~
@@ -73,6 +78,12 @@ venv/
 env/
 ENV/
 .env
+.env.*
+*.local
+
+# ─── Credentials / external service config ───────────────────────────────────
+kaggle.json
+.kaggle/
 
 # ─── Streamlit cache ──────────────────────────────────────────────────────────
 .streamlit/
@@ -84,7 +95,14 @@ exports/
 downloads/
 tmp/
 temp/
+*.bak
+*.orig
+*.rej
 
 # ─── Công cụ hỗ trợ nội bộ ───────────────────────────────────────────────────
 claude.md
 CLAUDE.md
+.claude/
+.obsidian/
+.agents/
+.codex/
