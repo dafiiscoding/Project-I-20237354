@@ -26,11 +26,15 @@ except ImportError:
 
 
 def _get_local_demo_files() -> list[tuple[str, Path]]:
-    """Trả về các file demo local nếu data/raw có sẵn trên máy chạy app."""
-    raw_dir = Path(__file__).parent.parent / 'data' / 'raw'
+    """Trả về các file demo có sẵn, ưu tiên data/raw local rồi đến sample đi kèm app."""
+    root_dir = Path(__file__).parent.parent
+    raw_dir = root_dir / 'data' / 'raw'
+    sample_dir = Path(__file__).parent / 'sample_data'
     candidates = [
-        ("Demo hậu kiểm 5.000 dòng có target", raw_dir / 'batch_demo_from_training_5000.csv'),
-        ("Kaggle cs-test.csv để dự đoán/submission", raw_dir / 'cs-test.csv'),
+        ("Demo benchmark có target (5.000 dòng local)", raw_dir / 'batch_demo_from_training_5000.csv'),
+        ("Demo dự đoán không target (Kaggle test local)", raw_dir / 'cs-test.csv'),
+        ("Demo benchmark có target (mẫu nhỏ)", sample_dir / 'batch_demo_sample.csv'),
+        ("Demo dự đoán không target (mẫu nhỏ)", sample_dir / 'kaggle_test_sample.csv'),
     ]
     return [(label, path) for label, path in candidates if path.exists()]
 
@@ -38,8 +42,8 @@ def _get_local_demo_files() -> list[tuple[str, Path]]:
 def render(model) -> None:
     """Render Tab 2: CSV upload + batch evaluation + export."""
 
-    st.subheader("📊 Đánh giá rủi ro theo lô (CSV)")
-    st.caption("Tải lên file CSV/XLSX hoặc chọn file demo local để đánh giá hàng loạt.")
+    st.subheader("📊 Đánh giá rủi ro theo lô (CSV/XLSX)")
+    st.caption("Tải lên file riêng hoặc chọn dữ liệu đề xuất để thử nhanh chức năng đánh giá hàng loạt.")
 
     # ── Step 1: Upload ──
     local_files = _get_local_demo_files()
@@ -49,7 +53,7 @@ def render(model) -> None:
         "Nguồn dữ liệu",
         options=source_options,
         index=default_source,
-        help="File demo local chỉ hiện khi data/raw có sẵn trên máy đang chạy Streamlit.",
+        help="Bản deploy luôn có mẫu nhỏ đi kèm; nếu chạy local có data/raw thì app sẽ ưu tiên file đầy đủ.",
     )
 
     col_upload, col_template = st.columns([3, 1])

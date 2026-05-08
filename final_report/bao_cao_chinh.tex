@@ -449,8 +449,11 @@ hồ sơ - \textbf{Thu nhập:} Trung bình \$6.670, phạm vi \$0--\$3M
 \caption{Phân bố lớp mục tiêu}
 \end{figure}
 
-Các biểu đồ chi tiết về giá trị thiếu, tương quan và nhóm trễ hạn được
-đặt ở Phụ lục E để phần chính tập trung vào kết luận.
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio,alt={Tổng quan giá trị thiếu}]{../reports/fig_02_missing_values.png}}
+\caption{Tổng quan giá trị thiếu}
+\end{figure}
 
 \FloatBarrier
 \Needspace{8\baselineskip}
@@ -496,7 +499,17 @@ EDA}\label{insight-quan-trux1ecdng-tux1eeb-eda}
   mô hình phi tuyến học tốt hơn.
 \end{enumerate}
 
-Chi tiết trực quan về tương quan và nhóm trễ hạn xem Phụ lục E.
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio,alt={Heatmap tương quan}]{../reports/fig_05_correlation_heatmap.png}}
+\caption{Heatmap tương quan}
+\end{figure}
+
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio,alt={Phân tích nhóm trễ hạn}]{../reports/fig_07_delinquency_analysis.png}}
+\caption{Phân tích nhóm trễ hạn}
+\end{figure}
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
@@ -595,8 +608,11 @@ Rank & Đặc trưng & SHAP \\
 \caption{Tầm quan trọng đặc trưng theo SHAP}
 \end{figure}
 
-Biểu đồ phụ thuộc SHAP chi tiết được đặt ở Phụ lục E để tránh làm rối
-phần kết quả chính.
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio,alt={SHAP dependence cho đặc trưng chính}]{../reports/fig_27_shap_dependence.png}}
+\caption{SHAP dependence cho đặc trưng chính}
+\end{figure}
 
 \FloatBarrier
 \Needspace{8\baselineskip}
@@ -648,8 +664,11 @@ Bayes-optimal (0,043) & 99,2\% & 6,9\% & 0,265 & 34,50 \\
 → \textbf{Giảm khoảng 2,01 triệu USD so với ngưỡng F1-optimal (0,77)},
 trong khi vẫn ưu tiên phát hiện hồ sơ rủi ro hơn so với ngưỡng F1.
 
-Biểu đồ chi tiết quá trình tối ưu ngưỡng được đặt ở Phụ lục E; phần
-chính giữ bảng quyết định vận hành.
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio,alt={Tối ưu ngưỡng vận hành}]{../reports/fig_25_threshold_optimization.png}}
+\caption{Tối ưu ngưỡng vận hành}
+\end{figure}
 
 \FloatBarrier
 \Needspace{8\baselineskip}
@@ -666,8 +685,17 @@ ro}\label{phuxe2n-tuxedch-lux1ed7i-vuxe0-phuxe2n-bux1ed1-ux111iux1ec3m-rux1ee7i-
   không làm tăng mạnh FN.
 \end{itemize}
 
-Các biểu đồ phân bố điểm rủi ro và hồ sơ sai số được đặt ở Phụ lục E để
-phục vụ phân tích sâu khi cần.
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio,alt={Phân bố điểm rủi ro}]{../reports/fig_24_score_distribution.png}}
+\caption{Phân bố điểm rủi ro}
+\end{figure}
+
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio,alt={Hồ sơ sai số theo phân phối}]{../reports/fig_22_error_profile_hist.png}}
+\caption{Hồ sơ sai số theo phân phối}
+\end{figure}
 
 \FloatBarrier
 \Needspace{8\baselineskip}
@@ -684,8 +712,17 @@ kê}\label{hiux1ec7u-chux1ec9nh-xuxe1c-suux1ea5t-vuxe0-ux111ux1ed9-tin-cux1eady-
   ý nghĩa thống kê hay không.
 \end{itemize}
 
-Biểu đồ calibration và tóm tắt DeLong được đặt ở Phụ lục E; phần chính
-chỉ giữ kết luận về độ tin cậy.
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio,alt={Biểu đồ calibration}]{../reports/fig_31_calibration.png}}
+\caption{Biểu đồ calibration}
+\end{figure}
+
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio,alt={Tóm tắt DeLong test}]{../reports/fig_32_delong_summary.png}}
+\caption{Tóm tắt DeLong test}
+\end{figure}
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
@@ -782,6 +819,12 @@ Diễn giải theo ma trận nhầm lẫn: TP = 228 hồ sơ vỡ nợ được 
 
 \begin{figure}
 \centering
+\pandocbounded{\includegraphics[keepaspectratio,alt={Phân bố xác suất và nhóm rủi ro trên batch demo}]{../reports/fig_33_batch_demo_distribution.png}}
+\caption{Phân bố xác suất và nhóm rủi ro trên batch demo}
+\end{figure}
+
+\begin{figure}
+\centering
 \pandocbounded{\includegraphics[keepaspectratio,alt={Ma trận nhầm lẫn trên batch demo}]{../reports/fig_34_batch_demo_confusion.png}}
 \caption{Ma trận nhầm lẫn trên batch demo}
 \end{figure}
@@ -840,8 +883,11 @@ tế}\label{giuxe1-trux1ecb-sux1eed-dux1ee5ng-trong-thux1ef1c-tux1ebf}
   căn cứ dữ liệu và có thể giải thích.
 \end{enumerate}
 
-Ảnh dashboard tổng hợp được đặt ở Phụ lục E để phần chính không bị dàn
-trải.
+\begin{figure}
+\centering
+\pandocbounded{\includegraphics[keepaspectratio,alt={Dashboard phân tích tổng hợp}]{../reports/fig_30_analysis_dashboard.png}}
+\caption{Dashboard phân tích tổng hợp}
+\end{figure}
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
@@ -1026,12 +1072,13 @@ Scaling: 1,9\%
 
 \FloatBarrier
 \Needspace{8\baselineskip}
-\subsection{E. Hình kỹ thuật chi
-tiết}\label{e.-huxecnh-kux1ef9-thuux1eadt-chi-tiux1ebft}
+\subsection{E. Bản phóng to / hình kỹ thuật chi
+tiết}\label{e.-bux1ea3n-phuxf3ng-to-huxecnh-kux1ef9-thuux1eadt-chi-tiux1ebft}
 
-Các hình dưới đây được chuyển xuống phụ lục để người đọc có thể kiểm tra
-kỹ khi cần, trong khi thân báo cáo chỉ giữ các hình phục vụ kết luận
-chính.
+Các hình dưới đây lặp lại các trực quan kỹ thuật quan trọng ở dạng tách
+riêng, giúp người đọc bản in giấy kiểm tra rõ hơn khi cần.
+
+\clearpage
 
 \begin{figure}
 \centering
@@ -1039,11 +1086,15 @@ chính.
 \caption{Tổng quan giá trị thiếu}
 \end{figure}
 
+\clearpage
+
 \begin{figure}
 \centering
 \pandocbounded{\includegraphics[keepaspectratio,alt={Heatmap tương quan}]{../reports/fig_05_correlation_heatmap.png}}
 \caption{Heatmap tương quan}
 \end{figure}
+
+\clearpage
 
 \begin{figure}
 \centering
@@ -1051,11 +1102,15 @@ chính.
 \caption{Phân tích nhóm trễ hạn}
 \end{figure}
 
+\clearpage
+
 \begin{figure}
 \centering
 \pandocbounded{\includegraphics[keepaspectratio,alt={SHAP dependence cho đặc trưng chính}]{../reports/fig_27_shap_dependence.png}}
 \caption{SHAP dependence cho đặc trưng chính}
 \end{figure}
+
+\clearpage
 
 \begin{figure}
 \centering
@@ -1063,11 +1118,15 @@ chính.
 \caption{Tối ưu ngưỡng vận hành}
 \end{figure}
 
+\clearpage
+
 \begin{figure}
 \centering
 \pandocbounded{\includegraphics[keepaspectratio,alt={Phân bố điểm rủi ro}]{../reports/fig_24_score_distribution.png}}
 \caption{Phân bố điểm rủi ro}
 \end{figure}
+
+\clearpage
 
 \begin{figure}
 \centering
@@ -1075,11 +1134,15 @@ chính.
 \caption{Hồ sơ sai số theo phân phối}
 \end{figure}
 
+\clearpage
+
 \begin{figure}
 \centering
 \pandocbounded{\includegraphics[keepaspectratio,alt={Biểu đồ calibration}]{../reports/fig_31_calibration.png}}
 \caption{Biểu đồ calibration}
 \end{figure}
+
+\clearpage
 
 \begin{figure}
 \centering
@@ -1087,11 +1150,15 @@ chính.
 \caption{Tóm tắt DeLong test}
 \end{figure}
 
+\clearpage
+
 \begin{figure}
 \centering
 \pandocbounded{\includegraphics[keepaspectratio,alt={Phân bố xác suất và nhóm rủi ro trên batch demo}]{../reports/fig_33_batch_demo_distribution.png}}
 \caption{Phân bố xác suất và nhóm rủi ro trên batch demo}
 \end{figure}
+
+\clearpage
 
 \begin{figure}
 \centering

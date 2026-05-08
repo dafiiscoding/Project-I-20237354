@@ -243,6 +243,65 @@ def plot_roc_pr(y_true: np.ndarray, probs: np.ndarray) -> go.Figure:
     return fig
 
 
+def plot_roc_curve(y_true: np.ndarray, probs: np.ndarray) -> go.Figure:
+    """ROC curve tách riêng để dễ đọc trong tab benchmark."""
+    from sklearn.metrics import roc_curve, auc
+
+    fpr, tpr, _ = roc_curve(y_true, probs)
+    auc_roc = auc(fpr, tpr)
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(
+        x=fpr, y=tpr, mode='lines',
+        line=dict(color='#e74c3c', width=2.8),
+        name=f'ROC (AUC={auc_roc:.4f})',
+    ))
+    fig.add_trace(go.Scatter(
+        x=[0, 1], y=[0, 1], mode='lines',
+        line=dict(color='gray', dash='dash', width=1.2),
+        name='Ngẫu nhiên',
+    ))
+    fig.update_layout(
+        title=f'Đường cong ROC (AUC = {auc_roc:.4f})',
+        xaxis_title='Tỷ lệ dương tính giả (FPR)',
+        yaxis_title='Tỷ lệ dương tính thật (Recall)',
+        xaxis=dict(range=[0, 1]),
+        yaxis=dict(range=[0, 1]),
+        height=380,
+        margin=dict(t=60, b=50, l=55, r=20),
+    )
+    return fig
+
+
+def plot_pr_curve(y_true: np.ndarray, probs: np.ndarray) -> go.Figure:
+    """Precision-Recall curve tách riêng để dễ đọc trong tab benchmark."""
+    from sklearn.metrics import precision_recall_curve, average_precision_score
+
+    precision, recall, _ = precision_recall_curve(y_true, probs)
+    ap = average_precision_score(y_true, probs)
+    prevalence = float(np.mean(y_true))
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(
+        x=recall, y=precision, mode='lines',
+        line=dict(color='#27ae60', width=2.8),
+        name=f'PR (AP={ap:.4f})',
+    ))
+    fig.add_trace(go.Scatter(
+        x=[0, 1], y=[prevalence, prevalence], mode='lines',
+        line=dict(color='gray', dash='dash', width=1.2),
+        name=f'Tỷ lệ nền ({prevalence:.1%})',
+    ))
+    fig.update_layout(
+        title=f'Đường cong Precision-Recall (AP = {ap:.4f})',
+        xaxis_title='Recall',
+        yaxis_title='Precision',
+        xaxis=dict(range=[0, 1]),
+        yaxis=dict(range=[0, 1]),
+        height=380,
+        margin=dict(t=60, b=50, l=55, r=20),
+    )
+    return fig
+
+
 # ─── Benchmark: Lift + Gain chart (decile) ──────────────────────────────────
 
 def plot_lift_gain(y_true: np.ndarray, probs: np.ndarray, n_deciles: int = 10) -> go.Figure:
@@ -326,3 +385,50 @@ def compute_ks_stat(y_true: np.ndarray, probs: np.ndarray) -> dict:
     diff = np.abs(cdf_pos - cdf_neg)
     idx_max = int(np.argmax(diff))
     return {'ks': float(diff[idx_max]), 'threshold_at_ks': float(grid[idx_max])}
+
+
+def plot_threshold_tradeoff(y_true: np.ndarray, probs: np.ndarray) -> go.Figure:
+    """Biểu đồ Recall/Precision/F2 và tỷ lệ từ chối theo ngưỡng."""
+    from sklearn.metrics import precision_score, recall_score, fbeta_score
+
+    thresholds = np.arange(0.05, 0.951, 0.025)
+    rows = []
+    for threshold in thresholds:
+        pred = (probs >= threshold).astype(int)
+        rows.append({
+            'threshold': threshold,
+            'Recall': recall_score(y_true, pred, zero_division=0),
+            'Precision': precision_score(y_true, pred, zero_division=0),
+            'F2': fbeta_score(y_true, pred, beta=2, zero_division=0),
+            'Tỷ lệ từ chối': float(pred.mean()),
+        })
+    df = pd.DataFrame(rows)
+
+    fig = go.Figure()
+    for metric, color in [
+        ('Recall', '#e74c3c'),
+        ('Precision', '#3498db'),
+        ('F2', '#2ecc71'),
+        ('Tỷ lệ từ chối', '#9b59b6'),
+    ]:
+        fig.add_trace(go.Scatter(
+            x=df['threshold'], y=df[metric], mode='lines',
+            line=dict(color=color, width=2.4),
+            name=metric,
+        ))
+    fig.add_vline(
+        x=THRESHOLD,
+        line_dash='dash',
+        line_color='black',
+        annotation_text=f'Ngưỡng mặc định {THRESHOLD:.3f}',
+        annotation_position='top right',
+    )
+    fig.update_layout(
+        title='Trade-off theo ngưỡng quyết định',
+        xaxis_title='Ngưỡng từ chối',
+        yaxis_title='Giá trị',
+        yaxis_tickformat='.0%',
+        height=420,
+        margin=dict(t=60, b=50, l=55, r=20),
+    )
+    return fig

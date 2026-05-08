@@ -152,7 +152,7 @@ Dataset gồm:
 
 ![Phân bố lớp mục tiêu](../reports/fig_01_target_distribution.png)
 
-Các biểu đồ chi tiết về giá trị thiếu, tương quan và nhóm trễ hạn được đặt ở Phụ lục E để phần chính tập trung vào kết luận.
+![Tổng quan giá trị thiếu](../reports/fig_02_missing_values.png)
 
 ## 3.2 Tiền xử lý
 
@@ -180,7 +180,9 @@ Các biểu đồ chi tiết về giá trị thiếu, tương quan và nhóm tr�
 2. `RevolvingUtilizationOfUnsecuredLines` và `DebtRatio` có phân phối lệch, cần theo dõi ngưỡng cực trị.
 3. Tương quan tuyến tính chỉ phản ánh một phần; đặc trưng tương tác giúp mô hình phi tuyến học tốt hơn.
 
-Chi tiết trực quan về tương quan và nhóm trễ hạn xem Phụ lục E.
+![Heatmap tương quan](../reports/fig_05_correlation_heatmap.png)
+
+![Phân tích nhóm trễ hạn](../reports/fig_07_delinquency_analysis.png)
 
 ---
 
@@ -227,7 +229,7 @@ TreeExplainer trên XGBoost:
 
 ![Tầm quan trọng đặc trưng theo SHAP](../reports/fig_26a_shap_bar.png)
 
-Biểu đồ phụ thuộc SHAP chi tiết được đặt ở Phụ lục E để tránh làm rối phần kết quả chính.
+![SHAP dependence cho đặc trưng chính](../reports/fig_27_shap_dependence.png)
 
 ## 4.4 Tối ưu ngưỡng (F2-optimal)
 
@@ -251,21 +253,25 @@ Tuy nhiên quá thấp (~74% từ chối).
 
 → **Giảm khoảng 2,01 triệu USD so với ngưỡng F1-optimal (0,77)**, trong khi vẫn ưu tiên phát hiện hồ sơ rủi ro hơn so với ngưỡng F1.
 
-Biểu đồ chi tiết quá trình tối ưu ngưỡng được đặt ở Phụ lục E; phần chính giữ bảng quyết định vận hành.
+![Tối ưu ngưỡng vận hành](../reports/fig_25_threshold_optimization.png)
 
 ## 4.5 Phân tích lỗi và phân bố điểm rủi ro
 
 - Nhóm lỗi chính nằm ở vùng điểm rủi ro trung gian (near-threshold), phản ánh các hồ sơ có tín hiệu mâu thuẫn.
 - Việc kiểm soát vùng này bằng quy trình “manual review” giúp giảm FP không làm tăng mạnh FN.
 
-Các biểu đồ phân bố điểm rủi ro và hồ sơ sai số được đặt ở Phụ lục E để phục vụ phân tích sâu khi cần.
+![Phân bố điểm rủi ro](../reports/fig_24_score_distribution.png)
+
+![Hồ sơ sai số theo phân phối](../reports/fig_22_error_profile_hist.png)
 
 ## 4.6 Hiệu chỉnh xác suất và độ tin cậy thống kê
 
 - Calibration cho thấy xác suất dự báo của mô hình sau hiệu chỉnh gần xác suất thực hơn.
 - DeLong test được dùng để kiểm tra khác biệt AUC giữa các mô hình có đủ ý nghĩa thống kê hay không.
 
-Biểu đồ calibration và tóm tắt DeLong được đặt ở Phụ lục E; phần chính chỉ giữ kết luận về độ tin cậy.
+![Biểu đồ calibration](../reports/fig_31_calibration.png)
+
+![Tóm tắt DeLong test](../reports/fig_32_delong_summary.png)
 
 ---
 
@@ -309,6 +315,8 @@ Kết quả này cho thấy batch benchmark trong app không chỉ hiển thị 
 
 Diễn giải theo ma trận nhầm lẫn: TP = 228 hồ sơ vỡ nợ được chặn đúng, FP = 544 hồ sơ tốt bị từ chối nhầm, FN = 106 hồ sơ vỡ nợ bị bỏ sót, và TN = 4122 hồ sơ tốt được duyệt đúng.
 
+![Phân bố xác suất và nhóm rủi ro trên batch demo](../reports/fig_33_batch_demo_distribution.png)
+
 ![Ma trận nhầm lẫn trên batch demo](../reports/fig_34_batch_demo_confusion.png)
 
 ![Tác động chi phí trên batch demo](../reports/fig_35_batch_demo_cost.png)
@@ -331,7 +339,7 @@ Kết quả thử nộp đạt Public AUC = 0,85785 và Private AUC = 0,86482, k
 2. **Đối với quản trị rủi ro:** theo dõi chất lượng mô hình qua batch evaluation và threshold tuning.
 3. **Đối với khách hàng cuối:** tăng tính minh bạch vì quyết định có căn cứ dữ liệu và có thể giải thích.
 
-Ảnh dashboard tổng hợp được đặt ở Phụ lục E để phần chính không bị dàn trải.
+![Dashboard phân tích tổng hợp](../reports/fig_30_analysis_dashboard.png)
 
 ---
 
@@ -439,29 +447,51 @@ Expected Calibration Error (ECE):
 
 ---
 
-## E. Hình kỹ thuật chi tiết
+## E. Bản phóng to / hình kỹ thuật chi tiết
 
-Các hình dưới đây được chuyển xuống phụ lục để người đọc có thể kiểm tra kỹ khi cần, trong khi thân báo cáo chỉ giữ các hình phục vụ kết luận chính.
+Các hình dưới đây lặp lại các trực quan kỹ thuật quan trọng ở dạng tách riêng, giúp người đọc bản in giấy kiểm tra rõ hơn khi cần.
+
+\clearpage
 
 ![Tổng quan giá trị thiếu](../reports/fig_02_missing_values.png)
 
+\clearpage
+
 ![Heatmap tương quan](../reports/fig_05_correlation_heatmap.png)
+
+\clearpage
 
 ![Phân tích nhóm trễ hạn](../reports/fig_07_delinquency_analysis.png)
 
+\clearpage
+
 ![SHAP dependence cho đặc trưng chính](../reports/fig_27_shap_dependence.png)
+
+\clearpage
 
 ![Tối ưu ngưỡng vận hành](../reports/fig_25_threshold_optimization.png)
 
+\clearpage
+
 ![Phân bố điểm rủi ro](../reports/fig_24_score_distribution.png)
+
+\clearpage
 
 ![Hồ sơ sai số theo phân phối](../reports/fig_22_error_profile_hist.png)
 
+\clearpage
+
 ![Biểu đồ calibration](../reports/fig_31_calibration.png)
+
+\clearpage
 
 ![Tóm tắt DeLong test](../reports/fig_32_delong_summary.png)
 
+\clearpage
+
 ![Phân bố xác suất và nhóm rủi ro trên batch demo](../reports/fig_33_batch_demo_distribution.png)
+
+\clearpage
 
 ![Dashboard phân tích tổng hợp](../reports/fig_30_analysis_dashboard.png)
 
