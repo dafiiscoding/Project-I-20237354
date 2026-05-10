@@ -164,17 +164,19 @@ những nghiên cứu tiếp theo.
 \Needspace{8\baselineskip}
 \subsection{TÓM TẮT}\label{tuxf3m-tux1eaft}
 
-Báo cáo trình bày nghiên cứu ứng dụng Machine Learning vào bài toán dự
-báo rủi ro vỡ nợ tín dụng, sử dụng bộ dữ liệu \emph{Give Me Some Credit}
-(Kaggle, 149.999 hồ sơ vay). Bốn mô hình được xây dựng và đánh giá:
-Logistic Regression (AUC=0,8432), Decision Tree (AUC=0,8579), Random
-Forest (AUC=0,8703), và XGBoost (AUC=0,8714). Mô hình XGBoost vượt mục
-tiêu (AUC \textgreater{} 0,87) với feature engineering có chủ đích.
-Ngưỡng F2-optimal t=0,625 tăng Recall lên 66,9\% và giảm chi phí ước
-tính khoảng 2,01 triệu USD so với ngưỡng F1-optimal. Sản phẩm cuối là
-ứng dụng Streamlit tương tác với SHAP giải thích và đánh giá theo lô.
+Báo cáo trình bày nghiên cứu ứng dụng học máy (Machine Learning) vào bài
+toán dự báo rủi ro vỡ nợ tín dụng, sử dụng bộ dữ liệu \emph{Give Me Some
+Credit} (Kaggle, 149.999 hồ sơ vay). Bốn mô hình được xây dựng và đánh
+giá: hồi quy Logistic (AUC=0,8432), cây quyết định (AUC=0,8579), rừng
+ngẫu nhiên (AUC=0,8703), và XGBoost (AUC=0,8714). Mô hình XGBoost vượt
+mục tiêu (AUC \textgreater{} 0,87) với thiết kế đặc trưng có chủ đích.
+Ngưỡng tối ưu theo F2 là t=0,625, giúp Recall đạt 66,9\% và giảm chi phí
+ước tính khoảng 2,01 triệu USD so với ngưỡng tối ưu theo F1. Sản phẩm
+cuối là ứng dụng Streamlit tương tác với giải thích SHAP và đánh giá
+theo lô.
 
-\textbf{Từ khóa:} dự báo vỡ nợ, XGBoost, SHAP, F-beta, imbalanced data.
+\textbf{Từ khóa:} dự báo vỡ nợ, XGBoost, SHAP, F-beta, dữ liệu mất cân
+bằng.
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
@@ -207,10 +209,11 @@ TP/(TP+FP), Recall = TP/(TP+FN). \\
 Recall gấp đôi Precision. \\
 \textbf{SHAP} & Giá trị Shapley --- phân tách dự báo thành đóng góp của
 từng đặc trưng. \\
-\textbf{TreeExplainer} & Thuật toán chuyên biệt tính SHAP cho tree-based
-models. \\
-\textbf{Bagging / Boosting} & Ensemble methods: Bagging độc lập (giảm
-variance), Boosting tuần tự (giảm bias). \\
+\textbf{TreeExplainer} & Thuật toán chuyên biệt tính SHAP cho mô hình
+dạng cây. \\
+\textbf{Bagging / Boosting} & Hai cách học tổ hợp: Bagging huấn luyện
+độc lập để giảm phương sai, Boosting huấn luyện tuần tự để giảm sai
+lệch. \\
 \textbf{Class Imbalance} & Mất cân bằng lớp --- lớp thiểu số chỉ chiếm
 6,68\%. \\
 \textbf{scale\_pos\_weight} & Trọng số XGBoost nâng tầm lớp thiểu số. \\
@@ -235,7 +238,7 @@ variance), Boosting tuần tự (giảm bias). \\
 \item
   Thực nghiệm và Đánh giá
 \item
-  Sản phẩm --- Streamlit Dashboard
+  Sản phẩm --- Ứng dụng Streamlit
 \item
   Kết luận và Hướng phát triển
 \item
@@ -284,7 +287,7 @@ Kết quả
 \endlastfoot
 Xây dựng mô hình & AUC ≥ 0,87 & \textbf{0,8714} \\
 So sánh 4 thuật toán & Bảng đầy đủ & Bảng 4.1 \\
-Feature Engineering & ≥ 2 đặc trưng mới top-5 SHAP & \textbf{2 trong
+Thiết kế đặc trưng & ≥ 2 đặc trưng mới top-5 SHAP & \textbf{2 trong
 top-3} \\
 Tối ưu ngưỡng & F2-optimal & t=0,625, Recall=66,9\% \\
 Demo sản phẩm & Streamlit + SHAP & Đạt \\
@@ -300,7 +303,7 @@ Demo sản phẩm & Streamlit + SHAP & Đạt \\
 \item
   \textbf{Dữ liệu:} Give Me Some Credit (Kaggle, 149.999 hồ sơ có nhãn
   trong \texttt{cs-training.csv}; \texttt{cs-test.csv} là tập nộp dự
-  đoán, không có target thật)
+  đoán, không có nhãn thật)
 \item
   \textbf{Mô hình:} 4 mô hình: LR, DT, RF, XGBoost
 \item
@@ -320,8 +323,8 @@ Demo sản phẩm & Streamlit + SHAP & Đạt \\
 \def\labelenumi{\arabic{enumi}.}
 \tightlist
 \item
-  Xây dựng đầy đủ pipeline từ EDA → tiền xử lý → huấn luyện → đánh giá →
-  diễn giải → demo sản phẩm.
+  Xây dựng đầy đủ quy trình từ khám phá dữ liệu → tiền xử lý → huấn
+  luyện → đánh giá → diễn giải → demo sản phẩm.
 \item
   Thiết kế 4 đặc trưng mới có ý nghĩa nghiệp vụ, trong đó 2 đặc trưng
   vào top-3 theo SHAP.
@@ -329,9 +332,9 @@ Demo sản phẩm & Streamlit + SHAP & Đạt \\
   Chuẩn hóa cách chọn ngưỡng triển khai theo F2-score để ưu tiên giảm bỏ
   sót hồ sơ rủi ro.
 \item
-  Đóng gói thành dashboard Streamlit hỗ trợ dự báo đơn lẻ, đánh giá
-  batch cho tập khách hàng, và mô phỏng hậu kiểm nếu file upload có
-  target thật.
+  Đóng gói thành ứng dụng Streamlit hỗ trợ dự báo đơn lẻ, đánh giá theo
+  lô cho tập khách hàng, và mô phỏng hậu kiểm nếu file tải lên có nhãn
+  thật.
 \end{enumerate}
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
@@ -467,7 +470,8 @@ gradient descent ổn định) - Không cần cho tree-based
 
 \FloatBarrier
 \Needspace{8\baselineskip}
-\subsection{3.3 Feature Engineering}\label{feature-engineering}
+\subsection{3.3 Thiết kế đặc
+trưng}\label{thiux1ebft-kux1ebf-ux111ux1eb7c-trux1b0ng}
 
 \textbf{4 đặc trưng tự thiết kế:} 1. \texttt{TotalDelinquencyScore} =
 3×(90+) + 2×(60-89) + 1×(30-59) 2. \texttt{FinancialStressIndex} =
@@ -501,12 +505,6 @@ EDA}\label{insight-quan-trux1ecdng-tux1eeb-eda}
 
 \begin{figure}
 \centering
-\pandocbounded{\includegraphics[keepaspectratio,alt={Heatmap tương quan}]{../reports/fig_05_correlation_heatmap.png}}
-\caption{Heatmap tương quan}
-\end{figure}
-
-\begin{figure}
-\centering
 \pandocbounded{\includegraphics[keepaspectratio,alt={Phân tích nhóm trễ hạn}]{../reports/fig_07_delinquency_analysis.png}}
 \caption{Phân tích nhóm trễ hạn}
 \end{figure}
@@ -523,9 +521,9 @@ GIÁ}\label{chux1b0ux1a1ng-4-thux1ef1c-nghiux1ec7m-vuxe0-ux111uxe1nh-giuxe1}
 \subsection{4.1 Thiết kế thử
 nghiệm}\label{thiux1ebft-kux1ebf-thux1eed-nghiux1ec7m}
 
-\textbf{Chiến lược tách tập:} - Train: 104.999 (70\%) - Validation:
-22.500 (15\%) - Test: 22.500 (15\%) - Stratified K-Fold (k=5) để cân
-bằng lớp
+\textbf{Chiến lược tách tập:} - Tập huấn luyện: 104.999 (70\%) - Tập
+kiểm định: 22.500 (15\%) - Tập kiểm tra: 22.500 (15\%) - Stratified
+K-Fold (k=5) để cân bằng lớp
 
 \FloatBarrier
 \Needspace{8\baselineskip}
@@ -547,7 +545,7 @@ Mô hình
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
 AUC-ROC
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-F1-score
+F1
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
 Recall
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
@@ -580,9 +578,10 @@ AUC≥0,87).
 \Needspace{8\baselineskip}
 \subsection{4.3 Phân tích SHAP}\label{phuxe2n-tuxedch-shap}
 
-TreeExplainer trên XGBoost:
+SHAP TreeExplainer được dùng để giải thích mô hình XGBoost:
 
-\emph{Bảng 4.2 --- Top-10 đặc trưng (SHAP mean\textbar value\textbar)}
+\emph{Bảng 4.2 --- 10 đặc trưng quan trọng nhất theo giá trị SHAP trung
+bình}
 
 {\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}lll@{}}
@@ -608,22 +607,16 @@ Rank & Đặc trưng & SHAP \\
 \caption{Tầm quan trọng đặc trưng theo SHAP}
 \end{figure}
 
-\begin{figure}
-\centering
-\pandocbounded{\includegraphics[keepaspectratio,alt={SHAP dependence cho đặc trưng chính}]{../reports/fig_27_shap_dependence.png}}
-\caption{SHAP dependence cho đặc trưng chính}
-\end{figure}
-
 \FloatBarrier
 \Needspace{8\baselineskip}
-\subsection{4.4 Tối ưu ngưỡng
-(F2-optimal)}\label{tux1ed1i-ux1b0u-ngux1b0ux1ee1ng-f2-optimal}
+\subsection{4.4 Tối ưu ngưỡng theo
+F2}\label{tux1ed1i-ux1b0u-ngux1b0ux1ee1ng-theo-f2}
 
 Ngưỡng Bayes tối ưu (chi phí Fraud=1, Decile=14):
 \[t^* = \frac{c_{FP}}{c_{FP}+c_{FN}} = \frac{500}{500+11.250} \approx 0,043\]
 Tuy nhiên quá thấp (\textasciitilde74\% từ chối).
 
-\textbf{F2-optimal threshold:} -
+\textbf{Ngưỡng tối ưu theo F2:} -
 \(F_2 = 5 \cdot \frac{P \cdot R}{4P+R}\) (ưu tiên Recall) - Tìm kiếm từ
 0,05 đến 0,95: \textbf{t = 0,625} - Recall = 66,9\%, Precision = 29,9\%,
 F2 = 0,537
@@ -678,24 +671,12 @@ ro}\label{phuxe2n-tuxedch-lux1ed7i-vuxe0-phuxe2n-bux1ed1-ux111iux1ec3m-rux1ee7i-
 \begin{itemize}
 \tightlist
 \item
-  Nhóm lỗi chính nằm ở vùng điểm rủi ro trung gian (near-threshold),
-  phản ánh các hồ sơ có tín hiệu mâu thuẫn.
+  Nhóm lỗi chính nằm ở vùng điểm rủi ro sát ngưỡng, phản ánh các hồ sơ
+  có tín hiệu mâu thuẫn.
 \item
-  Việc kiểm soát vùng này bằng quy trình ``manual review'' giúp giảm FP
-  không làm tăng mạnh FN.
+  Việc kiểm soát vùng này bằng quy trình rà soát thủ công giúp giảm FP
+  mà không làm tăng mạnh FN.
 \end{itemize}
-
-\begin{figure}
-\centering
-\pandocbounded{\includegraphics[keepaspectratio,alt={Phân bố điểm rủi ro}]{../reports/fig_24_score_distribution.png}}
-\caption{Phân bố điểm rủi ro}
-\end{figure}
-
-\begin{figure}
-\centering
-\pandocbounded{\includegraphics[keepaspectratio,alt={Hồ sơ sai số theo phân phối}]{../reports/fig_22_error_profile_hist.png}}
-\caption{Hồ sơ sai số theo phân phối}
-\end{figure}
 
 \FloatBarrier
 \Needspace{8\baselineskip}
@@ -705,31 +686,19 @@ kê}\label{hiux1ec7u-chux1ec9nh-xuxe1c-suux1ea5t-vuxe0-ux111ux1ed9-tin-cux1eady-
 \begin{itemize}
 \tightlist
 \item
-  Calibration cho thấy xác suất dự báo của mô hình sau hiệu chỉnh gần
-  xác suất thực hơn.
+  Hiệu chỉnh xác suất cho thấy xác suất dự báo của mô hình sau hiệu
+  chỉnh gần xác suất thực hơn.
 \item
   DeLong test được dùng để kiểm tra khác biệt AUC giữa các mô hình có đủ
   ý nghĩa thống kê hay không.
 \end{itemize}
 
-\begin{figure}
-\centering
-\pandocbounded{\includegraphics[keepaspectratio,alt={Biểu đồ calibration}]{../reports/fig_31_calibration.png}}
-\caption{Biểu đồ calibration}
-\end{figure}
-
-\begin{figure}
-\centering
-\pandocbounded{\includegraphics[keepaspectratio,alt={Tóm tắt DeLong test}]{../reports/fig_32_delong_summary.png}}
-\caption{Tóm tắt DeLong test}
-\end{figure}
-
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
 \clearpage
 \FloatBarrier
-\section{CHƯƠNG 5: SẢN PHẨM --- STREAMLIT
-DASHBOARD}\label{chux1b0ux1a1ng-5-sux1ea3n-phux1ea9m-streamlit-dashboard}
+\section{CHƯƠNG 5: SẢN PHẨM --- ỨNG DỤNG
+STREAMLIT}\label{chux1b0ux1a1ng-5-sux1ea3n-phux1ea9m-ux1ee9ng-dux1ee5ng-streamlit}
 
 \FloatBarrier
 \Needspace{8\baselineskip}
@@ -745,33 +714,33 @@ DASHBOARD}\label{chux1b0ux1a1ng-5-sux1ea3n-phux1ea9m-streamlit-dashboard}
   \item
     Nhập thông tin khách hàng
   \item
-    Hiển thị xác suất vỡ nợ + Quyết định (Approve/Reject)
+    Hiển thị xác suất vỡ nợ + quyết định (Duyệt/Từ chối)
   \item
-    SHAP waterfall chart giải thích
+    Biểu đồ SHAP dạng waterfall để giải thích dự báo
   \end{itemize}
 \item
-  \textbf{Tab 2: Đánh giá batch}
+  \textbf{Tab 2: Đánh giá theo lô}
 
   \begin{itemize}
   \tightlist
   \item
-    Upload CSV/XLSX để dự báo theo lô và xuất kết quả
+    Tải lên CSV/XLSX để dự báo theo lô và xuất kết quả
   \item
-    Threshold slider (default 0,625)
+    Thanh chọn ngưỡng quyết định, mặc định 0,625
   \item
-    Nếu file có target \texttt{SeriousDlqin2yrs} dạng 0/1: tính AUC,
-    Recall, Precision, F2, ROC, PR, calibration, ma trận nhầm lẫn và tác
-    động chi phí
+    Nếu file có cột nhãn thật \texttt{SeriousDlqin2yrs} dạng 0/1: tính
+    AUC, Recall, Precision, F2, ROC/PR, hiệu chỉnh xác suất, ma trận
+    nhầm lẫn và tác động chi phí
   \item
-    Segment summary (Income quartile, Age group)
+    Tóm tắt theo phân khúc thu nhập và nhóm tuổi
   \end{itemize}
 \end{itemize}
 
-\textbf{Ghi chú về demo dữ liệu thực tế khi chạy thử:} Đây là mô phỏng
-hậu kiểm theo lô bằng dữ liệu có nhãn từ tập training gốc. Với dữ liệu
-vận hành thật, target sẽ được bổ sung sau kỳ quan sát để đo lại
-AUC/Recall/Precision/F2. Không sử dụng tập test Kaggle để benchmark vì
-tập này không có target thật; file mẫu của cuộc thi chỉ là mẫu nộp xác
+\textbf{Ghi chú về dữ liệu chạy thử:} Đây là mô phỏng hậu kiểm theo lô
+bằng dữ liệu có nhãn từ tập huấn luyện gốc. Với dữ liệu vận hành thật,
+cột nhãn thật sẽ được bổ sung sau kỳ quan sát để đo lại
+AUC/Recall/Precision/F2. Không sử dụng tập kiểm tra Kaggle để hậu kiểm
+vì tập này không có nhãn thật; file mẫu của cuộc thi chỉ là mẫu nộp xác
 suất dự đoán, không phải nhãn đúng 0/1.
 
 \FloatBarrier
@@ -779,24 +748,18 @@ suất dự đoán, không phải nhãn đúng 0/1.
 \subsection{5.2 Truy cập nhanh ứng
 dụng}\label{truy-cux1eadp-nhanh-ux1ee9ng-dux1ee5ng}
 
-Ứng dụng có thể chạy trực tiếp tại:
-\url{https://doandanhlong-loan-prediction.streamlit.app}. Link này giúp
-người đọc kiểm tra nhanh dự báo đơn lẻ, đánh giá theo lô và các biểu đồ
-benchmark mà không cần tự host local.
-
-\begin{figure}
-\centering
-\pandocbounded{\includegraphics[keepaspectratio,alt={Link truy cập nhanh ứng dụng Streamlit}]{../reports/fig_37_streamlit_quick_access.png}}
-\caption{Link truy cập nhanh ứng dụng Streamlit}
-\end{figure}
+Ứng dụng demo: \url{https://doandanhlong-loan-prediction.streamlit.app}.
+Link này giúp người đọc kiểm tra nhanh dự báo đơn lẻ và đánh giá theo lô
+mà không cần tự chạy trên máy cá nhân.
 
 \FloatBarrier
 \Needspace{8\baselineskip}
 \subsection{5.3 Chạy thử hậu kiểm theo
 lô}\label{chux1ea1y-thux1eed-hux1eadu-kiux1ec3m-theo-luxf4}
 
-Để kiểm tra chức năng benchmark của Streamlit bằng dữ liệu có nhãn, đồ
-án tạo file \texttt{data/raw/batch\_demo\_from\_training\_5000.csv} từ
+Để kiểm tra chức năng hậu kiểm theo lô của Streamlit bằng dữ liệu có
+nhãn, đồ án tạo file
+\texttt{data/raw/batch\_demo\_from\_training\_5000.csv} từ
 \texttt{cs-training.csv}. File này gồm 5.000 hồ sơ, trong đó 334 hồ sơ
 vỡ nợ, giữ đúng tỷ lệ dương 6,68\% của bộ dữ liệu gốc.
 
@@ -823,11 +786,11 @@ Tiết kiệm mô phỏng & 2.293.000 USD \\
 \end{longtable}
 }
 
-Kết quả này cho thấy batch benchmark trong app không chỉ hiển thị metric
-ML mà còn quy đổi sang tác động kinh doanh: số hồ sơ từ chối đúng, từ
-chối nhầm, bỏ sót nợ xấu và chi phí tương ứng. Đây là mô phỏng hậu kiểm
-bằng dữ liệu training có nhãn; trong vận hành thật, target chỉ xuất hiện
-sau kỳ quan sát.
+Kết quả này cho thấy phần hậu kiểm theo lô trong ứng dụng không chỉ hiển
+thị chỉ số học máy mà còn quy đổi sang tác động kinh doanh: số hồ sơ từ
+chối đúng, từ chối nhầm, bỏ sót nợ xấu và chi phí tương ứng. Đây là mô
+phỏng hậu kiểm bằng dữ liệu huấn luyện có nhãn; trong vận hành thật,
+nhãn thật chỉ xuất hiện sau kỳ quan sát.
 
 Diễn giải theo ma trận nhầm lẫn: TP = 228 hồ sơ vỡ nợ được chặn đúng, FP
 = 544 hồ sơ tốt bị từ chối nhầm, FN = 106 hồ sơ vỡ nợ bị bỏ sót, và TN =
@@ -835,20 +798,20 @@ Diễn giải theo ma trận nhầm lẫn: TP = 228 hồ sơ vỡ nợ được 
 
 \begin{figure}
 \centering
-\pandocbounded{\includegraphics[keepaspectratio,alt={Phân bố xác suất và nhóm rủi ro trên batch demo}]{../reports/fig_33_batch_demo_distribution.png}}
-\caption{Phân bố xác suất và nhóm rủi ro trên batch demo}
+\pandocbounded{\includegraphics[keepaspectratio,alt={Phân bố xác suất và nhóm rủi ro trên demo theo lô}]{../reports/fig_33_batch_demo_distribution.png}}
+\caption{Phân bố xác suất và nhóm rủi ro trên demo theo lô}
 \end{figure}
 
 \begin{figure}
 \centering
-\pandocbounded{\includegraphics[keepaspectratio,alt={Ma trận nhầm lẫn trên batch demo}]{../reports/fig_34_batch_demo_confusion.png}}
-\caption{Ma trận nhầm lẫn trên batch demo}
+\pandocbounded{\includegraphics[keepaspectratio,alt={Ma trận nhầm lẫn trên demo theo lô}]{../reports/fig_34_batch_demo_confusion.png}}
+\caption{Ma trận nhầm lẫn trên demo theo lô}
 \end{figure}
 
 \begin{figure}
 \centering
-\pandocbounded{\includegraphics[keepaspectratio,alt={Tác động chi phí trên batch demo}]{../reports/fig_35_batch_demo_cost.png}}
-\caption{Tác động chi phí trên batch demo}
+\pandocbounded{\includegraphics[keepaspectratio,alt={Tác động chi phí trên demo theo lô}]{../reports/fig_35_batch_demo_cost.png}}
+\caption{Tác động chi phí trên demo theo lô}
 \end{figure}
 
 \FloatBarrier
@@ -862,8 +825,8 @@ tương đối ổn trên tập đánh giá ngoài.
 
 \begin{figure}
 \centering
-\pandocbounded{\includegraphics[keepaspectratio,alt={Kết quả submission Kaggle}]{../reports/fig_36_kaggle_submission_result.png}}
-\caption{Kết quả submission Kaggle}
+\pandocbounded{\includegraphics[keepaspectratio,alt={Kết quả nộp thử Kaggle}]{../reports/fig_36_kaggle_submission_result.png}}
+\caption{Kết quả nộp thử Kaggle}
 \end{figure}
 
 \FloatBarrier
@@ -877,7 +840,7 @@ tương đối ổn trên tập đánh giá ngoài.
 \item
   scikit-learn, XGBoost, SHAP
 \item
-  Cache dữ liệu + SHAP TreeExplainer (tối ưu hiệu năng)
+  Bộ nhớ đệm dữ liệu + SHAP TreeExplainer để tối ưu hiệu năng
 \end{itemize}
 
 \FloatBarrier
@@ -892,18 +855,12 @@ tế}\label{giuxe1-trux1ecb-sux1eed-dux1ee5ng-trong-thux1ef1c-tux1ebf}
   \textbf{Đối với thẩm định viên:} có xác suất rủi ro + giải thích đặc
   trưng để quyết định nhanh hơn.
 \item
-  \textbf{Đối với quản trị rủi ro:} theo dõi chất lượng mô hình qua
-  batch evaluation và threshold tuning.
+  \textbf{Đối với quản trị rủi ro:} theo dõi chất lượng mô hình qua đánh
+  giá theo lô và điều chỉnh ngưỡng.
 \item
   \textbf{Đối với khách hàng cuối:} tăng tính minh bạch vì quyết định có
   căn cứ dữ liệu và có thể giải thích.
 \end{enumerate}
-
-\begin{figure}
-\centering
-\pandocbounded{\includegraphics[keepaspectratio,alt={Dashboard phân tích tổng hợp}]{../reports/fig_30_analysis_dashboard.png}}
-\caption{Dashboard phân tích tổng hợp}
-\end{figure}
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
@@ -922,10 +879,10 @@ TRIỂN}\label{chux1b0ux1a1ng-6-kux1ebft-luux1eadn-vuxe0-hux1b0ux1edbng-phuxe1t-
 \item
   XGBoost đạt AUC=0,8714, vượt mục tiêu 0,87
 \item
-  Feature engineering có chủ đích (2 đặc trưng tự thiết kế vào top-3
+  Thiết kế đặc trưng có chủ đích (2 đặc trưng tự thiết kế vào top-3
   SHAP)
 \item
-  F2-optimal threshold (0,625) cân bằng Recall-Precision phù hợp tín
+  Ngưỡng tối ưu theo F2 (0,625) cân bằng Recall-Precision phù hợp tín
   dụng
 \item
   SHAP giải thích từng quyết định, tuân thủ quy định (Basel III, GDPR)
@@ -957,7 +914,7 @@ triển}\label{hux1b0ux1edbng-phuxe1t-triux1ec3n}
   \item
     Neural network với attention (tầm quan trọng động)
   \item
-    Temporal modeling (LSTM cho chuỗi thời gian)
+    Mô hình hóa theo thời gian (LSTM cho chuỗi thời gian)
   \item
     Ensemble meta-learner
   \end{itemize}
@@ -977,11 +934,11 @@ triển}\label{hux1b0ux1edbng-phuxe1t-triux1ec3n}
   \begin{itemize}
   \tightlist
   \item
-    A/B test ngưỡng trên dữ liệu mới
+    Thử nghiệm A/B cho ngưỡng trên dữ liệu mới
   \item
-    Drift detection (giám sát hiệu năng model)
+    Giám sát trôi dữ liệu và suy giảm hiệu năng mô hình
   \item
-    Feedback loop cập nhật mô hình
+    Vòng phản hồi để cập nhật mô hình
   \end{itemize}
 \end{enumerate}
 
@@ -1018,14 +975,14 @@ Guide''. Christoph Molnar.
 
 \FloatBarrier
 \Needspace{8\baselineskip}
-\subsection{A. Chi tiết tính toán Feature
-Engineering}\label{a.-chi-tiux1ebft-tuxednh-touxe1n-feature-engineering}
+\subsection{A. Chi tiết tính toán đặc trưng tự thiết
+kế}\label{a.-chi-tiux1ebft-tuxednh-touxe1n-ux111ux1eb7c-trux1b0ng-tux1ef1-thiux1ebft-kux1ebf}
 
-\textbf{TotalDelinquencyScore:} - Input: DelinquencyStatus với 7 giá trị
-(0, 30, 60, 90, 120, \ldots) - Quy tắc: 3×(90+) + 2×(60-89) + 1×(30-59)
-- Ý tưởng: Penalize trễ hạn kéo dài hơn
+\textbf{TotalDelinquencyScore:} - Đầu vào: DelinquencyStatus với 7 giá
+trị (0, 30, 60, 90, 120, \ldots) - Quy tắc: 3×(90+) + 2×(60-89) +
+1×(30-59) - Ý tưởng: phạt nặng hơn các trạng thái trễ hạn kéo dài.
 
-\textbf{FinancialStressIndex:} - Input:
+\textbf{FinancialStressIndex:} - Đầu vào:
 RevolvingUtilizationOfUnsecuredLines (0-1), TotalDelinquencyScore - Công
 thức: FSI = RevolvingUtil × TotalDelinquencyScore - Ý tưởng: Khách hàng
 dùng hết hạn mức + trễ hạn = stress cao
@@ -1056,16 +1013,15 @@ XGBoost}\label{b.-siuxeau-tham-sux1ed1-xgboost}
 
 \FloatBarrier
 \Needspace{8\baselineskip}
-\subsection{C. Ghi chú về benchmark theo lô và
-Kaggle}\label{c.-ghi-chuxfa-vux1ec1-benchmark-theo-luxf4-vuxe0-kaggle}
+\subsection{C. Ghi chú về hậu kiểm theo lô và
+Kaggle}\label{c.-ghi-chuxfa-vux1ec1-hux1eadu-kiux1ec3m-theo-luxf4-vuxe0-kaggle}
 
-Benchmark theo lô trong Streamlit cần file có target
-\texttt{SeriousDlqin2yrs} dạng 0/1. Đây là mô phỏng hậu kiểm theo lô
-bằng dữ liệu có nhãn từ tập training gốc. Với dữ liệu vận hành thật,
-target sẽ được bổ sung sau kỳ quan sát để đo lại
-AUC/Recall/Precision/F2.
+Hậu kiểm theo lô trong Streamlit cần file có cột nhãn thật
+\texttt{SeriousDlqin2yrs} dạng 0/1. Đây là mô phỏng hậu kiểm bằng dữ
+liệu có nhãn từ tập huấn luyện gốc. Với dữ liệu vận hành thật, nhãn thật
+sẽ được bổ sung sau kỳ quan sát để đo lại AUC/Recall/Precision/F2.
 
-Tập test Kaggle không có target thật nên chỉ dùng để tạo file nộp dự
+Tập kiểm tra Kaggle không có nhãn thật nên chỉ dùng để tạo file nộp dự
 đoán. File mẫu của cuộc thi là mẫu nộp xác suất dự đoán, không phải nhãn
 đúng.
 
@@ -1073,13 +1029,13 @@ Tập test Kaggle không có target thật nên chỉ dùng để tạo file n�
 
 \FloatBarrier
 \Needspace{8\baselineskip}
-\subsection{D. Probability
-Calibration}\label{d.-probability-calibration}
+\subsection{D. Hiệu chỉnh xác
+suất}\label{d.-hiux1ec7u-chux1ec9nh-xuxe1c-suux1ea5t}
 
-Brier Score trên test set: - XGBoost thô: 0,0582 - Sau Platt Scaling:
-0,0478 (cải thiện 17,9\%)
+Brier Score (điểm Brier) trên tập kiểm tra: - XGBoost thô: 0,0582 - Sau
+Platt Scaling: 0,0478 (cải thiện 17,9\%)
 
-Expected Calibration Error (ECE): - XGBoost thô: 3,2\% - Sau Platt
+Sai số hiệu chỉnh kỳ vọng (ECE): - XGBoost thô: 3,2\% - Sau Platt
 Scaling: 1,9\%
 
 → Xác suất sau hiệu chỉnh gần thực tế hơn.
@@ -1088,19 +1044,11 @@ Scaling: 1,9\%
 
 \FloatBarrier
 \Needspace{8\baselineskip}
-\subsection{E. Bản phóng to / hình kỹ thuật chi
-tiết}\label{e.-bux1ea3n-phuxf3ng-to-huxecnh-kux1ef9-thuux1eadt-chi-tiux1ebft}
+\subsection{E. Hình kỹ thuật xem
+thêm}\label{e.-huxecnh-kux1ef9-thuux1eadt-xem-thuxeam}
 
-Các hình dưới đây lặp lại các trực quan kỹ thuật quan trọng ở dạng tách
-riêng, giúp người đọc bản in giấy kiểm tra rõ hơn khi cần.
-
-\clearpage
-
-\begin{figure}
-\centering
-\pandocbounded{\includegraphics[keepaspectratio,alt={Tổng quan giá trị thiếu}]{../reports/fig_02_missing_values.png}}
-\caption{Tổng quan giá trị thiếu}
-\end{figure}
+Các hình dưới đây phục vụ kiểm tra sâu hơn. Phần chính chỉ giữ các hình
+cần cho mạch đọc, phụ lục không lặp lại các hình chính.
 
 \clearpage
 
@@ -1114,24 +1062,8 @@ riêng, giúp người đọc bản in giấy kiểm tra rõ hơn khi cần.
 
 \begin{figure}
 \centering
-\pandocbounded{\includegraphics[keepaspectratio,alt={Phân tích nhóm trễ hạn}]{../reports/fig_07_delinquency_analysis.png}}
-\caption{Phân tích nhóm trễ hạn}
-\end{figure}
-
-\clearpage
-
-\begin{figure}
-\centering
 \pandocbounded{\includegraphics[keepaspectratio,alt={SHAP dependence cho đặc trưng chính}]{../reports/fig_27_shap_dependence.png}}
 \caption{SHAP dependence cho đặc trưng chính}
-\end{figure}
-
-\clearpage
-
-\begin{figure}
-\centering
-\pandocbounded{\includegraphics[keepaspectratio,alt={Tối ưu ngưỡng vận hành}]{../reports/fig_25_threshold_optimization.png}}
-\caption{Tối ưu ngưỡng vận hành}
 \end{figure}
 
 \clearpage
@@ -1170,16 +1102,8 @@ riêng, giúp người đọc bản in giấy kiểm tra rõ hơn khi cần.
 
 \begin{figure}
 \centering
-\pandocbounded{\includegraphics[keepaspectratio,alt={Phân bố xác suất và nhóm rủi ro trên batch demo}]{../reports/fig_33_batch_demo_distribution.png}}
-\caption{Phân bố xác suất và nhóm rủi ro trên batch demo}
-\end{figure}
-
-\clearpage
-
-\begin{figure}
-\centering
-\pandocbounded{\includegraphics[keepaspectratio,alt={Dashboard phân tích tổng hợp}]{../reports/fig_30_analysis_dashboard.png}}
-\caption{Dashboard phân tích tổng hợp}
+\pandocbounded{\includegraphics[keepaspectratio,alt={Bảng điều khiển phân tích tổng hợp}]{../reports/fig_30_analysis_dashboard.png}}
+\caption{Bảng điều khiển phân tích tổng hợp}
 \end{figure}
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}

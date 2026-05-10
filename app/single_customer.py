@@ -17,7 +17,7 @@ def _build_dataframe(
     revolving_util, age, n30_59, debt_ratio, monthly_income,
     n_open, n90, n_realestate, n60_89, n_dependents
 ) -> pd.DataFrame:
-    """Xây dựng DataFrame 1 dòng với đầy đủ features."""
+    """Xây dựng DataFrame 1 dòng với đầy đủ đặc trưng."""
     total_delinq = n90 * 3 + n60_89 * 2 + n30_59 * 1
     financial_stress = revolving_util * total_delinq
     dti = debt_ratio * monthly_income
@@ -131,9 +131,9 @@ def render(model) -> None:
             st.markdown("---")
             st.subheader("📖 Giới thiệu ứng dụng")
             st.markdown("""
-            - **Mô hình**: XGBoost huấn luyện trên 104.999 hồ sơ (train split của bộ dữ liệu 149.999 hồ sơ)
+            - **Mô hình**: XGBoost huấn luyện trên 104.999 hồ sơ (tập huấn luyện của bộ dữ liệu 149.999 hồ sơ)
             - **Đặc trưng**: 10 đặc trưng gốc + 4 đặc trưng kỹ thuật (tự động tính)
             - **Chỉ số**: AUC-ROC = 0,8714 (tập kiểm tra)
             - **Ngưỡng**: 0,625 — duyệt nếu P(vỡ nợ) < 0,625
-            - **Top features**: Tỷ lệ sử dụng tín dụng, lịch sử trễ hạn, tuổi
+            - **Đặc trưng quan trọng**: Tỷ lệ sử dụng tín dụng, lịch sử trễ hạn, tuổi
             """)

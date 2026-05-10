@@ -11,10 +11,10 @@
 | Chỉ số | Giá trị |
 |---|---|
 | **AUC-ROC tốt nhất** | **0,8714** (XGBoost) |
-| **Recall ở ngưỡng triển khai 0,625** | **66,9%** — tăng từ 51,6% ở ngưỡng F1-optimal |
-| **Ngưỡng từ chối** | **0,625** — tối ưu F2-score |
-| **Tiết kiệm ước tính** | **~2,01 triệu USD** so với ngưỡng F1-optimal trên test set |
-| **Top features** | FinancialStressIndex, TotalDelinquencyScore — **2/3 tự tạo** |
+| **Recall ở ngưỡng triển khai 0,625** | **66,9%** — tăng từ 51,6% ở ngưỡng tối ưu theo F1 |
+| **Ngưỡng từ chối** | **0,625** — tối ưu theo F2 |
+| **Tiết kiệm ước tính** | **~2,01 triệu USD** so với ngưỡng tối ưu theo F1 trên tập kiểm tra |
+| **Đặc trưng quan trọng nhất** | FinancialStressIndex, TotalDelinquencyScore — **2/3 là đặc trưng tự thiết kế** |
 
 ---
 
@@ -23,7 +23,7 @@
 Dự báo khách hàng có vỡ nợ trong **2 năm tới** hay không, dựa trên thông tin tài chính lịch sử.
 
 - **Dữ liệu:** 149.999 hồ sơ vay (Kaggle — Give Me Some Credit)
-- **Mất cân bằng:** Chỉ **6.68%** vỡ nợ → không thể chỉ dùng Accuracy
+- **Mất cân bằng:** Chỉ **6,68%** vỡ nợ → không thể chỉ dùng độ chính xác tổng thể (Accuracy)
 
 ![Phân bố lớp mục tiêu](../reports/fig_01_target_distribution.png)
 
@@ -31,14 +31,14 @@ Dự báo khách hàng có vỡ nợ trong **2 năm tới** hay không, dựa tr
 
 ## Quy trình hoạt động ra sao?
 
-![Sơ đồ pipeline](../reports/visual_summary/fig_vs_01_pipeline_overview.png)
+![Sơ đồ quy trình](../reports/visual_summary/fig_vs_01_pipeline_overview.png)
 
 1. **Dữ liệu thô** — 10 đặc trưng tài chính
-2. **EDA** — phát hiện outlier, tương quan
-3. **Tiền xử lý** — KNN Imputer, feature engineering
+2. **Khám phá dữ liệu (EDA)** — phát hiện ngoại lệ và tương quan
+3. **Tiền xử lý** — điền giá trị thiếu bằng KNN và thiết kế đặc trưng
 4. **Mô hình** — so sánh 4 thuật toán: LR, DT, RF, **XGBoost**
 5. **Giải thích** — SHAP TreeExplainer
-6. **Ứng dụng** — Streamlit dashboard
+6. **Ứng dụng** — bảng điều khiển Streamlit
 
 ---
 
@@ -50,7 +50,7 @@ Dự báo khách hàng có vỡ nợ trong **2 năm tới** hay không, dựa tr
 - **TotalDelinquencyScore** = 3×(trễ 90+) + 2×(trễ 60-89) + 1×(trễ 30-59) → **tự tạo**
 - **RevolvingUtilizationOfUnsecuredLines** — tỷ lệ sử dụng hạn mức → gốc
 
-→ **2 trong 3 yếu tố quan trọng nhất là features tự thiết kế**
+→ **2 trong 3 yếu tố quan trọng nhất là đặc trưng tự thiết kế**
 
 ---
 
@@ -66,24 +66,26 @@ Dự báo khách hàng có vỡ nợ trong **2 năm tới** hay không, dựa tr
 
 ---
 
-## Tại sao chọn ngưỡng 0.625 thay vì 0.5?
+## Tại sao chọn ngưỡng 0,625 thay vì 0,5?
 
 ![Tối ưu hóa ngưỡng](../reports/fig_25_threshold_optimization.png)
 
 Trong tín dụng: **bỏ sót 1 người sẽ vỡ nợ (FN)** tốn kém hơn nhiều so với **từ chối nhầm người tốt (FP)**.
 
-- Ngưỡng F1-optimal (0,77): Recall = 51,6% → bỏ sót 48,4%
-- Ngưỡng F2-optimal **(0,625): Recall = 66,9% → giảm khoảng 2,01 triệu USD so với ngưỡng F1-optimal**
+- Ngưỡng tối ưu theo F1 (0,77): Recall = 51,6% → bỏ sót 48,4%
+- Ngưỡng tối ưu theo F2 **(0,625): Recall = 66,9% → giảm khoảng 2,01 triệu USD so với ngưỡng tối ưu theo F1**
 
 F2-score ưu tiên Recall gấp đôi Precision — phù hợp logic kinh doanh.
 
 ---
 
-## Demo batch và kiểm tra Kaggle
+## Demo theo lô và kiểm tra Kaggle
 
-Streamlit có thể upload CSV/XLSX để dự báo theo lô. Nếu file có thêm cột `SeriousDlqin2yrs` dạng 0/1, app sẽ mô phỏng hậu kiểm và tính AUC/Recall/Precision/F2 cùng tác động chi phí.
+Ứng dụng Streamlit: <https://doandanhlong-loan-prediction.streamlit.app>
 
-**Lưu ý khi demo:** Đây là mô phỏng hậu kiểm theo lô bằng dữ liệu có nhãn từ tập training gốc. Với dữ liệu vận hành thật, target sẽ được bổ sung sau kỳ quan sát để đo lại AUC/Recall/Precision/F2.
+Streamlit có thể tải CSV/XLSX để dự báo theo lô. Nếu file có thêm cột nhãn thật `SeriousDlqin2yrs` dạng 0/1, ứng dụng sẽ mô phỏng hậu kiểm và tính AUC/Recall/Precision/F2 cùng tác động chi phí.
+
+**Lưu ý khi demo:** Đây là mô phỏng hậu kiểm theo lô bằng dữ liệu có nhãn từ tập huấn luyện gốc. Với dữ liệu vận hành thật, nhãn thật sẽ được bổ sung sau kỳ quan sát để đo lại AUC/Recall/Precision/F2.
 
 Kết quả chạy thật trên file demo 5.000 hồ sơ:
 
@@ -95,11 +97,11 @@ Kết quả chạy thật trên file demo 5.000 hồ sơ:
 | Chi phí dùng mô hình | 1.464.500 USD |
 | Tiết kiệm so với duyệt tất cả | 2.293.000 USD |
 
-![Phân bố batch demo](../reports/fig_33_batch_demo_distribution.png)
+![Phân bố demo theo lô](../reports/fig_33_batch_demo_distribution.png)
 
 ![Chi phí batch demo](../reports/fig_35_batch_demo_cost.png)
 
-Với Kaggle, tập test không có target thật nên không dùng để benchmark. Kết quả nộp thử đạt **Public Score = 0,85785**, **Private Score = 0,86482**.
+Với Kaggle, tập kiểm tra không có nhãn thật nên không dùng để hậu kiểm. Kết quả nộp thử đạt **Public Score = 0,85785**, **Private Score = 0,86482**.
 
 ![Kết quả Kaggle](../reports/fig_36_kaggle_submission_result.png)
 
@@ -109,9 +111,8 @@ Với Kaggle, tập test không có target thật nên không dùng để benchm
 
 | Tài liệu | Mô tả |
 |---|---|
-| `final_report/bao_cao_chinh.md` | Báo cáo đầy đủ 6 chương (~800 dòng) |
-| `presentation/slide_executive_summary.md` | 7 slides cho người không chuyên |
-| `presentation/defense_guide.md` | Q&A + toán học chi tiết bảo vệ |
-| `app/app.py` — `streamlit run app/app.py` | Dashboard tương tác |
-- Defense/Q&A kỹ thuật: `presentation/defense_guide.md`
-- Demo app: `streamlit run app/app.py`
+| `final_report/bao_cao_chinh.pdf` | Báo cáo chính để nộp/chấm |
+| `final_report/bao_cao_chinh.md` | Nguồn Markdown của báo cáo |
+| `app/app.py` — `streamlit run app/app.py` | Ứng dụng tương tác |
+| `README.md` | Hướng dẫn đọc repo và chạy nhanh |
+- Demo app: <https://doandanhlong-loan-prediction.streamlit.app>

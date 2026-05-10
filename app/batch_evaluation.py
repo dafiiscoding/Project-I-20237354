@@ -1,4 +1,4 @@
-"""Tab 2: Đánh giá theo lô (CSV/XLSX upload)."""
+"""Tab 2: Đánh giá theo lô bằng CSV/XLSX."""
 
 import sys
 import numpy as np
@@ -37,19 +37,19 @@ def _get_demo_sources() -> list[tuple[str, Path]]:
 
     sources = []
     if batch_full.exists():
-        sources.append(("Demo hậu kiểm 5.000 dòng từ training (có target)", batch_full))
+        sources.append(("Demo hậu kiểm 5.000 dòng từ tập huấn luyện (có nhãn thật)", batch_full))
     elif batch_sample.exists():
-        sources.append(("Demo hậu kiểm 5.000 dòng từ training (có target)", batch_sample))
+        sources.append(("Demo hậu kiểm 5.000 dòng từ tập huấn luyện (có nhãn thật)", batch_sample))
 
     if kaggle_sample.exists():
-        sources.append(("Demo dự đoán Kaggle test mẫu (không target)", kaggle_sample))
+        sources.append(("Demo dự đoán mẫu Kaggle (không có nhãn thật)", kaggle_sample))
     if kaggle_full.exists():
-        sources.append(("Kaggle cs-test đầy đủ local (không target)", kaggle_full))
+        sources.append(("Tập cs-test Kaggle đầy đủ trên máy (không có nhãn thật)", kaggle_full))
     return sources
 
 
 def render(model) -> None:
-    """Render Tab 2: CSV upload + batch evaluation + export."""
+    """Hiển thị Tab 2: tải dữ liệu, dự báo theo lô, hậu kiểm và xuất kết quả."""
 
     st.subheader("📊 Đánh giá rủi ro theo lô (CSV/XLSX)")
     st.caption("Tải lên file riêng hoặc chọn dữ liệu đề xuất để thử nhanh chức năng đánh giá hàng loạt.")
@@ -62,12 +62,12 @@ def render(model) -> None:
         options=source_options,
         index=0 if demo_sources else len(source_options) - 1,
         horizontal=True,
-        help="Demo 5.000 dòng có target dùng để benchmark; Kaggle test không có target nên chỉ dùng để dự đoán.",
+        help="Demo 5.000 dòng có nhãn thật dùng để hậu kiểm; Kaggle test không có nhãn thật nên chỉ dùng để dự đoán.",
     )
     if source_choice.startswith("Demo hậu kiểm"):
-        st.info("Dữ liệu demo 5.000 dòng được tách từ training gốc, có target 0/1 để mô phỏng hậu kiểm AUC/Recall/Precision/F2.")
+        st.info("Dữ liệu demo 5.000 dòng được tách từ tập huấn luyện gốc, có nhãn thật 0/1 để mô phỏng hậu kiểm AUC/Recall/Precision/F2.")
     elif "Kaggle" in source_choice:
-        st.info("Dữ liệu Kaggle test không có target thật, app chỉ dự đoán xác suất và không tính benchmark.")
+        st.info("Dữ liệu Kaggle test không có nhãn thật, ứng dụng chỉ dự đoán xác suất và không tính hậu kiểm.")
 
     col_upload, col_template = st.columns([3, 1])
     with col_upload:
@@ -75,7 +75,7 @@ def render(model) -> None:
             "Tải file dữ liệu (CSV hoặc XLSX, tối đa 500.000 dòng)",
             type=["csv", "xlsx"],
             disabled=source_choice != "Upload file mới",
-            help=f"File cần chứa đủ {len(REQUIRED_COLS)} cột raw. Tải CSV mẫu bên phải nếu chưa có."
+            help=f"File cần chứa đủ {len(REQUIRED_COLS)} cột dữ liệu gốc. Tải CSV mẫu bên phải nếu chưa có."
         )
     with col_template:
         st.markdown("&nbsp;")
@@ -95,7 +95,7 @@ def render(model) -> None:
     try:
         if source_choice == "Upload file mới":
             df_raw = read_uploaded_table(uploaded)
-            source_note = getattr(uploaded, 'name', 'file upload')
+            source_note = getattr(uploaded, 'name', 'file tải lên')
         else:
             local_path = dict(demo_sources)[source_choice]
             df_raw = pd.read_csv(local_path)
@@ -116,7 +116,7 @@ def render(model) -> None:
 
     has_target = TARGET_COL in df_raw.columns
     n_rows = len(df_raw)
-    st.success(f"✅ Tải thành công: **{n_rows:,} dòng**, {len(df_raw.columns)} cột từ `{source_note}`{' (có cột mục tiêu — sẽ hiển thị kết quả benchmark)' if has_target else ''}.")
+    st.success(f"✅ Tải thành công: **{n_rows:,} dòng**, {len(df_raw.columns)} cột từ `{source_note}`{' (có cột nhãn thật — sẽ hiển thị kết quả hậu kiểm)' if has_target else ''}.")
 
     decision_threshold = st.slider(
         "Ngưỡng quyết định từ chối (dùng cho tập file này)",
@@ -219,7 +219,7 @@ def render(model) -> None:
         # F. SHAP global (sample 500)
         if X_feat_cached is not None:
             st.markdown("#### Tầm quan trọng đặc trưng toàn cục (SHAP)")
-            st.caption(f"Tính trên mẫu ngẫu nhiên 500 khách hàng từ tập upload.")
+            st.caption(f"Tính trên mẫu ngẫu nhiên 500 khách hàng từ tập tải lên.")
             n_sample = min(500, len(X_feat_cached))
             X_sample = X_feat_cached.sample(n=n_sample, random_state=42)
             with st.spinner("Đang tính SHAP..."):
@@ -227,10 +227,10 @@ def render(model) -> None:
             st.pyplot(fig_shap, use_container_width=True)
             plt.close(fig_shap)
 
-        # G. Benchmark (chỉ khi có target)
+        # G. Hậu kiểm (chỉ khi có nhãn thật)
         if has_target_cached and TARGET_COL in df_raw_cached.columns:
             st.markdown("---")
-            st.markdown("#### Đánh giá hiệu năng mô hình (Benchmark)")
+            st.markdown("#### Đánh giá hiệu năng mô hình (hậu kiểm)")
             _render_benchmark(model, X_feat_cached, df_raw_cached[TARGET_COL], threshold_cached)
 
         st.markdown("---")
@@ -269,7 +269,7 @@ def _render_overview(df_out: pd.DataFrame, threshold: float) -> None:
 
 
 def _render_benchmark(model, X_feat: pd.DataFrame, y_true: pd.Series, threshold: float) -> None:
-    """Khi CSV có cột target — đánh giá toàn diện hiệu năng mô hình trên tập đó."""
+    """Khi CSV có cột nhãn thật, đánh giá toàn diện hiệu năng mô hình trên tập đó."""
     import numpy as np
 
     try:
@@ -281,15 +281,15 @@ def _render_benchmark(model, X_feat: pd.DataFrame, y_true: pd.Series, threshold:
         n_invalid = int((~valid_mask).sum())
         if n_invalid > 0:
             st.info(
-                f"Benchmark bỏ qua {n_invalid:,} dòng có `{TARGET_COL}` trống hoặc không phải 0/1. "
-                "Dự đoán vẫn được giữ cho toàn bộ các dòng hợp lệ về feature."
+                f"Hậu kiểm bỏ qua {n_invalid:,} dòng có `{TARGET_COL}` trống hoặc không phải 0/1. "
+                "Dự đoán vẫn được giữ cho toàn bộ các dòng hợp lệ về đặc trưng."
             )
 
         X_eval = X_feat.loc[valid_mask].copy()
         y_arr = y_series.loc[valid_mask].astype(int).to_numpy()
 
         if len(y_arr) == 0:
-            st.warning(f"Không thể tính benchmark: cột `{TARGET_COL}` không có dòng target 0/1 hợp lệ.")
+            st.warning(f"Không thể tính hậu kiểm: cột `{TARGET_COL}` không có dòng nhãn thật 0/1 hợp lệ.")
             return
         if len(np.unique(y_arr)) < 2:
             st.warning(
@@ -317,7 +317,7 @@ def _render_benchmark(model, X_feat: pd.DataFrame, y_true: pd.Series, threshold:
         col5, col6 = st.columns(2)
         col5.metric("KS Statistic", f"{ks['ks']:.3f}",
                     help="Khoảng cách CDF giữa 2 lớp; >0,3 = mô hình credit risk tốt")
-        col6.metric("Ngưỡng KS-optimal", f"{ks['threshold_at_ks']:.3f}",
+        col6.metric("Ngưỡng KS tối ưu", f"{ks['threshold_at_ks']:.3f}",
                     help="Ngưỡng tại đó CDF khác nhau nhiều nhất")
 
         # Reference benchmark từ test set (báo cáo chính)
@@ -331,7 +331,7 @@ def _render_benchmark(model, X_feat: pd.DataFrame, y_true: pd.Series, threshold:
             )
         elif delta_auc < -0.01:
             st.warning(
-                f"AUC = {metrics['AUC-ROC']:.4f} thấp hơn benchmark gốc 0,8714 "
+                f"AUC = {metrics['AUC-ROC']:.4f} thấp hơn mốc kiểm tra gốc 0,8714 "
                 f"(Δ={delta_auc:+.4f}). Cân nhắc data drift hoặc khác biệt phân phối."
             )
         else:
@@ -349,10 +349,10 @@ def _render_benchmark(model, X_feat: pd.DataFrame, y_true: pd.Series, threshold:
             st.plotly_chart(plot_pr_curve(y_arr, probs), use_container_width=True)
 
         # Lift + Gain
-        st.markdown("##### Phân tích Lift và Cumulative Gain (theo decile rủi ro)")
+        st.markdown("##### Phân tích Lift và Cumulative Gain (theo nhóm 10% rủi ro)")
         st.caption(
-            "Decile 1 = 10% hồ sơ rủi ro nhất theo mô hình. Lift cao ở decile đầu = mô hình "
-            "tập trung tín hiệu vỡ nợ vào nhóm top đầu — cốt lõi của credit scoring."
+            "Nhóm 1 = 10% hồ sơ rủi ro nhất theo mô hình. Lift cao ở nhóm đầu nghĩa là mô hình "
+            "tập trung tín hiệu vỡ nợ vào nhóm rủi ro cao — cốt lõi của chấm điểm tín dụng."
         )
         fig_lg = plot_lift_gain(y_arr, probs, n_deciles=10)
         st.plotly_chart(fig_lg, use_container_width=True)
@@ -380,18 +380,18 @@ def _render_benchmark(model, X_feat: pd.DataFrame, y_true: pd.Series, threshold:
         plt.close(fig)
 
     except Exception as e:
-        st.warning(f"Không thể tính benchmark: {e}")
+        st.warning(f"Không thể tính hậu kiểm: {e}")
         import traceback
         with st.expander("Chi tiết lỗi"):
             st.code(traceback.format_exc())
 
 
 def _render_business_impact(y_arr: np.ndarray, probs: np.ndarray, threshold: float) -> None:
-    """Quy đổi kết quả benchmark thành chi phí/lợi ích kinh doanh ước tính."""
+    """Quy đổi kết quả hậu kiểm thành chi phí/lợi ích kinh doanh ước tính."""
     st.markdown("##### Tác động kinh doanh ước tính")
     st.caption(
         "Đây là mô phỏng chi phí rủi ro để giải thích mô hình giúp giảm tổn thất như thế nào "
-        "trên lô dữ liệu có target, không phải lợi nhuận kế toán chính thức."
+        "trên lô dữ liệu có nhãn thật, không phải lợi nhuận kế toán chính thức."
     )
 
     col_cfg1, col_cfg2 = st.columns(2)
@@ -458,7 +458,7 @@ def _render_business_impact(y_arr: np.ndarray, probs: np.ndarray, threshold: flo
 
     st.dataframe(
         pd.DataFrame([
-            {"Nhóm": "Thực tế vỡ nợ", "Số hồ sơ": n_bad, "Diễn giải": "Target = 1 trong file upload"},
+                {"Nhóm": "Thực tế vỡ nợ", "Số hồ sơ": n_bad, "Diễn giải": "Nhãn thật = 1 trong file tải lên"},
             {"Nhóm": "Từ chối đúng (TP)", "Số hồ sơ": tp, "Diễn giải": "Chặn được hồ sơ thực sự vỡ nợ"},
             {"Nhóm": "Từ chối nhầm (FP)", "Số hồ sơ": fp, "Diễn giải": "Hồ sơ tốt nhưng bị từ chối"},
             {"Nhóm": "Bỏ sót nợ xấu (FN)", "Số hồ sơ": fn, "Diễn giải": "Hồ sơ vỡ nợ nhưng vẫn được duyệt"},
@@ -626,4 +626,4 @@ def _show_column_guide() -> None:
     }
     data = [{'Tên cột': k, 'Mô tả': v} for k, v in col_desc.items()]
     st.dataframe(pd.DataFrame(data), use_container_width=True, hide_index=True)
-    st.caption("Cột tùy chọn: `SeriousDlqin2yrs` (0/1) — nếu có sẽ tính thêm chỉ số benchmark.")
+    st.caption("Cột tùy chọn: `SeriousDlqin2yrs` (0/1) — nếu có sẽ tính thêm chỉ số hậu kiểm.")

@@ -20,9 +20,9 @@ Dù đã cố gắng hết sức, báo cáo chắc chắn còn nhiều thiếu s
 
 ## TÓM TẮT
 
-Báo cáo trình bày nghiên cứu ứng dụng Machine Learning vào bài toán dự báo rủi ro vỡ nợ tín dụng, sử dụng bộ dữ liệu *Give Me Some Credit* (Kaggle, 149.999 hồ sơ vay). Bốn mô hình được xây dựng và đánh giá: Logistic Regression (AUC=0,8432), Decision Tree (AUC=0,8579), Random Forest (AUC=0,8703), và XGBoost (AUC=0,8714). Mô hình XGBoost vượt mục tiêu (AUC > 0,87) với feature engineering có chủ đích. Ngưỡng F2-optimal t=0,625 tăng Recall lên 66,9% và giảm chi phí ước tính khoảng 2,01 triệu USD so với ngưỡng F1-optimal. Sản phẩm cuối là ứng dụng Streamlit tương tác với SHAP giải thích và đánh giá theo lô.
+Báo cáo trình bày nghiên cứu ứng dụng học máy (Machine Learning) vào bài toán dự báo rủi ro vỡ nợ tín dụng, sử dụng bộ dữ liệu *Give Me Some Credit* (Kaggle, 149.999 hồ sơ vay). Bốn mô hình được xây dựng và đánh giá: hồi quy Logistic (AUC=0,8432), cây quyết định (AUC=0,8579), rừng ngẫu nhiên (AUC=0,8703), và XGBoost (AUC=0,8714). Mô hình XGBoost vượt mục tiêu (AUC > 0,87) với thiết kế đặc trưng có chủ đích. Ngưỡng tối ưu theo F2 là t=0,625, giúp Recall đạt 66,9% và giảm chi phí ước tính khoảng 2,01 triệu USD so với ngưỡng tối ưu theo F1. Sản phẩm cuối là ứng dụng Streamlit tương tác với giải thích SHAP và đánh giá theo lô.
 
-**Từ khóa:** dự báo vỡ nợ, XGBoost, SHAP, F-beta, imbalanced data.
+**Từ khóa:** dự báo vỡ nợ, XGBoost, SHAP, F-beta, dữ liệu mất cân bằng.
 
 ---
 
@@ -35,8 +35,8 @@ Báo cáo trình bày nghiên cứu ứng dụng Machine Learning vào bài toá
 | **Precision / Recall** | Độ chính xác / Độ phát hiện. Precision = TP/(TP+FP), Recall = TP/(TP+FN). |
 | **F1 / F2** | Trung bình điều hòa Precision-Recall; F2 ưu tiên Recall gấp đôi Precision. |
 | **SHAP** | Giá trị Shapley — phân tách dự báo thành đóng góp của từng đặc trưng. |
-| **TreeExplainer** | Thuật toán chuyên biệt tính SHAP cho tree-based models. |
-| **Bagging / Boosting** | Ensemble methods: Bagging độc lập (giảm variance), Boosting tuần tự (giảm bias). |
+| **TreeExplainer** | Thuật toán chuyên biệt tính SHAP cho mô hình dạng cây. |
+| **Bagging / Boosting** | Hai cách học tổ hợp: Bagging huấn luyện độc lập để giảm phương sai, Boosting huấn luyện tuần tự để giảm sai lệch. |
 | **Class Imbalance** | Mất cân bằng lớp — lớp thiểu số chỉ chiếm 6,68%. |
 | **scale_pos_weight** | Trọng số XGBoost nâng tầm lớp thiểu số. |
 
@@ -48,7 +48,7 @@ Báo cáo trình bày nghiên cứu ứng dụng Machine Learning vào bài toá
 2. Cơ sở lý thuyết
 3. Dữ liệu và Tiền xử lý
 4. Thực nghiệm và Đánh giá
-5. Sản phẩm — Streamlit Dashboard
+5. Sản phẩm — Ứng dụng Streamlit
 6. Kết luận và Hướng phát triển
 7. Tài liệu tham khảo
 8. Phụ lục
@@ -67,23 +67,23 @@ Tỷ lệ nợ xấu Việt Nam cuối 2023 là 4,55%. Quy trình thẩm định
 |----------|----------|--------|
 | Xây dựng mô hình | AUC ≥ 0,87 | **0,8714** |
 | So sánh 4 thuật toán | Bảng đầy đủ | Bảng 4.1 |
-| Feature Engineering | ≥ 2 đặc trưng mới top-5 SHAP | **2 trong top-3** |
+| Thiết kế đặc trưng | ≥ 2 đặc trưng mới top-5 SHAP | **2 trong top-3** |
 | Tối ưu ngưỡng | F2-optimal | t=0,625, Recall=66,9% |
 | Demo sản phẩm | Streamlit + SHAP | Đạt |
 
 ## 1.3 Phạm vi
 
-- **Dữ liệu:** Give Me Some Credit (Kaggle, 149.999 hồ sơ có nhãn trong `cs-training.csv`; `cs-test.csv` là tập nộp dự đoán, không có target thật)
+- **Dữ liệu:** Give Me Some Credit (Kaggle, 149.999 hồ sơ có nhãn trong `cs-training.csv`; `cs-test.csv` là tập nộp dự đoán, không có nhãn thật)
 - **Mô hình:** 4 mô hình: LR, DT, RF, XGBoost
 - **Không bao gồm:** DNN, real-time, tích hợp system, thị trường khác
 - **Công nghệ:** Python 3.14, scikit-learn 1.8.0, XGBoost 3.2.0, SHAP 0.51.0
 
 ## 1.4 Đóng góp chính của đồ án
 
-1. Xây dựng đầy đủ pipeline từ EDA → tiền xử lý → huấn luyện → đánh giá → diễn giải → demo sản phẩm.
+1. Xây dựng đầy đủ quy trình từ khám phá dữ liệu → tiền xử lý → huấn luyện → đánh giá → diễn giải → demo sản phẩm.
 2. Thiết kế 4 đặc trưng mới có ý nghĩa nghiệp vụ, trong đó 2 đặc trưng vào top-3 theo SHAP.
 3. Chuẩn hóa cách chọn ngưỡng triển khai theo F2-score để ưu tiên giảm bỏ sót hồ sơ rủi ro.
-4. Đóng gói thành dashboard Streamlit hỗ trợ dự báo đơn lẻ, đánh giá batch cho tập khách hàng, và mô phỏng hậu kiểm nếu file upload có target thật.
+4. Đóng gói thành ứng dụng Streamlit hỗ trợ dự báo đơn lẻ, đánh giá theo lô cho tập khách hàng, và mô phỏng hậu kiểm nếu file tải lên có nhãn thật.
 
 ---
 
@@ -164,7 +164,7 @@ Dataset gồm:
 - StandardScaler cho LR (yêu cầu gradient descent ổn định)
 - Không cần cho tree-based
 
-## 3.3 Feature Engineering
+## 3.3 Thiết kế đặc trưng
 
 **4 đặc trưng tự thiết kế:**
 1. `TotalDelinquencyScore` = 3×(90+) + 2×(60-89) + 1×(30-59)
@@ -180,8 +180,6 @@ Dataset gồm:
 2. `RevolvingUtilizationOfUnsecuredLines` và `DebtRatio` có phân phối lệch, cần theo dõi ngưỡng cực trị.
 3. Tương quan tuyến tính chỉ phản ánh một phần; đặc trưng tương tác giúp mô hình phi tuyến học tốt hơn.
 
-![Heatmap tương quan](../reports/fig_05_correlation_heatmap.png)
-
 ![Phân tích nhóm trễ hạn](../reports/fig_07_delinquency_analysis.png)
 
 ---
@@ -191,16 +189,16 @@ Dataset gồm:
 ## 4.1 Thiết kế thử nghiệm
 
 **Chiến lược tách tập:**
-- Train: 104.999 (70%)
-- Validation: 22.500 (15%)
-- Test: 22.500 (15%)
+- Tập huấn luyện: 104.999 (70%)
+- Tập kiểm định: 22.500 (15%)
+- Tập kiểm tra: 22.500 (15%)
 - Stratified K-Fold (k=5) để cân bằng lớp
 
 ## 4.2 So sánh mô hình
 
 *Bảng 4.1 — Kết quả tổng hợp*
 
-| Mô hình | AUC-ROC | F1-score | Recall | Precision | Thời gian (s) |
+| Mô hình | AUC-ROC | F1 | Recall | Precision | Thời gian (s) |
 |---------|---------|----------|--------|-----------|---------------|
 | Logistic Regression | 0,8432 | 0,398 | 41,2% | 39,8% | 1,23 |
 | Decision Tree CART | 0,8579 | 0,421 | 48,7% | 40,1% | 0,18 |
@@ -213,9 +211,9 @@ Dataset gồm:
 
 ## 4.3 Phân tích SHAP
 
-TreeExplainer trên XGBoost:
+SHAP TreeExplainer được dùng để giải thích mô hình XGBoost:
 
-*Bảng 4.2 — Top-10 đặc trưng (SHAP mean|value|)*
+*Bảng 4.2 — 10 đặc trưng quan trọng nhất theo giá trị SHAP trung bình*
 
 | Rank | Đặc trưng | SHAP |
 |------|-----------|------|
@@ -229,15 +227,13 @@ TreeExplainer trên XGBoost:
 
 ![Tầm quan trọng đặc trưng theo SHAP](../reports/fig_26a_shap_bar.png)
 
-![SHAP dependence cho đặc trưng chính](../reports/fig_27_shap_dependence.png)
-
-## 4.4 Tối ưu ngưỡng (F2-optimal)
+## 4.4 Tối ưu ngưỡng theo F2
 
 Ngưỡng Bayes tối ưu (chi phí Fraud=1, Decile=14):
 $$t^* = \frac{c_{FP}}{c_{FP}+c_{FN}} = \frac{500}{500+11.250} \approx 0,043$$
 Tuy nhiên quá thấp (~74% từ chối). 
 
-**F2-optimal threshold:**
+**Ngưỡng tối ưu theo F2:**
 - $F_2 = 5 \cdot \frac{P \cdot R}{4P+R}$ (ưu tiên Recall)
 - Tìm kiếm từ 0,05 đến 0,95: **t = 0,625**
 - Recall = 66,9%, Precision = 29,9%, F2 = 0,537
@@ -257,50 +253,40 @@ Tuy nhiên quá thấp (~74% từ chối).
 
 ## 4.5 Phân tích lỗi và phân bố điểm rủi ro
 
-- Nhóm lỗi chính nằm ở vùng điểm rủi ro trung gian (near-threshold), phản ánh các hồ sơ có tín hiệu mâu thuẫn.
-- Việc kiểm soát vùng này bằng quy trình “manual review” giúp giảm FP không làm tăng mạnh FN.
-
-![Phân bố điểm rủi ro](../reports/fig_24_score_distribution.png)
-
-![Hồ sơ sai số theo phân phối](../reports/fig_22_error_profile_hist.png)
+- Nhóm lỗi chính nằm ở vùng điểm rủi ro sát ngưỡng, phản ánh các hồ sơ có tín hiệu mâu thuẫn.
+- Việc kiểm soát vùng này bằng quy trình rà soát thủ công giúp giảm FP mà không làm tăng mạnh FN.
 
 ## 4.6 Hiệu chỉnh xác suất và độ tin cậy thống kê
 
-- Calibration cho thấy xác suất dự báo của mô hình sau hiệu chỉnh gần xác suất thực hơn.
+- Hiệu chỉnh xác suất cho thấy xác suất dự báo của mô hình sau hiệu chỉnh gần xác suất thực hơn.
 - DeLong test được dùng để kiểm tra khác biệt AUC giữa các mô hình có đủ ý nghĩa thống kê hay không.
-
-![Biểu đồ calibration](../reports/fig_31_calibration.png)
-
-![Tóm tắt DeLong test](../reports/fig_32_delong_summary.png)
 
 ---
 
-# CHƯƠNG 5: SẢN PHẨM — STREAMLIT DASHBOARD
+# CHƯƠNG 5: SẢN PHẨM — ỨNG DỤNG STREAMLIT
 
 ## 5.1 Tính năng chính
 
 - **Tab 1: Dự báo đơn lẻ**
   - Nhập thông tin khách hàng
-  - Hiển thị xác suất vỡ nợ + Quyết định (Approve/Reject)
-  - SHAP waterfall chart giải thích
+  - Hiển thị xác suất vỡ nợ + quyết định (Duyệt/Từ chối)
+  - Biểu đồ SHAP dạng waterfall để giải thích dự báo
 
-- **Tab 2: Đánh giá batch**
-  - Upload CSV/XLSX để dự báo theo lô và xuất kết quả
-  - Threshold slider (default 0,625)
-  - Nếu file có target `SeriousDlqin2yrs` dạng 0/1: tính AUC, Recall, Precision, F2, ROC, PR, calibration, ma trận nhầm lẫn và tác động chi phí
-  - Segment summary (Income quartile, Age group)
+- **Tab 2: Đánh giá theo lô**
+  - Tải lên CSV/XLSX để dự báo theo lô và xuất kết quả
+  - Thanh chọn ngưỡng quyết định, mặc định 0,625
+  - Nếu file có cột nhãn thật `SeriousDlqin2yrs` dạng 0/1: tính AUC, Recall, Precision, F2, ROC/PR, hiệu chỉnh xác suất, ma trận nhầm lẫn và tác động chi phí
+  - Tóm tắt theo phân khúc thu nhập và nhóm tuổi
 
-**Ghi chú về demo dữ liệu thực tế khi chạy thử:** Đây là mô phỏng hậu kiểm theo lô bằng dữ liệu có nhãn từ tập training gốc. Với dữ liệu vận hành thật, target sẽ được bổ sung sau kỳ quan sát để đo lại AUC/Recall/Precision/F2. Không sử dụng tập test Kaggle để benchmark vì tập này không có target thật; file mẫu của cuộc thi chỉ là mẫu nộp xác suất dự đoán, không phải nhãn đúng 0/1.
+**Ghi chú về dữ liệu chạy thử:** Đây là mô phỏng hậu kiểm theo lô bằng dữ liệu có nhãn từ tập huấn luyện gốc. Với dữ liệu vận hành thật, cột nhãn thật sẽ được bổ sung sau kỳ quan sát để đo lại AUC/Recall/Precision/F2. Không sử dụng tập kiểm tra Kaggle để hậu kiểm vì tập này không có nhãn thật; file mẫu của cuộc thi chỉ là mẫu nộp xác suất dự đoán, không phải nhãn đúng 0/1.
 
 ## 5.2 Truy cập nhanh ứng dụng
 
-Ứng dụng có thể chạy trực tiếp tại: <https://doandanhlong-loan-prediction.streamlit.app>. Link này giúp người đọc kiểm tra nhanh dự báo đơn lẻ, đánh giá theo lô và các biểu đồ benchmark mà không cần tự host local.
-
-![Link truy cập nhanh ứng dụng Streamlit](../reports/fig_37_streamlit_quick_access.png)
+Ứng dụng demo: <https://doandanhlong-loan-prediction.streamlit.app>. Link này giúp người đọc kiểm tra nhanh dự báo đơn lẻ và đánh giá theo lô mà không cần tự chạy trên máy cá nhân.
 
 ## 5.3 Chạy thử hậu kiểm theo lô
 
-Để kiểm tra chức năng benchmark của Streamlit bằng dữ liệu có nhãn, đồ án tạo file `data/raw/batch_demo_from_training_5000.csv` từ `cs-training.csv`. File này gồm 5.000 hồ sơ, trong đó 334 hồ sơ vỡ nợ, giữ đúng tỷ lệ dương 6,68% của bộ dữ liệu gốc.
+Để kiểm tra chức năng hậu kiểm theo lô của Streamlit bằng dữ liệu có nhãn, đồ án tạo file `data/raw/batch_demo_from_training_5000.csv` từ `cs-training.csv`. File này gồm 5.000 hồ sơ, trong đó 334 hồ sơ vỡ nợ, giữ đúng tỷ lệ dương 6,68% của bộ dữ liệu gốc.
 
 Kết quả chạy thật ở ngưỡng vận hành `t = 0,625`:
 
@@ -317,35 +303,33 @@ Kết quả chạy thật ở ngưỡng vận hành `t = 0,625`:
 | Chi phí nếu duyệt tất cả | 3.757.500 USD |
 | Tiết kiệm mô phỏng | 2.293.000 USD |
 
-Kết quả này cho thấy batch benchmark trong app không chỉ hiển thị metric ML mà còn quy đổi sang tác động kinh doanh: số hồ sơ từ chối đúng, từ chối nhầm, bỏ sót nợ xấu và chi phí tương ứng. Đây là mô phỏng hậu kiểm bằng dữ liệu training có nhãn; trong vận hành thật, target chỉ xuất hiện sau kỳ quan sát.
+Kết quả này cho thấy phần hậu kiểm theo lô trong ứng dụng không chỉ hiển thị chỉ số học máy mà còn quy đổi sang tác động kinh doanh: số hồ sơ từ chối đúng, từ chối nhầm, bỏ sót nợ xấu và chi phí tương ứng. Đây là mô phỏng hậu kiểm bằng dữ liệu huấn luyện có nhãn; trong vận hành thật, nhãn thật chỉ xuất hiện sau kỳ quan sát.
 
 Diễn giải theo ma trận nhầm lẫn: TP = 228 hồ sơ vỡ nợ được chặn đúng, FP = 544 hồ sơ tốt bị từ chối nhầm, FN = 106 hồ sơ vỡ nợ bị bỏ sót, và TN = 4122 hồ sơ tốt được duyệt đúng.
 
-![Phân bố xác suất và nhóm rủi ro trên batch demo](../reports/fig_33_batch_demo_distribution.png)
+![Phân bố xác suất và nhóm rủi ro trên demo theo lô](../reports/fig_33_batch_demo_distribution.png)
 
-![Ma trận nhầm lẫn trên batch demo](../reports/fig_34_batch_demo_confusion.png)
+![Ma trận nhầm lẫn trên demo theo lô](../reports/fig_34_batch_demo_confusion.png)
 
-![Tác động chi phí trên batch demo](../reports/fig_35_batch_demo_cost.png)
+![Tác động chi phí trên demo theo lô](../reports/fig_35_batch_demo_cost.png)
 
 ## 5.4 Kết quả thử nộp Kaggle
 
 Kết quả thử nộp đạt Public AUC = 0,85785 và Private AUC = 0,86482, khá gần AUC kiểm tra nội bộ 0,8714; điều này cho thấy mô hình tổng quát hóa tương đối ổn trên tập đánh giá ngoài.
 
-![Kết quả submission Kaggle](../reports/fig_36_kaggle_submission_result.png)
+![Kết quả nộp thử Kaggle](../reports/fig_36_kaggle_submission_result.png)
 
 ## 5.5 Công nghệ
 
 - Streamlit 1.45.0
 - scikit-learn, XGBoost, SHAP
-- Cache dữ liệu + SHAP TreeExplainer (tối ưu hiệu năng)
+- Bộ nhớ đệm dữ liệu + SHAP TreeExplainer để tối ưu hiệu năng
 
 ## 5.6 Giá trị sử dụng trong thực tế
 
 1. **Đối với thẩm định viên:** có xác suất rủi ro + giải thích đặc trưng để quyết định nhanh hơn.
-2. **Đối với quản trị rủi ro:** theo dõi chất lượng mô hình qua batch evaluation và threshold tuning.
+2. **Đối với quản trị rủi ro:** theo dõi chất lượng mô hình qua đánh giá theo lô và điều chỉnh ngưỡng.
 3. **Đối với khách hàng cuối:** tăng tính minh bạch vì quyết định có căn cứ dữ liệu và có thể giải thích.
-
-![Dashboard phân tích tổng hợp](../reports/fig_30_analysis_dashboard.png)
 
 ---
 
@@ -354,8 +338,8 @@ Kết quả thử nộp đạt Public AUC = 0,85785 và Private AUC = 0,86482, k
 ## 6.1 Kết luận chính
 
 1. XGBoost đạt AUC=0,8714, vượt mục tiêu 0,87
-2. Feature engineering có chủ đích (2 đặc trưng tự thiết kế vào top-3 SHAP)
-3. F2-optimal threshold (0,625) cân bằng Recall-Precision phù hợp tín dụng
+2. Thiết kế đặc trưng có chủ đích (2 đặc trưng tự thiết kế vào top-3 SHAP)
+3. Ngưỡng tối ưu theo F2 (0,625) cân bằng Recall-Precision phù hợp tín dụng
 4. SHAP giải thích từng quyết định, tuân thủ quy định (Basel III, GDPR)
 
 ## 6.2 Hướng phát triển
@@ -366,7 +350,7 @@ Kết quả thử nộp đạt Public AUC = 0,85785 và Private AUC = 0,86482, k
 
 2. **Mô hình nâng cao:**
    - Neural network với attention (tầm quan trọng động)
-   - Temporal modeling (LSTM cho chuỗi thời gian)
+   - Mô hình hóa theo thời gian (LSTM cho chuỗi thời gian)
    - Ensemble meta-learner
 
 3. **Giải thích sâu:**
@@ -374,9 +358,9 @@ Kết quả thử nộp đạt Public AUC = 0,85785 và Private AUC = 0,86482, k
    - Prototype cases (khách hàng tương tự)
 
 4. **Vận hành:**
-   - A/B test ngưỡng trên dữ liệu mới
-   - Drift detection (giám sát hiệu năng model)
-   - Feedback loop cập nhật mô hình
+   - Thử nghiệm A/B cho ngưỡng trên dữ liệu mới
+   - Giám sát trôi dữ liệu và suy giảm hiệu năng mô hình
+   - Vòng phản hồi để cập nhật mô hình
 
 ---
 
@@ -400,15 +384,15 @@ Kết quả thử nộp đạt Public AUC = 0,85785 và Private AUC = 0,86482, k
 
 # PHỤ LỤC
 
-## A. Chi tiết tính toán Feature Engineering
+## A. Chi tiết tính toán đặc trưng tự thiết kế
 
 **TotalDelinquencyScore:**
-- Input: DelinquencyStatus với 7 giá trị (0, 30, 60, 90, 120, ...)
+- Đầu vào: DelinquencyStatus với 7 giá trị (0, 30, 60, 90, 120, ...)
 - Quy tắc: 3×(90+) + 2×(60-89) + 1×(30-59)
-- Ý tưởng: Penalize trễ hạn kéo dài hơn
+- Ý tưởng: phạt nặng hơn các trạng thái trễ hạn kéo dài.
 
 **FinancialStressIndex:**
-- Input: RevolvingUtilizationOfUnsecuredLines (0-1), TotalDelinquencyScore
+- Đầu vào: RevolvingUtilizationOfUnsecuredLines (0-1), TotalDelinquencyScore
 - Công thức: FSI = RevolvingUtil × TotalDelinquencyScore
 - Ý tưởng: Khách hàng dùng hết hạn mức + trễ hạn = stress cao
 
@@ -431,21 +415,21 @@ Kết quả thử nộp đạt Public AUC = 0,85785 và Private AUC = 0,86482, k
 
 ---
 
-## C. Ghi chú về benchmark theo lô và Kaggle
+## C. Ghi chú về hậu kiểm theo lô và Kaggle
 
-Benchmark theo lô trong Streamlit cần file có target `SeriousDlqin2yrs` dạng 0/1. Đây là mô phỏng hậu kiểm theo lô bằng dữ liệu có nhãn từ tập training gốc. Với dữ liệu vận hành thật, target sẽ được bổ sung sau kỳ quan sát để đo lại AUC/Recall/Precision/F2.
+Hậu kiểm theo lô trong Streamlit cần file có cột nhãn thật `SeriousDlqin2yrs` dạng 0/1. Đây là mô phỏng hậu kiểm bằng dữ liệu có nhãn từ tập huấn luyện gốc. Với dữ liệu vận hành thật, nhãn thật sẽ được bổ sung sau kỳ quan sát để đo lại AUC/Recall/Precision/F2.
 
-Tập test Kaggle không có target thật nên chỉ dùng để tạo file nộp dự đoán. File mẫu của cuộc thi là mẫu nộp xác suất dự đoán, không phải nhãn đúng.
+Tập kiểm tra Kaggle không có nhãn thật nên chỉ dùng để tạo file nộp dự đoán. File mẫu của cuộc thi là mẫu nộp xác suất dự đoán, không phải nhãn đúng.
 
 ---
 
-## D. Probability Calibration
+## D. Hiệu chỉnh xác suất
 
-Brier Score trên test set:
+Brier Score (điểm Brier) trên tập kiểm tra:
 - XGBoost thô: 0,0582
 - Sau Platt Scaling: 0,0478 (cải thiện 17,9%)
 
-Expected Calibration Error (ECE):
+Sai số hiệu chỉnh kỳ vọng (ECE):
 - XGBoost thô: 3,2%
 - Sau Platt Scaling: 1,9%
 
@@ -453,13 +437,9 @@ Expected Calibration Error (ECE):
 
 ---
 
-## E. Bản phóng to / hình kỹ thuật chi tiết
+## E. Hình kỹ thuật xem thêm
 
-Các hình dưới đây lặp lại các trực quan kỹ thuật quan trọng ở dạng tách riêng, giúp người đọc bản in giấy kiểm tra rõ hơn khi cần.
-
-\clearpage
-
-![Tổng quan giá trị thiếu](../reports/fig_02_missing_values.png)
+Các hình dưới đây phục vụ kiểm tra sâu hơn. Phần chính chỉ giữ các hình cần cho mạch đọc, phụ lục không lặp lại các hình chính.
 
 \clearpage
 
@@ -467,15 +447,7 @@ Các hình dưới đây lặp lại các trực quan kỹ thuật quan trọng 
 
 \clearpage
 
-![Phân tích nhóm trễ hạn](../reports/fig_07_delinquency_analysis.png)
-
-\clearpage
-
 ![SHAP dependence cho đặc trưng chính](../reports/fig_27_shap_dependence.png)
-
-\clearpage
-
-![Tối ưu ngưỡng vận hành](../reports/fig_25_threshold_optimization.png)
 
 \clearpage
 
@@ -495,11 +467,7 @@ Các hình dưới đây lặp lại các trực quan kỹ thuật quan trọng 
 
 \clearpage
 
-![Phân bố xác suất và nhóm rủi ro trên batch demo](../reports/fig_33_batch_demo_distribution.png)
-
-\clearpage
-
-![Dashboard phân tích tổng hợp](../reports/fig_30_analysis_dashboard.png)
+![Bảng điều khiển phân tích tổng hợp](../reports/fig_30_analysis_dashboard.png)
 
 ---
 

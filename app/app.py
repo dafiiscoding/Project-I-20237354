@@ -5,7 +5,7 @@ Mô hình: XGBoost | AUC=0.8714 | Ngưỡng triển khai=0.625
 
 Cấu trúc:
   Tab 1 — Khách hàng đơn lẻ : nhập thủ công + SHAP
-  Tab 2 — Đánh giá theo lô  : upload CSV/XLSX + batch predict + visualization
+  Tab 2 — Đánh giá theo lô  : tải CSV/XLSX + dự báo hàng loạt + trực quan hóa
   Tab 3 — Hướng dẫn         : giải thích ứng dụng + cách đọc kết quả
 
 Chạy: streamlit run app/app.py (từ thư mục gốc project)
@@ -90,26 +90,26 @@ def _render_help() -> None:
     2. Tải file lên, xem trước dữ liệu.
     3. Chọn ngưỡng quyết định phù hợp cho tập hiện tại.
     4. Nhấn **Đánh giá toàn bộ** — ứng dụng tự động tính thêm 4 đặc trưng kỹ thuật.
-    5. Xem các biểu đồ: phân bố rủi ro, top khách hàng rủi ro cao, benchmark và trade-off theo ngưỡng.
+    5. Xem các biểu đồ: phân bố rủi ro, nhóm khách hàng rủi ro cao nhất, hậu kiểm và đánh đổi theo ngưỡng.
     6. Tải CSV kết quả với 4 cột bổ sung: `probability`, `risk_tier`, `decision`, `decision_threshold`.
     """)
     st.info(
         "Nếu file có cột `SeriousDlqin2yrs` dạng 0/1, app sẽ mô phỏng hậu kiểm theo lô và tính "
-        "AUC/Recall/Precision/F2. Với dữ liệu vận hành thật, target chỉ có sau kỳ quan sát; "
-        "`cs-test.csv` của Kaggle không có target thật nên chỉ dùng để tạo submission."
+        "AUC/Recall/Precision/F2. Với dữ liệu vận hành thật, cột nhãn thật chỉ có sau kỳ quan sát; "
+        "`cs-test.csv` của Kaggle không có nhãn thật nên chỉ dùng để tạo file nộp dự đoán."
     )
 
     st.markdown("### Giải thích các chỉ số")
     import pandas as pd
     st.dataframe(pd.DataFrame([
         {"Chỉ số": "probability", "Ý nghĩa": "Xác suất vỡ nợ trong 2 năm tới (0 → 1)"},
-        {"Chỉ số": "risk_tier", "Ý nghĩa": "Mức độ rủi ro: LOW / MEDIUM / HIGH / VERY_HIGH"},
-        {"Chỉ số": "decision", "Ý nghĩa": "APPROVE nếu P < threshold, REJECT nếu P ≥ threshold"},
-        {"Chỉ số": "decision_threshold", "Ý nghĩa": "Ngưỡng quyết định đã dùng cho lần đánh giá batch hiện tại"},
-        {"Chỉ số": "SHAP value", "Ý nghĩa": "Đóng góp của đặc trưng vào dự báo; đỏ = tăng rủi ro"},
+        {"Chỉ số": "risk_tier", "Ý nghĩa": "Nhóm rủi ro: LOW / MEDIUM / HIGH / VERY_HIGH"},
+        {"Chỉ số": "decision", "Ý nghĩa": "APPROVE nếu P < ngưỡng, REJECT nếu P ≥ ngưỡng"},
+        {"Chỉ số": "decision_threshold", "Ý nghĩa": "Ngưỡng quyết định đã dùng cho lần đánh giá theo lô hiện tại"},
+        {"Chỉ số": "SHAP value", "Ý nghĩa": "Giá trị SHAP: đóng góp của đặc trưng vào dự báo; đỏ = tăng rủi ro"},
     ]), hide_index=True, use_container_width=True)
 
-    st.markdown("### 4 đặc trưng kỹ thuật (tự động tính từ raw features)")
+    st.markdown("### 4 đặc trưng kỹ thuật (tự động tính từ đặc trưng gốc)")
     st.dataframe(pd.DataFrame([
         {"Đặc trưng": "TotalDelinquencyScore", "Công thức": "3×(Trễ 90+) + 2×(Trễ 60-89) + 1×(Trễ 30-59)"},
         {"Đặc trưng": "FinancialStressIndex", "Công thức": "RevolvingUtil × TotalDelinquencyScore"},
