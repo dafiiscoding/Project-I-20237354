@@ -4,6 +4,8 @@
 
 Ứng dụng demo: <https://doandanhlong-loan-prediction.streamlit.app>
 
+![So sánh bốn mô hình](reports/fig_20_model_comparison.png)
+
 ## Kết quả chính
 
 | Nội dung | Kết quả |
@@ -22,6 +24,14 @@ Ghi chú thuật ngữ:
 - **Precision**: trong nhóm bị từ chối, tỷ lệ thật sự vỡ nợ.
 - **F2-score**: chỉ số ưu tiên Recall hơn Precision, phù hợp bài toán tín dụng vì bỏ sót người vỡ nợ thường tốn kém hơn từ chối nhầm.
 - **SHAP**: phương pháp giải thích đặc trưng nào làm tăng hoặc giảm rủi ro trong dự báo.
+
+Tầm quan trọng đặc trưng theo SHAP (2 đặc trưng tự thiết kế vào top-3):
+
+![Tầm quan trọng đặc trưng theo SHAP](reports/fig_26a_shap_bar.png)
+
+Tối ưu ngưỡng quyết định theo F2:
+
+![Tối ưu ngưỡng theo F2](reports/fig_25_threshold_optimization.png)
 
 ## Chạy nhanh ứng dụng
 
@@ -111,3 +121,16 @@ Các thư mục/file không đưa lên GitHub gồm `data/`, cache, log LaTeX v�
 - Mô hình chính là XGBoost, được lưu tại `models/best_model.pkl`.
 - Ứng dụng Streamlit có sẵn lựa chọn demo 5.000 dòng có nhãn để kiểm tra hậu kiểm.
 - Các thuật ngữ tiếng Anh cần giữ như XGBoost, SHAP, AUC-ROC được giải thích trong báo cáo và tóm tắt.
+
+## Biên dịch báo cáo
+
+Báo cáo được soạn bằng LaTeX (`final_report/bao_cao_chinh.tex`). Cần MiKTeX/TeX Live có `xelatex`. Thả 2 logo `logo_bachkhoa.png` và `logo_toantin.png` vào `final_report/assets/` (thiếu thì bìa hiện ô giữ chỗ), rồi:
+
+```powershell
+cd final_report
+python build_pdf.py
+```
+
+## Giấy phép
+
+Mã nguồn và tài liệu trong kho phát hành theo giấy phép [MIT](LICENSE). Dữ liệu gốc thuộc Kaggle, không nằm trong phạm vi giấy phép này.
