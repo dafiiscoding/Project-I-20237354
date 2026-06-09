@@ -1,1114 +1,920 @@
-% Options for packages loaded elsewhere
-\PassOptionsToPackage{unicode}{hyperref}
-\PassOptionsToPackage{hyphens}{url}
-\documentclass[
-]{article}
-\usepackage{xcolor}
-\usepackage[margin=1in]{geometry}
+% =====================================================================
+%  BÁO CÁO ĐỒ ÁN I — DỰ BÁO RỦI RO VỠ NỢ TÍN DỤNG BẰNG MACHINE LEARNING
+%  Tác giả: Đoàn Danh Long — 20237354 — Khoa Toán-Tin, ĐHBK Hà Nội
+%  File này được VIẾT TAY (không qua pandoc). Biên dịch: xelatex 2 lần.
+%  Build: python build_pdf.py   (hoặc latexmk -xelatex bao_cao_chinh.tex)
+% =====================================================================
+\documentclass[12pt,a4paper,oneside]{report}
+
+% ---------- Font & ngôn ngữ ----------
+\usepackage{fontspec}
+\setmainfont{Times New Roman}
+\newfontfamily\monofont{Cascadia Mono}
+\defaultfontfeatures{Ligatures=TeX}
+
+% ---------- Hình học trang ----------
+\usepackage[a4paper,margin=2.5cm,headheight=15pt]{geometry}
+\usepackage{setspace}
+\onehalfspacing
+
+% ---------- Toán ----------
 \usepackage{amsmath,amssymb}
-\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
-\usepackage{iftex}
-\ifPDFTeX
-  \usepackage[T1]{fontenc}
-  \usepackage[utf8]{inputenc}
-  \usepackage{textcomp} % provide euro and other symbols
-\else % if luatex or xetex
-  \usepackage{unicode-math} % this also loads fontspec
-  \defaultfontfeatures{Scale=MatchLowercase}
-  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
-\fi
-\usepackage{lmodern}
-\ifPDFTeX\else
-  % xetex/luatex font selection
-  \setmainfont[]{Times New Roman}
-  \setmonofont[]{Cascadia Mono}
-\newfontfamily\EmojiFont{Segoe UI Emoji}
-\fi
-% Use upquote if available, for straight quotes in verbatim environments
-\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
-\IfFileExists{microtype.sty}{% use microtype if available
-  \usepackage[]{microtype}
-  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
-}{}
-\makeatletter
-\@ifundefined{KOMAClassName}{% if non-KOMA class
-  \IfFileExists{parskip.sty}{%
-    \usepackage{parskip}
-  }{% else
-    \setlength{\parindent}{0pt}
-    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
-}{% if KOMA class
-  \KOMAoptions{parskip=half}}
-\makeatother
-\usepackage{color}
-\usepackage{fancyvrb}
-\newcommand{\VerbBar}{|}
-\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
-\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
-% Add ',fontsize=\small' for more characters per line
-\newenvironment{Shaded}{}{}
-\newcommand{\AlertTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{#1}}}
-\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
-\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.49,0.56,0.16}{#1}}
-\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{#1}}
-\newcommand{\BuiltInTok}[1]{\textcolor[rgb]{0.00,0.50,0.00}{#1}}
-\newcommand{\CharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
-\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textit{#1}}}
-\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
-\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.53,0.00,0.00}{#1}}
-\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{#1}}}
-\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.56,0.13,0.00}{#1}}
-\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{#1}}
-\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.73,0.13,0.13}{\textit{#1}}}
-\newcommand{\ErrorTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{#1}}}
-\newcommand{\ExtensionTok}[1]{#1}
-\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{#1}}
-\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.02,0.16,0.49}{#1}}
-\newcommand{\ImportTok}[1]{\textcolor[rgb]{0.00,0.50,0.00}{\textbf{#1}}}
-\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
-\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{#1}}}
-\newcommand{\NormalTok}[1]{#1}
-\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.40,0.40,0.40}{#1}}
-\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{#1}}
-\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.74,0.48,0.00}{#1}}
-\newcommand{\RegionMarkerTok}[1]{#1}
-\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
-\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.73,0.40,0.53}{#1}}
-\newcommand{\StringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
-\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.10,0.09,0.49}{#1}}
-\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
-\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
-\usepackage{longtable,booktabs,array}
-\newcounter{none} % for unnumbered tables
-\usepackage{calc} % for calculating minipage widths
-% Correct order of tables after \paragraph or \subparagraph
-\usepackage{etoolbox}
-\makeatletter
-\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
-\makeatother
-% Allow footnotes in longtable head/foot
-\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
-\makesavenoteenv{longtable}
+\usepackage{mathtools}
+\usepackage{amsthm}
+
+% ---------- Màu & box ----------
+\usepackage{xcolor}
+\definecolor{bkblue}{RGB}{0,51,102}      % xanh navy tiêu đề
+\definecolor{bkred}{RGB}{197,24,24}       % đỏ nhấn
+\definecolor{boxgray}{RGB}{247,247,247}
+\definecolor{linkcol}{RGB}{0,71,133}
+\usepackage[most]{tcolorbox}
+
+% ---------- Định lý / Định nghĩa (kiểu box như báo cáo tham khảo) ----------
+\newtheoremstyle{vnplain}{6pt}{6pt}{\itshape}{}{\bfseries\color{bkblue}}{.}{.5em}{}
+\theoremstyle{vnplain}
+\newtheorem{dlytheo}{Định lý}[chapter]
+\newtheorem{menhde}[dlytheo]{Mệnh đề}
+\newtheorem{bode}[dlytheo]{Bổ đề}
+\newtheoremstyle{vndef}{6pt}{6pt}{}{}{\bfseries\color{bkred}}{.}{.5em}{}
+\theoremstyle{vndef}
+\newtheorem{dinhnghia}[dlytheo]{Định nghĩa}
+\newtheorem{nhanxet}[dlytheo]{Nhận xét}
+\newtheorem{vidu}[dlytheo]{Ví dụ}
+\renewcommand{\qedsymbol}{$\blacksquare$}
+\renewcommand{\proofname}{Chứng minh}
+\renewenvironment{proof}[1][\proofname]{\par\noindent\textit{#1.}\ }{\hfill$\blacksquare$\par\vspace{4pt}}
+
+% Box bao quanh định nghĩa/định lý quan trọng
+\newtcolorbox{khungtheo}[1][]{enhanced,boxrule=0.6pt,colback=boxgray,colframe=bkblue,
+  arc=2pt,left=8pt,right=8pt,top=6pt,bottom=6pt,breakable,#1}
+
+% ---------- Đồ thị, bảng, hình ----------
 \usepackage{graphicx}
-\makeatletter
-\newsavebox\pandoc@box
-\newcommand*\pandocbounded[1]{% scales image to fit in text height/width
-  \sbox\pandoc@box{#1}%
-  \Gscale@div\@tempa{\textheight}{\dimexpr\ht\pandoc@box+\dp\pandoc@box\relax}%
-  \Gscale@div\@tempb{\linewidth}{\wd\pandoc@box}%
-  \ifdim\@tempb\p@<\@tempa\p@\let\@tempa\@tempb\fi% select the smaller of both
-  \ifdim\@tempa\p@<\p@\scalebox{\@tempa}{\usebox\pandoc@box}%
-  \else\usebox{\pandoc@box}%
-  \fi%
-}
-% Set default figure placement to htbp
-\def\fps@figure{htbp}
-\makeatother
-\setlength{\emergencystretch}{3em} % prevent overfull lines
-\providecommand{\tightlist}{%
-  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
-\usepackage{bookmark}
-\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
-\urlstyle{same}
-\hypersetup{
-  hidelinks,
-  pdfcreator={LaTeX via pandoc}}
-
-\author{}
-\date{}
-
-
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{multirow}
+\usepackage{caption}
+\captionsetup{font=small,labelfont={bf,color=bkblue},justification=centering,skip=6pt}
 \usepackage{float}
 \usepackage{placeins}
-\usepackage{needspace}
-\usepackage{caption}
-\captionsetup{font=small,labelfont=bf,skip=6pt}
-\setkeys{Gin}{width=\linewidth,height=0.72\textheight,keepaspectratio}
-\setlength{\LTpre}{6pt}
-\setlength{\LTpost}{6pt}
-\renewcommand{\arraystretch}{1.08}
-\sloppy
+\renewcommand{\arraystretch}{1.25}
 
+% ---------- TikZ (sơ đồ pipeline / kiến trúc) ----------
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric,arrows.meta,positioning,fit,backgrounds,calc}
+
+% ---------- Header / Footer ----------
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0.4pt}
+\fancyhead[L]{\small\itshape\nouppercase{\leftmark}}
+\fancyhead[R]{\small\thepage}
+\fancypagestyle{plain}{\fancyhf{}\fancyfoot[C]{\small\thepage}\renewcommand{\headrulewidth}{0pt}}
+
+% ---------- Kiểu Chương (số trong khung như báo cáo tham khảo) ----------
+\usepackage{titlesec}
+\titleformat{\chapter}[hang]
+  {\Huge\bfseries\color{bkblue}}
+  {\colorbox{bkblue}{\color{white}\rule[-6pt]{0pt}{28pt}\,\thechapter\,}}{16pt}{\Huge}
+\titlespacing*{\chapter}{0pt}{10pt}{24pt}
+
+% ---------- Nhãn tiếng Việt ----------
+\renewcommand{\chaptername}{Chương}
+\renewcommand{\contentsname}{Mục lục}
+\renewcommand{\figurename}{Hình}
+\renewcommand{\tablename}{Bảng}
+\renewcommand{\listfigurename}{Danh sách hình vẽ}
+\renewcommand{\bibname}{Tài liệu tham khảo}
+\renewcommand{\appendixname}{Phụ lục}
+
+% ---------- Liên kết ----------
+\usepackage[unicode,hidelinks]{hyperref}
+\hypersetup{colorlinks=true,linkcolor=linkcol,citecolor=bkred,urlcolor=linkcol,
+  pdftitle={Dự báo rủi ro vỡ nợ tín dụng bằng Machine Learning},
+  pdfauthor={Đoàn Danh Long}}
+\usepackage[nameinlink]{cleveref}
+\crefname{equation}{công thức}{công thức}
+\crefname{figure}{Hình}{Hình}
+\crefname{table}{Bảng}{Bảng}
+\crefname{chapter}{Chương}{Chương}
+\crefname{section}{Mục}{Mục}
+\crefname{dlytheo}{kết quả}{kết quả}
+
+% ---------- Lệnh tắt toán ----------
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Prob}{\mathbb{P}}
+\newcommand{\xv}{\mathbf{x}}
+\newcommand{\wv}{\mathbf{w}}
+\newcommand{\sgn}{\operatorname{sign}}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
+
+% =====================================================================
 \begin{document}
 
-\section{DỰ BÁO RỦI RO VỠ NỢ TÍN DỤNG BẰNG MACHINE
-LEARNING}\label{dux1ef1-buxe1o-rux1ee7i-ro-vux1ee1-nux1ee3-tuxedn-dux1ee5ng-bux1eb1ng-machine-learning}
+% =====================================================================
+%  TRANG BÌA
+% =====================================================================
+\begin{titlepage}
+\centering
+\begin{tikzpicture}[remember picture,overlay]
+  \draw[bkblue,line width=1pt,dash pattern=on 6pt off 3pt]
+    ($(current page.north west)+(1.4cm,-1.4cm)$) rectangle
+    ($(current page.south east)+(-1.4cm,1.4cm)$);
+  \draw[bkblue,line width=0.4pt]
+    ($(current page.north west)+(1.65cm,-1.65cm)$) rectangle
+    ($(current page.south east)+(-1.65cm,1.65cm)$);
+\end{tikzpicture}
 
-\textbf{Sinh viên thực hiện:} Đoàn Danh Long\\
-\textbf{Mã số sinh viên:} 20237354\\
-\textbf{Giảng viên hướng dẫn:} Nguyễn Cảnh Nam\\
-\textbf{Học kỳ:} 2025.2 - Năm học 2025--2026
+{\large\bfseries ĐẠI HỌC BÁCH KHOA HÀ NỘI\par}
+{\large\bfseries KHOA TOÁN - TIN\par}
+\vspace{2pt}{\color{bkblue}\rule{3cm}{0.8pt}}\par
+\vspace{1.2cm}
 
-\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+% --- Logo: thả file PNG vào final_report/assets/ là tự hiện ---
+\begin{tabular}{c@{\hskip 1.6cm}c}
+  \IfFileExists{assets/logo_bachkhoa.png}
+    {\includegraphics[height=3cm]{assets/logo_bachkhoa.png}}
+    {\fbox{\parbox[c][3cm][c]{3cm}{\centering\small Logo\\ĐHBK}}}
+  &
+  \IfFileExists{assets/logo_toantin.png}
+    {\includegraphics[height=3cm]{assets/logo_toantin.png}}
+    {\fbox{\parbox[c][3cm][c]{3cm}{\centering\small Logo\\Toán-Tin}}}
+\end{tabular}
 
-\FloatBarrier
-\Needspace{8\baselineskip}
-\subsection{LỜI CẢM ƠN}\label{lux1eddi-cux1ea3m-ux1a1n}
+\vspace{1.6cm}
+{\Large\bfseries BÁO CÁO ĐỒ ÁN I\par}
+\vspace{4pt}
+{\large HỌC PHẦN ĐỒ ÁN NGHIÊN CỨU\par}
+\vspace{1.1cm}
+{\color{bkblue}\Huge\bfseries DỰ BÁO RỦI RO VỠ NỢ\par}
+\vspace{6pt}
+{\color{bkblue}\Huge\bfseries TÍN DỤNG BẰNG MACHINE LEARNING\par}
+\vspace{2.2cm}
 
-Em xin gửi lời cảm ơn chân thành đến Giảng viên hướng dẫn - Thầy Nguyễn
-Cảnh Nam, Khoa Toán--Tin, Trường Đại học Bách Khoa Hà Nội - đã tận tình
-hướng dẫn, góp ý và định hướng trong suốt quá trình thực hiện đồ án.
+{\large
+\begin{tabular}{r@{\hskip 0.6cm}l}
+  \textbf{Giảng viên hướng dẫn:} & \color{bkred}TS. Nguyễn Cảnh Nam\\[4pt]
+  \textbf{Sinh viên thực hiện:}  & Đoàn Danh Long\\[4pt]
+  \textbf{Mã số sinh viên:}      & 20237354\\[4pt]
+  \textbf{Học kỳ:}               & 2025.2\\
+\end{tabular}\par}
 
-Em cũng xin cảm ơn gia đình và bạn bè đã luôn động viên, tạo điều kiện
-thuận lợi để em có thể hoàn thành đồ án đúng tiến độ.
+\vfill
+{\bfseries Hà Nội, tháng 6 năm 2026\par}
+\end{titlepage}
 
-Dù đã cố gắng hết sức, báo cáo chắc chắn còn nhiều thiếu sót. Em rất
-mong nhận được nhận xét và góp ý từ Thầy để tiếp tục cải thiện trong
+% =====================================================================
+%  PHẦN ĐẦU (đánh số La Mã)
+% =====================================================================
+\pagenumbering{roman}
+
+% ---------- LỜI MỞ ĐẦU ----------
+\chapter*{Lời mở đầu}
+\addcontentsline{toc}{chapter}{Lời mở đầu}
+\markboth{LỜI MỞ ĐẦU}{}
+
+Hoạt động tín dụng là xương sống của hệ thống ngân hàng, nhưng đi kèm với nó là rủi ro
+vỡ nợ — khi người vay mất khả năng trả nợ. Việc đánh giá rủi ro chính xác trước khi cấp
+tín dụng quyết định trực tiếp đến chất lượng tài sản và sự an toàn của tổ chức cho vay.
+Quy trình thẩm định thủ công truyền thống vừa tốn kém, vừa khó mở rộng quy mô, vừa mang
+tính chủ quan; trong khi các mô hình chấm điểm tuyến tính cổ điển (như FICO) bỏ qua phần
+lớn các tương tác phi tuyến giữa các yếu tố tài chính.
+
+Học máy (Machine Learning) cung cấp một hướng tiếp cận khác: học quy luật rủi ro trực
+tiếp từ dữ liệu lịch sử của hàng trăm nghìn hồ sơ vay, nắm bắt các quan hệ phi tuyến phức
+tạp mà mô hình tuyến tính không biểu diễn được. Tuy nhiên, một mô hình tốt trong bài toán
+tín dụng không chỉ cần \emph{chính xác} mà còn phải \emph{giải thích được} (do ràng buộc
+pháp lý khi từ chối khách hàng) và \emph{phù hợp với chi phí kinh doanh} (vì bỏ sót một
+người sẽ vỡ nợ tốn kém hơn nhiều so với từ chối nhầm một người tốt).
+
+Báo cáo này trình bày một cách hệ thống toàn bộ quy trình xây dựng một hệ thống dự báo
+rủi ro vỡ nợ trên bộ dữ liệu \emph{Give Me Some Credit} (Kaggle): từ cơ sở lý thuyết của
+các mô hình phân loại, khám phá và tiền xử lý dữ liệu, thiết kế đặc trưng, huấn luyện và
+so sánh bốn mô hình (Hồi quy Logistic, Cây quyết định, Rừng ngẫu nhiên, XGBoost), đến
+diễn giải mô hình bằng giá trị SHAP, tối ưu ngưỡng quyết định theo chi phí, và đóng gói
+thành một ứng dụng web hoàn chỉnh. Toàn bộ nội dung được sắp xếp từ cơ sở lý thuyết đến
+thực nghiệm và ứng dụng, nhằm tạo thành một bản tổng hợp nhất quán và dễ theo dõi.
+
+% ---------- LỜI CẢM ƠN ----------
+\chapter*{Lời cảm ơn}
+\addcontentsline{toc}{chapter}{Lời cảm ơn}
+\markboth{LỜI CẢM ƠN}{}
+
+Em xin gửi lời cảm ơn chân thành đến Giảng viên hướng dẫn — Thầy Nguyễn Cảnh Nam, Khoa
+Toán--Tin, Trường Đại học Bách Khoa Hà Nội — đã tận tình hướng dẫn, góp ý và định hướng
+trong suốt quá trình thực hiện đồ án.
+
+Em cũng xin cảm ơn gia đình và bạn bè đã luôn động viên, tạo điều kiện thuận lợi để em có
+thể hoàn thành đồ án đúng tiến độ. Dù đã cố gắng hết sức, báo cáo chắc chắn còn nhiều
+thiếu sót. Em rất mong nhận được nhận xét và góp ý từ Thầy để tiếp tục cải thiện trong
 những nghiên cứu tiếp theo.
 
-\emph{Hà Nội, tháng 4 năm 2026 --- Đoàn Danh Long}
+\vspace{8pt}
+\hfill\emph{Hà Nội, tháng 6 năm 2026 — Đoàn Danh Long}
 
-\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+% ---------- TÓM TẮT ----------
+\chapter*{Tóm tắt}
+\addcontentsline{toc}{chapter}{Tóm tắt}
+\markboth{TÓM TẮT}{}
 
-\FloatBarrier
-\Needspace{8\baselineskip}
-\subsection{TÓM TẮT}\label{tuxf3m-tux1eaft}
+Báo cáo trình bày nghiên cứu ứng dụng học máy vào bài toán dự báo rủi ro vỡ nợ tín dụng,
+sử dụng bộ dữ liệu \emph{Give Me Some Credit} (Kaggle, 149.999 hồ sơ vay). Bốn mô hình
+được xây dựng và đánh giá: Hồi quy Logistic ($\mathrm{AUC}=0{,}8432$), Cây quyết định
+($0{,}8579$), Rừng ngẫu nhiên ($0{,}8703$) và XGBoost ($0{,}8714$). XGBoost vượt mục tiêu
+($\mathrm{AUC}>0{,}87$) nhờ thiết kế đặc trưng có chủ đích, trong đó hai đặc trưng tự thiết
+kế lọt vào top-3 theo giá trị SHAP. Ngưỡng quyết định được tối ưu theo $F_2$ tại
+$t=0{,}625$, đạt Recall $66{,}9\%$ và giảm chi phí ước tính khoảng $2{,}01$ triệu USD so
+với ngưỡng tối ưu theo $F_1$. Sản phẩm cuối là một ứng dụng Streamlit tương tác, hỗ trợ
+dự báo đơn lẻ kèm giải thích SHAP và đánh giá theo lô.
 
-Báo cáo trình bày nghiên cứu ứng dụng học máy (Machine Learning) vào bài
-toán dự báo rủi ro vỡ nợ tín dụng, sử dụng bộ dữ liệu \emph{Give Me Some
-Credit} (Kaggle, 149.999 hồ sơ vay). Bốn mô hình được xây dựng và đánh
-giá: hồi quy Logistic (AUC=0,8432), cây quyết định (AUC=0,8579), rừng
-ngẫu nhiên (AUC=0,8703), và XGBoost (AUC=0,8714). Mô hình XGBoost vượt
-mục tiêu (AUC \textgreater{} 0,87) với thiết kế đặc trưng có chủ đích.
-Ngưỡng tối ưu theo F2 là t=0,625, giúp Recall đạt 66,9\% và giảm chi phí
-ước tính khoảng 2,01 triệu USD so với ngưỡng tối ưu theo F1. Sản phẩm
-cuối là ứng dụng Streamlit tương tác với giải thích SHAP và đánh giá
-theo lô.
+\vspace{6pt}
+\noindent\textbf{Từ khóa:} dự báo vỡ nợ, XGBoost, SHAP, $F_\beta$-score, dữ liệu mất cân bằng.
 
-\textbf{Từ khóa:} dự báo vỡ nợ, XGBoost, SHAP, F-beta, dữ liệu mất cân
-bằng.
+% ---------- MỤC LỤC ----------
+\tableofcontents
+\listoffigures
 
-\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+% ---------- BẢNG THUẬT NGỮ ----------
+\chapter*{Bảng thuật ngữ viết tắt}
+\addcontentsline{toc}{chapter}{Bảng thuật ngữ viết tắt}
+\markboth{BẢNG THUẬT NGỮ VIẾT TẮT}{}
 
-\FloatBarrier
-\Needspace{8\baselineskip}
-\subsection{BẢNG THUẬT NGỮ VIẾT
-TẮT}\label{bux1ea3ng-thuux1eadt-ngux1eef-viux1ebft-tux1eaft}
-
-{\def\LTcaptype{none} % do not increment counter
-\begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}@{}}
-\toprule\noalign{}
-\begin{minipage}[b]{\linewidth}\raggedright
-Thuật ngữ
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Giải nghĩa
-\end{minipage} \\
-\midrule\noalign{}
+\begin{longtable}{>{\bfseries}p{3.2cm} p{11cm}}
+\toprule
+\textmd{\bfseries Thuật ngữ} & \textbf{Giải nghĩa}\\
+\midrule
 \endhead
-\bottomrule\noalign{}
-\endlastfoot
-\textbf{AUC-ROC} & Diện tích dưới đường cong ROC --- đo khả năng xếp
-hạng. 0,5 = ngẫu nhiên, 1 = hoàn hảo. \\
-\textbf{TP / FP / TN / FN} & Dương tính thật / Dương tính giả / Âm tính
-thật / Âm tính giả. FN đắt nhất trong tín dụng. \\
-\textbf{Precision / Recall} & Độ chính xác / Độ phát hiện. Precision =
-TP/(TP+FP), Recall = TP/(TP+FN). \\
-\textbf{F1 / F2} & Trung bình điều hòa Precision-Recall; F2 ưu tiên
-Recall gấp đôi Precision. \\
-\textbf{SHAP} & Giá trị Shapley --- phân tách dự báo thành đóng góp của
-từng đặc trưng. \\
-\textbf{TreeExplainer} & Thuật toán chuyên biệt tính SHAP cho mô hình
-dạng cây. \\
-\textbf{Bagging / Boosting} & Hai cách học tổ hợp: Bagging huấn luyện
-độc lập để giảm phương sai, Boosting huấn luyện tuần tự để giảm sai
-lệch. \\
-\textbf{Class Imbalance} & Mất cân bằng lớp --- lớp thiểu số chỉ chiếm
-6,68\%. \\
-\textbf{scale\_pos\_weight} & Trọng số XGBoost nâng tầm lớp thiểu số. \\
+AUC-ROC & Diện tích dưới đường cong ROC — đo khả năng xếp hạng. $0{,}5$ = ngẫu nhiên, $1$ = hoàn hảo.\\
+TP/FP/TN/FN & Dương thật / Dương giả / Âm thật / Âm giả. FN đắt nhất trong tín dụng.\\
+Precision/Recall & $\mathrm{Precision}=TP/(TP{+}FP)$; $\mathrm{Recall}=TP/(TP{+}FN)$.\\
+$F_1/F_2$ & Trung bình điều hòa Precision--Recall; $F_2$ ưu tiên Recall gấp đôi Precision.\\
+SHAP & Giá trị Shapley — phân tách dự báo thành đóng góp của từng đặc trưng.\\
+Bagging/Boosting & Hai kiểu học tổ hợp: Bagging huấn luyện song song giảm phương sai; Boosting tuần tự giảm độ chệch.\\
+Class Imbalance & Mất cân bằng lớp — lớp thiểu số chỉ chiếm $6{,}68\%$.\\
+\texttt{scale\_pos\_weight} & Trọng số XGBoost nâng tầm lớp thiểu số.\\
+\bottomrule
 \end{longtable}
-}
 
-\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+% =====================================================================
+%  PHẦN THÂN (đánh số Ả Rập)
+% =====================================================================
+\cleardoublepage
+\pagenumbering{arabic}
 
-\FloatBarrier
-\Needspace{8\baselineskip}
-\subsection{MỤC LỤC}\label{mux1ee5c-lux1ee5c}
+% =====================================================================
+\chapter{Giới thiệu}\label{ch:gioithieu}
 
+\section{Tính cấp thiết}
+Tỷ lệ nợ xấu của hệ thống ngân hàng Việt Nam cuối năm 2023 ở mức $4{,}55\%$~\cite{sbv2024},
+phản ánh áp lực rủi ro tín dụng ngày càng lớn. Quy trình thẩm định thủ công không mở rộng
+được theo quy mô hồ sơ; trong khi các mô hình chấm điểm tuyến tính cổ điển bỏ qua các
+tương tác phi tuyến giữa thu nhập, dư nợ và lịch sử trễ hạn.
+
+Học máy học quy luật rủi ro từ dữ liệu lịch sử quy mô lớn và nắm bắt được các tương tác
+phi tuyến này. Tuy nhiên, các mô hình mạnh thường mang tính ``hộp đen''. Hiệp ước Basel
+và quy định bảo vệ dữ liệu (GDPR, Điều 22) yêu cầu tổ chức tín dụng phải \emph{giải thích
+được} lý do từ chối một hồ sơ~\cite{bcbs2018,gdpr2018}. Phương pháp SHAP~\cite{lundberg2017}
+giải quyết yêu cầu này bằng cách quy mỗi quyết định về đóng góp của từng đặc trưng.
+
+\section{Mục tiêu (SMART)}
+\begin{table}[htbp]\centering
+\caption{Mục tiêu cụ thể và kết quả đạt được của đồ án.}
+\label{tab:smart}
+\begin{tabular}{p{4.2cm} p{5cm} p{4.2cm}}
+\toprule
+\textbf{Mục tiêu} & \textbf{Chỉ tiêu} & \textbf{Kết quả}\\
+\midrule
+Xây dựng mô hình & $\mathrm{AUC}\ge 0{,}87$ & \textbf{0,8714}\\
+So sánh 4 thuật toán & Bảng đầy đủ & \cref{tab:sosanh}\\
+Thiết kế đặc trưng & $\ge 2$ đặc trưng mới vào top-5 SHAP & \textbf{2 trong top-3}\\
+Tối ưu ngưỡng & Tối ưu theo $F_2$ & $t=0{,}625$, Recall $66{,}9\%$\\
+Demo sản phẩm & Streamlit + SHAP & Đạt\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Phạm vi}
+\begin{itemize}
+  \item \textbf{Dữ liệu:} \emph{Give Me Some Credit} (Kaggle, 149.999 hồ sơ có nhãn trong
+        \texttt{cs-training.csv}; \texttt{cs-test.csv} là tập nộp dự đoán, không có nhãn thật).
+  \item \textbf{Mô hình:} bốn mô hình LR, DT, RF, XGBoost.
+  \item \textbf{Không bao gồm:} mạng nơ-ron sâu, chấm điểm thời gian thực, tích hợp hệ thống.
+  \item \textbf{Công nghệ:} Python 3.14, scikit-learn 1.8, XGBoost 3.2, SHAP 0.51.
+\end{itemize}
+
+\section{Đóng góp chính và quy trình tổng quan}
+Đóng góp chính của đồ án gồm: (1) xây dựng đầy đủ quy trình từ khám phá dữ liệu đến demo
+sản phẩm; (2) thiết kế 4 đặc trưng mới có ý nghĩa nghiệp vụ, 2 trong số đó vào top-3 SHAP;
+(3) chuẩn hóa cách chọn ngưỡng triển khai theo $F_2$; (4) đóng gói thành ứng dụng web hỗ
+trợ dự báo đơn lẻ và hậu kiểm theo lô. Toàn bộ quy trình được tóm tắt trong \cref{fig:pipeline}.
+
+\begin{figure}[htbp]\centering
+\begin{tikzpicture}[
+  node distance=8mm and 7mm,
+  box/.style={draw=bkblue,fill=boxgray,rounded corners=2pt,minimum height=10mm,
+    text width=21mm,align=center,font=\small,thick},
+  arr/.style={-{Latex[length=2.4mm]},bkblue,thick}]
+  \node[box](a){Khám phá dữ liệu (EDA)};
+  \node[box,right=of a](b){Tiền xử lý \& Khuyết thiếu};
+  \node[box,right=of b](c){Thiết kế đặc trưng};
+  \node[box,right=of c](d){Huấn luyện 4 mô hình};
+  \node[box,below=of d](e){Đánh giá \& Tối ưu ngưỡng};
+  \node[box,left=of e](f){Diễn giải SHAP};
+  \node[box,left=of f](g){Hiệu chỉnh xác suất};
+  \node[box,left=of g](h){Ứng dụng Streamlit};
+  \draw[arr](a)--(b); \draw[arr](b)--(c); \draw[arr](c)--(d);
+  \draw[arr](d)--(e); \draw[arr](e)--(f); \draw[arr](f)--(g); \draw[arr](g)--(h);
+\end{tikzpicture}
+\caption{Sơ đồ quy trình tổng quan của đồ án.}
+\label{fig:pipeline}
+\end{figure}
+
+% =====================================================================
+\chapter{Cơ sở lý thuyết}\label{ch:lythuyet}
+
+Chương này trình bày nền tảng toán học của các mô hình và độ đo được sử dụng. Mục tiêu là
+làm rõ \emph{vì sao} mỗi mô hình hoạt động, thay vì chỉ mô tả cách dùng.
+
+\section{Bài toán phân loại nhị phân}
+\begin{khungtheo}
+\begin{dinhnghia}[Phân loại nhị phân]
+Cho không gian đặc trưng $\mathcal{X}\subseteq\R^p$ và nhãn $y\in\{0,1\}$. Bài toán phân
+loại nhị phân là tìm hàm $f:\mathcal{X}\to[0,1]$ ước lượng xác suất hậu nghiệm
+$f(\xv)\approx \Prob(y=1\mid \xv)$. Quyết định cứng thu được qua một ngưỡng $t\in(0,1)$:
+\[
+  \hat{y}=\mathbf{1}\!\left[f(\xv)\ge t\right].
+\]
+\end{dinhnghia}
+\end{khungtheo}
+
+\paragraph{Mất cân bằng lớp.} Trong bộ dữ liệu, tỷ lệ vỡ nợ chỉ $6{,}68\%$, tức tỷ lệ
+âm/dương xấp xỉ $14{:}1$. Hệ quả là (i) độ chính xác (accuracy) trở nên vô nghĩa — một bộ
+phân loại luôn dự báo ``không vỡ nợ'' đã đạt $93{,}32\%$ accuracy; và (ii) ngưỡng tối ưu
+thường khác xa $0{,}5$. Vì vậy ta đánh giá bằng AUC, $F_\beta$ và chi phí kỳ vọng thay vì
+accuracy (xem \cref{sec:metric}).
+
+\section{Hồi quy Logistic}\label{sec:lr}
+Hồi quy Logistic mô hình hóa xác suất hậu nghiệm bằng hàm sigmoid
+$\sigma(z)=\dfrac{1}{1+e^{-z}}$ áp lên một tổ hợp tuyến tính của đặc trưng:
+\begin{equation}
+  p_i \coloneqq \Prob(y_i=1\mid \xv_i)=\sigma(\wv^\top\xv_i + b)
+  =\frac{1}{1+\exp\!\big(-(\wv^\top\xv_i+b)\big)}.
+  \label{eq:lr}
+\end{equation}
+Tham số $(\wv,b)$ được ước lượng theo nguyên lý hợp lý cực đại (MLE). Với giả thiết các
+quan sát độc lập tuân theo phân phối Bernoulli, hàm hợp lý là
+$\prod_i p_i^{y_i}(1-p_i)^{1-y_i}$. Lấy logarit âm và chia cho $N$ ta được hàm mất mát
+\emph{cross-entropy} (log-loss):
+\begin{equation}
+  \mathcal{L}(\wv,b)=-\frac{1}{N}\sum_{i=1}^{N}\Big[y_i\log p_i+(1-y_i)\log(1-p_i)\Big].
+  \label{eq:logloss}
+\end{equation}
+
+\begin{menhde}[Gradient và tính lồi]\label{md:lr}
+Đặt $X\in\R^{N\times p}$ là ma trận đặc trưng, $\mathbf{p}=(p_i)$, $\mathbf{y}=(y_i)$. Khi đó
+\[
+  \nabla_{\wv}\mathcal{L}=\frac{1}{N}X^\top(\mathbf{p}-\mathbf{y}),
+  \qquad
+  \nabla^2_{\wv}\mathcal{L}=\frac{1}{N}X^\top S X,
+\]
+với $S=\operatorname{diag}\big(p_i(1-p_i)\big)\succeq 0$. Do đó $\mathcal{L}$ là hàm lồi
+theo $\wv$, và mọi điểm dừng đều là cực tiểu toàn cục.
+\end{menhde}
+\begin{proof}
+Dùng $\sigma'(z)=\sigma(z)(1-\sigma(z))$. Với một quan sát, $\partial\mathcal{L}_i/\partial
+\wv=-(y_i-p_i)\xv_i=(p_i-y_i)\xv_i$; lấy trung bình cho công thức gradient. Đạo hàm thêm
+một lần: $\partial p_i/\partial\wv=p_i(1-p_i)\xv_i$, suy ra Hessian $=\frac1N\sum_i
+p_i(1-p_i)\xv_i\xv_i^\top=\frac1N X^\top S X$. Với mọi $\mathbf{v}$,
+$\mathbf{v}^\top X^\top S X\mathbf{v}=\sum_i p_i(1-p_i)(\xv_i^\top\mathbf{v})^2\ge 0$ vì
+$p_i\in(0,1)$. Vậy Hessian nửa xác định dương, $\mathcal{L}$ lồi.
+\end{proof}
+
+\noindent\textbf{Ưu/nhược.} Nhanh, dễ giải thích (hệ số là log-odds), là baseline tốt;
+nhưng chỉ tạo biên quyết định tuyến tính nên khó nắm bắt tương tác phi tuyến mạnh.
+
+\section{Cây quyết định (CART)}\label{sec:dt}
+Cây quyết định phân hoạch đệ quy không gian đặc trưng thành các vùng hình hộp, mỗi vùng
+gán một dự báo. Tại mỗi nút, thuật toán CART chọn cặp (đặc trưng, ngưỡng) làm \emph{giảm
+độ vẩn} (impurity) nhiều nhất. Với một nút $t$ chứa tỉ lệ lớp $p_{k\mid t}$, hai độ vẩn
+thông dụng là
+\begin{equation}
+  \underbrace{G(t)=1-\sum_{k}p_{k\mid t}^2}_{\text{Gini}},
+  \qquad
+  \underbrace{H(t)=-\sum_{k}p_{k\mid t}\log_2 p_{k\mid t}}_{\text{Entropy}}.
+  \label{eq:gini}
+\end{equation}
+Một phép chia $s$ tách nút cha thành nút con trái/phải với số mẫu $N_L,N_R$ ($N=N_L+N_R$).
+Độ giảm độ vẩn (information gain) là
+\begin{equation}
+  \Delta I(s,t)=I(t)-\frac{N_L}{N}I(t_L)-\frac{N_R}{N}I(t_R),
+  \label{eq:gain}
+\end{equation}
+và CART chọn $s^\star=\argmax_s \Delta I(s,t)$. Cây dừng khi đạt độ sâu tối đa hoặc số mẫu
+lá tối thiểu.
+
+\noindent\textbf{Ưu/nhược.} Trực quan, mô tả được logic quyết định; nhưng một cây đơn dễ
+quá khớp (overfit) và có phương sai cao — đây chính là động lực cho mô hình tổ hợp.
+
+\section{Bagging và Rừng ngẫu nhiên}\label{sec:rf}
+Rừng ngẫu nhiên huấn luyện $B$ cây trên các mẫu bootstrap khác nhau và lấy trung bình dự
+báo. Cơ chế giảm phương sai được làm rõ bởi kết quả sau.
+
+\begin{menhde}[Giảm phương sai nhờ trung bình hóa]\label{md:rf}
+Giả sử $B$ cây cho dự báo $\{Z_b\}$ cùng phân phối, mỗi cái có phương sai $\sigma^2$ và
+tương quan từng cặp $\rho\ge 0$. Khi đó phương sai của dự báo trung bình
+$\bar Z=\frac1B\sum_b Z_b$ là
+\begin{equation}
+  \operatorname{Var}(\bar Z)=\rho\,\sigma^2+\frac{1-\rho}{B}\,\sigma^2
+  \xrightarrow{\;B\to\infty\;}\rho\,\sigma^2.
+  \label{eq:rf}
+\end{equation}
+\end{menhde}
+\begin{proof}
+$\operatorname{Var}(\bar Z)=\frac{1}{B^2}\big[\sum_b\operatorname{Var}(Z_b)+\sum_{b\ne b'}
+\operatorname{Cov}(Z_b,Z_{b'})\big]=\frac{1}{B^2}\big[B\sigma^2+B(B-1)\rho\sigma^2\big]
+=\frac{\sigma^2}{B}+\frac{B-1}{B}\rho\sigma^2$, rút gọn ra \cref{eq:rf}.
+\end{proof}
+
+Số hạng thứ hai $\frac{1-\rho}{B}\sigma^2$ triệt tiêu khi tăng $B$, nhưng số hạng
+$\rho\sigma^2$ thì không. Vì thế Rừng ngẫu nhiên còn \emph{lấy ngẫu nhiên một tập con đặc
+trưng} tại mỗi phép chia để \emph{giảm $\rho$} giữa các cây — đó là điểm khác biệt cốt lõi
+so với bagging thuần. Kết quả: ổn định hơn cây đơn, kháng nhiễu tốt, đổi lại khó diễn giải
+trực tiếp.
+
+\section{Gradient Boosting và XGBoost}\label{sec:xgb}
+Khác với bagging (song song), boosting xây mô hình cộng dồn theo chuỗi: cây thứ $t$ sửa
+phần sai số còn lại của tổ hợp $t-1$ cây trước. Dự báo sau $t$ vòng là
+$\hat y_i^{(t)}=\hat y_i^{(t-1)}+f_t(\xv_i)$, với $f_t$ là một cây hồi quy. XGBoost cực
+tiểu hàm mục tiêu \emph{có chính quy hóa}:
+\begin{equation}
+  \mathcal{L}^{(t)}=\sum_{i=1}^{N} l\!\big(y_i,\hat y_i^{(t-1)}+f_t(\xv_i)\big)
+  +\Omega(f_t),
+  \qquad
+  \Omega(f)=\gamma T+\tfrac12\lambda\lVert\mathbf{w}\rVert^2,
+  \label{eq:xgbobj}
+\end{equation}
+trong đó $T$ là số lá, $\mathbf{w}$ là véc-tơ trọng số lá, $\gamma,\lambda\ge 0$ kiểm soát
+độ phức tạp. Khai triển Taylor bậc hai quanh $\hat y^{(t-1)}$ với
+$g_i=\partial_{\hat y}l$, $h_i=\partial^2_{\hat y}l$:
+\begin{equation}
+  \mathcal{L}^{(t)}\simeq\sum_{i=1}^{N}\Big[g_i f_t(\xv_i)+\tfrac12 h_i f_t(\xv_i)^2\Big]
+  +\Omega(f_t)+\text{const}.
+  \label{eq:taylor}
+\end{equation}
+
+\begin{khungtheo}
+\begin{dlytheo}[Trọng số lá tối ưu và độ lợi phép chia]\label{dl:xgb}
+Với một cấu trúc cây cố định, gọi $I_j$ là tập mẫu rơi vào lá $j$, và đặt
+$G_j=\sum_{i\in I_j}g_i$, $H_j=\sum_{i\in I_j}h_i$. Khi đó trọng số lá tối ưu và giá trị
+mục tiêu tối ưu tương ứng là
+\begin{equation}
+  w_j^\star=-\frac{G_j}{H_j+\lambda},
+  \qquad
+  \tilde{\mathcal{L}}^{(t)}=-\frac12\sum_{j=1}^{T}\frac{G_j^2}{H_j+\lambda}+\gamma T.
+  \label{eq:wopt}
+\end{equation}
+Độ lợi (gain) khi tách một lá thành hai lá trái/phải là
+\begin{equation}
+  \mathrm{Gain}=\frac12\!\left[\frac{G_L^2}{H_L+\lambda}+\frac{G_R^2}{H_R+\lambda}
+  -\frac{(G_L+G_R)^2}{H_L+H_R+\lambda}\right]-\gamma.
+  \label{eq:xgbgain}
+\end{equation}
+\end{dlytheo}
+\end{khungtheo}
+\begin{proof}
+Vì một cây gán cùng một trọng số $w_j$ cho mọi mẫu trong lá $j$, nhóm tổng theo lá:
+$\mathcal{L}^{(t)}=\sum_{j=1}^{T}\big[G_j w_j+\frac12(H_j+\lambda)w_j^2\big]+\gamma T$. Đây
+là tam thức bậc hai theo $w_j$ với hệ số bậc hai dương; cực tiểu đạt tại
+$w_j^\star=-G_j/(H_j+\lambda)$. Thế lại được
+$\tilde{\mathcal{L}}^{(t)}=-\frac12\sum_j G_j^2/(H_j+\lambda)+\gamma T$. Độ lợi của phép
+chia là chênh lệch giá trị mục tiêu trước và sau khi tách, cho ra \cref{eq:xgbgain}.
+\end{proof}
+
+\noindent Công thức \cref{eq:xgbgain} chính là tiêu chí XGBoost dùng để chọn điểm chia: nó
+thưởng cho phép chia làm giảm mục tiêu và phạt $\gamma$ cho mỗi lá mới, tạo cơ chế cắt tỉa
+tự nhiên. Việc dùng cả $g_i$ và $h_i$ (Newton bậc hai) khiến XGBoost hội tụ nhanh và ổn
+định hơn boosting bậc nhất.
+
+\section{Độ đo đánh giá}\label{sec:metric}
+Từ ma trận nhầm lẫn $(TP,FP,FN,TN)$ định nghĩa
+$\mathrm{Precision}=\frac{TP}{TP+FP}$, $\mathrm{Recall}=\frac{TP}{TP+FN}$. Tổng quát hóa
+qua trung bình điều hòa có trọng số là $F_\beta$:
+\begin{equation}
+  F_\beta=(1+\beta^2)\cdot\frac{\mathrm{Precision}\cdot\mathrm{Recall}}
+  {\beta^2\,\mathrm{Precision}+\mathrm{Recall}}.
+  \label{eq:fbeta}
+\end{equation}
+Tham số $\beta$ đặt tầm quan trọng của Recall gấp $\beta$ lần Precision; ta chọn $\beta=2$
+vì trong tín dụng, bỏ sót người vỡ nợ (FN) tốn kém hơn từ chối nhầm (FP).
+
+\begin{khungtheo}
+\begin{dlytheo}[Diễn giải xác suất của AUC]\label{dl:auc}
+Gọi $\xv^+$ là một mẫu dương và $\xv^-$ là một mẫu âm lấy ngẫu nhiên độc lập. Khi đó diện
+tích dưới đường cong ROC bằng xác suất mô hình xếp mẫu dương cao hơn mẫu âm:
+\begin{equation}
+  \mathrm{AUC}=\Prob\big(f(\xv^+)>f(\xv^-)\big)+\tfrac12\Prob\big(f(\xv^+)=f(\xv^-)\big).
+  \label{eq:auc}
+\end{equation}
+\end{dlytheo}
+\end{khungtheo}
+\begin{proof}[Phác thảo]
+Đường ROC là đồ thị $\mathrm{TPR}(t)$ theo $\mathrm{FPR}(t)$ khi quét ngưỡng $t$. Đổi biến,
+$\mathrm{AUC}=\int_0^1 \mathrm{TPR}\,d(\mathrm{FPR})=\int \Prob(f(\xv^+)>t)\,
+d\Prob(f(\xv^-)\le t)$, chính là $\Prob(f(\xv^+)>f(\xv^-))$ (cộng nửa khối lượng tại các
+điểm bằng nhau). Đây cũng là thống kê $U$ Mann--Whitney chuẩn hóa, nên AUC bất biến với mọi
+phép biến đổi đơn điệu của điểm số.
+\end{proof}
+
+\begin{nhanxet}[Ngưỡng Bayes tối ưu theo chi phí]\label{nx:bayes}
+Nếu chi phí của một FP là $c_{FP}$ và của một FN là $c_{FN}$, quy tắc cực tiểu chi phí kỳ
+vọng là dự báo dương khi $p>t^\star$ với
+$t^\star=\dfrac{c_{FP}}{c_{FP}+c_{FN}}$. Chi phí FN càng lớn thì ngưỡng càng thấp.
+\end{nhanxet}
+
+\section{Diễn giải mô hình bằng SHAP}\label{sec:shap}
+SHAP gán cho mỗi đặc trưng $i$ một đóng góp $\phi_i$ vào chênh lệch giữa dự báo và giá trị
+nền, dựa trên \emph{giá trị Shapley} từ lý thuyết trò chơi hợp tác. Với hàm giá trị $v(S)$
+là dự báo kỳ vọng khi chỉ biết tập đặc trưng $S$:
+\begin{equation}
+  \phi_i=\sum_{S\subseteq F\setminus\{i\}}\frac{|S|!\,(|F|-|S|-1)!}{|F|!}
+  \big[v(S\cup\{i\})-v(S)\big].
+  \label{eq:shap}
+\end{equation}
+Giá trị Shapley là cách phân bổ \emph{duy nhất} thỏa đồng thời bốn tiên đề: tính hiệu quả
+($\sum_i\phi_i$ bằng chênh lệch dự báo), đối xứng, đặc trưng vô dụng có $\phi_i=0$, và tính
+cộng tính. Với mô hình cây, \texttt{TreeExplainer} tính \cref{eq:shap} chính xác theo thời
+gian đa thức, tránh chi phí tổ hợp $2^{|F|}$.
+
+\section{Hiệu chỉnh xác suất và kiểm định thống kê}\label{sec:calib}
+Điểm số của cây boosting thường không phải xác suất hiệu chỉnh tốt. \emph{Platt scaling}
+hiệu chỉnh bằng một hồi quy logistic một biến trên điểm số: $\hat p=\sigma(a\,f(\xv)+b)$.
+Chất lượng hiệu chỉnh đo bằng điểm Brier $\mathrm{BS}=\frac1N\sum_i(\hat p_i-y_i)^2$ và sai
+số hiệu chỉnh kỳ vọng ECE. Để kiểm tra chênh lệch AUC giữa hai mô hình \emph{tương quan}
+(cùng tập kiểm tra) có ý nghĩa thống kê hay không, ta dùng kiểm định DeLong.
+
+% =====================================================================
+\chapter{Dữ liệu và Tiền xử lý}\label{ch:dulieu}
+
+\section{Khám phá dữ liệu (EDA)}
+Bộ dữ liệu gồm 149.999 hồ sơ (sau khi loại 1 dòng có tuổi $=0$), 10 đặc trưng gốc. Tỷ lệ
+vỡ nợ $6{,}68\%$ ($9.951$ dương / $140.048$ âm) — mất cân bằng mạnh
+(\cref{fig:target}). Một số biến tài chính như \texttt{RevolvingUtilization} và
+\texttt{DebtRatio} có phân phối lệch phải nặng, cần lưu ý các giá trị cực trị
+(\cref{fig:univariate}).
+
+\begin{figure}[htbp]\centering
+\includegraphics[width=0.7\linewidth]{../reports/fig_01_target_distribution.png}
+\caption{Phân bố lớp mục tiêu — mất cân bằng $\approx 14{:}1$.}
+\label{fig:target}
+\end{figure}
+
+\begin{figure}[htbp]\centering
+\includegraphics[width=0.95\linewidth]{../reports/fig_03_univariate.png}
+\caption{Phân phối đơn biến của các đặc trưng gốc.}
+\label{fig:univariate}
+\end{figure}
+
+\begin{figure}[htbp]\centering
+\includegraphics[width=0.85\linewidth]{../reports/fig_05_correlation_heatmap.png}
+\caption{Ma trận tương quan giữa các đặc trưng.}
+\label{fig:corr}
+\end{figure}
+
+Nhóm biến trễ hạn (\texttt{30-59}, \texttt{60-89}, \texttt{90+} ngày) liên hệ mạnh nhất với
+rủi ro vỡ nợ (\cref{fig:delinq}), gợi ý giá trị của các đặc trưng tổng hợp từ nhóm này.
+
+\begin{figure}[htbp]\centering
+\includegraphics[width=0.9\linewidth]{../reports/fig_07_delinquency_analysis.png}
+\caption{Phân tích nhóm biến trễ hạn theo tỷ lệ vỡ nợ.}
+\label{fig:delinq}
+\end{figure}
+
+\section{Xử lý giá trị thiếu}
+Hai biến có khuyết thiếu đáng kể: \texttt{MonthlyIncome} ($19{,}8\%$) và số người phụ thuộc.
+Ta dùng KNN Imputer ($k=5$): mỗi giá trị thiếu được điền bằng trung bình của 5 hồ sơ gần
+nhất theo khoảng cách Euclid trên các chiều quan sát được. So với điền trung vị, KNN giữ
+được cấu trúc tương quan giữa các biến (\cref{fig:imputation}).
+
+\begin{figure}[htbp]\centering
+\includegraphics[width=0.85\linewidth]{../reports/fig_11_imputation_comparison.png}
+\caption{So sánh phân phối trước/sau khi điền khuyết bằng KNN.}
+\label{fig:imputation}
+\end{figure}
+
+\section{Chuẩn hóa}
+Áp dụng \texttt{StandardScaler} cho Hồi quy Logistic để gradient descent ổn định (đưa các
+đặc trưng về cùng thang đo). Các mô hình dựa trên cây (DT, RF, XGBoost) bất biến với phép
+biến đổi đơn điệu nên không cần chuẩn hóa.
+
+\section{Thiết kế đặc trưng}
+Bốn đặc trưng được thiết kế dựa trên hiểu biết nghiệp vụ:
 \begin{enumerate}
-\def\labelenumi{\arabic{enumi}.}
-\tightlist
-\item
-  Giới thiệu
-\item
-  Cơ sở lý thuyết
-\item
-  Dữ liệu và Tiền xử lý
-\item
-  Thực nghiệm và Đánh giá
-\item
-  Sản phẩm --- Ứng dụng Streamlit
-\item
-  Kết luận và Hướng phát triển
-\item
-  Tài liệu tham khảo
-\item
-  Phụ lục
+  \item \texttt{TotalDelinquencyScore} $=3\times(90+)+2\times(60\text{-}89)+1\times(30\text{-}59)$ — phạt nặng trễ hạn kéo dài.
+  \item \texttt{FinancialStressIndex} $=\texttt{RevolvingUtil}\times\texttt{TotalDelinquencyScore}$ — dùng hết hạn mức \emph{và} trễ hạn = áp lực cao.
+  \item \texttt{AbsoluteMonthlyDebt} $=\texttt{DebtRatio}\times\texttt{MonthlyIncome}$ — quy dư nợ tương đối về giá trị tuyệt đối.
+  \item \texttt{DelinquencySeverityBalance} $=(30\text{-}59)-(90+)$ — cân bằng mức độ trễ hạn trên ảnh chụp tĩnh.
 \end{enumerate}
+Hiệu quả của thiết kế này được kiểm chứng ở \cref{sec:shap_kq}.
 
-\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+\section{Mất cân bằng lớp}
+Để xử lý mất cân bằng, ta dùng \texttt{scale\_pos\_weight} $=n_-/n_+\approx 14$ trong
+XGBoost (nâng trọng số lớp thiểu số) và khảo sát SMOTE (sinh mẫu thiểu số tổng hợp,
+\cref{fig:smote}). Cuối cùng chọn trọng số lớp vì giữ được phân phối gốc và tránh rò rỉ
+dữ liệu khi kết hợp với kiểm định chéo.
 
-\clearpage
-\FloatBarrier
-\section{CHƯƠNG 1: GIỚI
-THIỆU}\label{chux1b0ux1a1ng-1-giux1edbi-thiux1ec7u}
+\begin{figure}[htbp]\centering
+\includegraphics[width=0.8\linewidth]{../reports/fig_15_smote.png}
+\caption{Minh họa SMOTE sinh mẫu lớp thiểu số.}
+\label{fig:smote}
+\end{figure}
 
-\FloatBarrier
-\Needspace{8\baselineskip}
-\subsection{1.1 Tính cấp thiết}\label{tuxednh-cux1ea5p-thiux1ebft}
+% =====================================================================
+\chapter{Thực nghiệm và Đánh giá}\label{ch:thucnghiem}
 
-Tỷ lệ nợ xấu Việt Nam cuối 2023 là 4,55\%. Quy trình thẩm định thủ công
-không mở rộng được quy mô; mô hình FICO tuyến tính bỏ qua tương tác phi
-tuyến. ML học từ hàng triệu hồ sơ, nắm bắt tương tác phi tuyến. SHAP
-giải quyết yêu cầu ``black-box'' --- ngân hàng buộc phải giải thích lý
-do từ chối (Basel III Điều 431).
+\section{Thiết kế thử nghiệm}
+Chia dữ liệu theo tỷ lệ $70/15/15$: huấn luyện $104.999$, kiểm định $22.500$, kiểm tra
+$22.500$ hồ sơ, dùng phân tầng (stratified) để giữ tỷ lệ lớp. Lựa chọn siêu tham số bằng
+kiểm định chéo phân tầng $k=5$.
 
-\FloatBarrier
-\Needspace{8\baselineskip}
-\subsection{1.2 Mục tiêu SMART}\label{mux1ee5c-tiuxeau-smart}
+\section{So sánh mô hình}
+XGBoost cho AUC cao nhất và thỏa mục tiêu $\mathrm{AUC}\ge 0{,}87$ (\cref{tab:sosanh},
+\cref{fig:compare}). Đường ROC/PR của bốn mô hình được so sánh trong \cref{fig:roc}.
 
-{\def\LTcaptype{none} % do not increment counter
-\begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3571}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3571}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2857}}@{}}
-\toprule\noalign{}
-\begin{minipage}[b]{\linewidth}\raggedright
-Mục tiêu
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Chỉ tiêu
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Kết quả
-\end{minipage} \\
-\midrule\noalign{}
-\endhead
-\bottomrule\noalign{}
-\endlastfoot
-Xây dựng mô hình & AUC ≥ 0,87 & \textbf{0,8714} \\
-So sánh 4 thuật toán & Bảng đầy đủ & Bảng 4.1 \\
-Thiết kế đặc trưng & ≥ 2 đặc trưng mới top-5 SHAP & \textbf{2 trong
-top-3} \\
-Tối ưu ngưỡng & F2-optimal & t=0,625, Recall=66,9\% \\
-Demo sản phẩm & Streamlit + SHAP & Đạt \\
-\end{longtable}
-}
+\begin{table}[htbp]\centering
+\caption{Kết quả tổng hợp bốn mô hình trên tập kiểm tra.}
+\label{tab:sosanh}
+\begin{tabular}{l c c c c c}
+\toprule
+\textbf{Mô hình} & \textbf{AUC-ROC} & \textbf{F1} & \textbf{Recall} & \textbf{Precision} & \textbf{Thời gian (s)}\\
+\midrule
+Logistic Regression & 0,8432 & 0,398 & 41,2\% & 39,8\% & 1,23\\
+Decision Tree (CART) & 0,8579 & 0,421 & 48,7\% & 40,1\% & 0,18\\
+Random Forest & 0,8703 & 0,437 & 52,1\% & 40,5\% & 5,32\\
+\textbf{XGBoost} & \textbf{0,8714} & \textbf{0,442} & \textbf{52,6\%} & \textbf{41,3\%} & \textbf{2,18}\\
+\bottomrule
+\end{tabular}
+\end{table}
 
-\FloatBarrier
-\Needspace{8\baselineskip}
-\subsection{1.3 Phạm vi}\label{phux1ea1m-vi}
+\begin{figure}[htbp]\centering
+\includegraphics[width=0.92\linewidth]{../reports/fig_20_model_comparison.png}
+\caption{So sánh tổng hợp các chỉ số giữa bốn mô hình.}
+\label{fig:compare}
+\end{figure}
 
+\begin{figure}[htbp]\centering
+\includegraphics[width=0.92\linewidth]{../reports/fig_roc_comparison.png}
+\caption{Đường ROC của bốn mô hình trên tập kiểm tra.}
+\label{fig:roc}
+\end{figure}
+
+\section{Diễn giải SHAP}\label{sec:shap_kq}
+Áp dụng \texttt{TreeExplainer} cho XGBoost. Hai đặc trưng tự thiết kế
+(\texttt{FinancialStressIndex}, \texttt{TotalDelinquencyScore}) lọt vào top-3
+(\cref{tab:shap}, \cref{fig:shapbar}), xác nhận hiệu quả của thiết kế đặc trưng.
+
+\begin{table}[htbp]\centering
+\caption{Năm đặc trưng quan trọng nhất theo $|\text{SHAP}|$ trung bình.}
+\label{tab:shap}
+\begin{tabular}{c l c}
+\toprule
+\textbf{Hạng} & \textbf{Đặc trưng} & \textbf{SHAP}\\
+\midrule
+1 & RevolvingUtilizationOfUnsecuredLines & 0,251\\
+2 & \textit{FinancialStressIndex} (tự thiết kế) & 0,198\\
+3 & \textit{TotalDelinquencyScore} (tự thiết kế) & 0,187\\
+4 & NumberOfOpenCreditLinesAndLoans & 0,142\\
+5 & Age & 0,108\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[htbp]\centering
+\includegraphics[width=0.9\linewidth]{../reports/fig_26a_shap_bar.png}
+\caption{Tầm quan trọng đặc trưng theo giá trị SHAP.}
+\label{fig:shapbar}
+\end{figure}
+
+\section{Tối ưu ngưỡng theo \texorpdfstring{$F_2$}{F2}}
+Theo Nhận xét~\ref{nx:bayes}, ngưỡng Bayes với $c_{FP}=500$, $c_{FN}=11.250$ là
+$t^\star=\frac{500}{500+11.250}\approx 0{,}043$ — quá thấp (từ chối $\sim 74\%$ hồ sơ),
+không thực dụng. Thay vào đó ta tối ưu trực tiếp $F_2$ (\cref{eq:fbeta}, $\beta=2$):
+quét $t\in[0{,}05;0{,}95]$ cho cực đại tại $t=0{,}625$ với Recall $66{,}9\%$, Precision
+$29{,}9\%$, $F_2=0{,}537$ (\cref{tab:nguong}, \cref{fig:threshold}).
+
+\begin{table}[htbp]\centering
+\caption{So sánh các ngưỡng trên tập kiểm tra (22.500 hồ sơ).}
+\label{tab:nguong}
+\begin{tabular}{l c c c c}
+\toprule
+\textbf{Ngưỡng} & \textbf{Recall} & \textbf{Precision} & \textbf{$F_2$} & \textbf{Chi phí (tr.USD)}\\
+\midrule
+Mặc định (0,50) & 77,5\% & 22,2\% & 0,518 & 5,84\\
+\textbf{$F_2$-optimal (0,625)} & \textbf{66,9\%} & \textbf{29,9\%} & \textbf{0,537} & \textbf{6,78}\\
+$F_1$-optimal (0,77) & 51,6\% & 39,4\% & 0,486 & 8,79\\
+Bayes-optimal (0,043) & 99,2\% & 6,9\% & 0,265 & 34,50\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[htbp]\centering
+\includegraphics[width=0.9\linewidth]{../reports/fig_25_threshold_optimization.png}
+\caption{Tối ưu ngưỡng vận hành theo $F_2$.}
+\label{fig:threshold}
+\end{figure}
+
+So với ngưỡng $F_1$-optimal, ngưỡng $F_2$ giảm khoảng $2{,}01$ triệu USD chi phí trong khi
+vẫn ưu tiên phát hiện hồ sơ rủi ro.
+
+\section{Phân tích lỗi và hiệu chỉnh xác suất}
+Phần lớn lỗi tập trung ở vùng điểm rủi ro sát ngưỡng — các hồ sơ có tín hiệu mâu thuẫn
+(\cref{fig:score}); vùng này phù hợp để chuyển sang rà soát thủ công. Sau Platt scaling,
+điểm Brier giảm từ $0{,}0582$ xuống $0{,}0478$ và ECE từ $3{,}2\%$ xuống $1{,}9\%$, tức xác
+suất dự báo gần thực tế hơn (\cref{fig:calib}). Kiểm định DeLong xác nhận chênh lệch AUC
+giữa XGBoost và Random Forest là nhỏ và không có ý nghĩa thống kê mạnh, nhất quán với
+\cref{tab:sosanh}.
+
+\begin{figure}[htbp]\centering
+\includegraphics[width=0.8\linewidth]{../reports/fig_24_score_distribution.png}
+\caption{Phân bố điểm rủi ro của hai lớp quanh ngưỡng quyết định.}
+\label{fig:score}
+\end{figure}
+
+\begin{figure}[htbp]\centering
+\includegraphics[width=0.8\linewidth]{../reports/fig_31_calibration.png}
+\caption{Đường hiệu chỉnh xác suất trước và sau Platt scaling.}
+\label{fig:calib}
+\end{figure}
+
+% =====================================================================
+\chapter{Sản phẩm — Ứng dụng Streamlit}\label{ch:sanpham}
+
+\section{Kiến trúc hệ thống}
+Ứng dụng được đóng gói thành một web app Streamlit với kiến trúc tách lớp như
+\cref{fig:arch}: lớp giao diện nhận đầu vào, lớp xử lý nạp mô hình đã lưu và bộ tiền xử lý,
+lớp giải thích sinh biểu đồ SHAP. Mô hình và \texttt{TreeExplainer} được nạp một lần và lưu
+đệm để tối ưu hiệu năng.
+
+\begin{figure}[htbp]\centering
+\begin{tikzpicture}[
+  node distance=10mm and 12mm,
+  box/.style={draw=bkblue,fill=boxgray,rounded corners=2pt,minimum height=11mm,
+    text width=26mm,align=center,font=\small,thick},
+  db/.style={draw=bkred,fill=white,rounded corners=2pt,minimum height=11mm,
+    text width=22mm,align=center,font=\small,thick},
+  arr/.style={-{Latex[length=2.4mm]},bkblue,thick}]
+  \node[box](ui){Giao diện Streamlit\\(2 tab)};
+  \node[box,right=of ui](pre){Bộ tiền xử lý\\(scaler, imputer)};
+  \node[box,right=of pre](mdl){Mô hình XGBoost\\\texttt{best\_model.pkl}};
+  \node[box,below=of mdl](shap){SHAP\\TreeExplainer};
+  \node[box,left=of shap](out){Kết quả + Giải thích};
+  \draw[arr](ui)--(pre); \draw[arr](pre)--(mdl); \draw[arr](mdl)--(shap);
+  \draw[arr](shap)--(out); \draw[arr](out)-|(ui);
+\end{tikzpicture}
+\caption{Kiến trúc lớp của ứng dụng Streamlit.}
+\label{fig:arch}
+\end{figure}
+
+\section{Tính năng chính}
 \begin{itemize}
-\tightlist
-\item
-  \textbf{Dữ liệu:} Give Me Some Credit (Kaggle, 149.999 hồ sơ có nhãn
-  trong \texttt{cs-training.csv}; \texttt{cs-test.csv} là tập nộp dự
-  đoán, không có nhãn thật)
-\item
-  \textbf{Mô hình:} 4 mô hình: LR, DT, RF, XGBoost
-\item
-  \textbf{Không bao gồm:} DNN, real-time, tích hợp system, thị trường
-  khác
-\item
-  \textbf{Công nghệ:} Python 3.14, scikit-learn 1.8.0, XGBoost 3.2.0,
-  SHAP 0.51.0
+  \item \textbf{Tab 1 — Dự báo đơn lẻ:} nhập thông tin khách hàng, hiển thị xác suất vỡ nợ
+        và quyết định (Duyệt/Từ chối) kèm biểu đồ SHAP waterfall giải thích.
+  \item \textbf{Tab 2 — Đánh giá theo lô:} tải lên CSV/XLSX, dự báo theo lô, cho chọn
+        ngưỡng (mặc định $0{,}625$). Nếu file có cột nhãn thật \texttt{SeriousDlqin2yrs},
+        ứng dụng tính AUC, Recall, Precision, $F_2$, ROC/PR, ma trận nhầm lẫn và tác động
+        chi phí, đồng thời tóm tắt theo phân khúc thu nhập và nhóm tuổi.
 \end{itemize}
-
-\FloatBarrier
-\Needspace{8\baselineskip}
-\subsection{1.4 Đóng góp chính của đồ
-án}\label{ux111uxf3ng-guxf3p-chuxednh-cux1ee7a-ux111ux1ed3-uxe1n}
-
-\begin{enumerate}
-\def\labelenumi{\arabic{enumi}.}
-\tightlist
-\item
-  Xây dựng đầy đủ quy trình từ khám phá dữ liệu → tiền xử lý → huấn
-  luyện → đánh giá → diễn giải → demo sản phẩm.
-\item
-  Thiết kế 4 đặc trưng mới có ý nghĩa nghiệp vụ, trong đó 2 đặc trưng
-  vào top-3 theo SHAP.
-\item
-  Chuẩn hóa cách chọn ngưỡng triển khai theo F2-score để ưu tiên giảm bỏ
-  sót hồ sơ rủi ro.
-\item
-  Đóng gói thành ứng dụng Streamlit hỗ trợ dự báo đơn lẻ, đánh giá theo
-  lô cho tập khách hàng, và mô phỏng hậu kiểm nếu file tải lên có nhãn
-  thật.
-\end{enumerate}
-
-\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
-
-\clearpage
-\FloatBarrier
-\section{CHƯƠNG 2: CƠ SỞ LÝ
-THUYẾT}\label{chux1b0ux1a1ng-2-cux1a1-sux1edf-luxfd-thuyux1ebft}
-
-\FloatBarrier
-\Needspace{8\baselineskip}
-\subsection{2.1 Binary Classification}\label{binary-classification}
-
-\Needspace{6\baselineskip}
-\subsubsection{2.1.1 Định nghĩa}\label{ux111ux1ecbnh-nghux129a}
-
-Học hàm \(f: \mathbb{R}^p \to [0,1]\) với
-\(f(\mathbf{x}) = P(y=1|\mathbf{x})\). Quyết định:
-\(\hat{y} = \mathbb{1}[f(\mathbf{x}) \geq t]\).
-
-\Needspace{6\baselineskip}
-\subsubsection{2.1.2 Class Imbalance}\label{class-imbalance}
-
-Tỷ lệ vỡ nợ 6,68\% → imbalance 1:14. Hệ quả: (1) Accuracy không phù hợp,
-(2) Ngưỡng tối ưu ≠ 0,5.
-
-\Needspace{6\baselineskip}
-\subsubsection{2.1.3 Metrics}\label{metrics}
-
-\begin{itemize}
-\tightlist
-\item
-  \(\text{Precision} = \frac{TP}{TP+FP}\)
-\item
-  \(\text{Recall} = \frac{TP}{TP+FN}\)
-\item
-  \(F_\beta = (1+\beta^2) \cdot \frac{P \cdot R}{\beta^2 P + R}\)
-\item
-  \textbf{AUC-ROC} = \(P(f(\mathbf{x}^+) > f(\mathbf{x}^-))\)
-\end{itemize}
-
-F2 ưu tiên Recall gấp đôi Precision --- phù hợp tín dụng.
-
-\FloatBarrier
-\Needspace{8\baselineskip}
-\subsection{2.2 Cơ sở của các mô hình sử
-dụng}\label{cux1a1-sux1edf-cux1ee7a-cuxe1c-muxf4-huxecnh-sux1eed-dux1ee5ng}
-
-\Needspace{6\baselineskip}
-\subsubsection{2.2.1 Logistic Regression (mô hình tuyến tính
-chuẩn)}\label{logistic-regression-muxf4-huxecnh-tuyux1ebfn-tuxednh-chuux1ea9n}
-
-Logistic Regression mô hình hóa xác suất: \[
-P(y=1|x)=\sigma(w^\top x + b)=\frac{1}{1+e^{-(w^\top x+b)}}
-\] Ưu điểm: nhanh, dễ giải thích, làm baseline tốt. Hạn chế: khó nắm bắt
-quan hệ phi tuyến mạnh.
-
-\Needspace{6\baselineskip}
-\subsubsection{2.2.2 Decision Tree CART (mô hình luật rẽ
-nhánh)}\label{decision-tree-cart-muxf4-huxecnh-luux1eadt-rux1ebd-nhuxe1nh}
-
-Cây quyết định chia không gian đặc trưng thành các vùng dựa trên tiêu
-chí giảm độ hỗn loạn (Gini/Entropy).\\
-Ưu điểm: trực quan, mô tả logic quyết định rõ. Hạn chế: dễ overfit nếu
-không regularize.
-
-\Needspace{6\baselineskip}
-\subsubsection{2.2.3 Random Forest (ensemble giảm phương
-sai)}\label{random-forest-ensemble-giux1ea3m-phux1b0ux1a1ng-sai}
-
-Random Forest huấn luyện nhiều cây trên các mẫu bootstrap khác nhau rồi
-lấy trung bình/xấp xỉ biểu quyết.\\
-Ưu điểm: ổn định hơn cây đơn, kháng nhiễu tốt. Hạn chế: khó diễn giải
-trực tiếp hơn LR/DT.
-
-\Needspace{6\baselineskip}
-\subsubsection{2.2.4 XGBoost (boosting bậc
-hai)}\label{xgboost-boosting-bux1eadc-hai}
-
-XGBoost xây mô hình theo chuỗi cây, mỗi cây mới sửa sai số còn lại của
-toàn bộ cây trước.\\
-Điểm mạnh là dùng gradient + hessian (Taylor bậc hai), regularization và
-kiểm soát phức tạp mô hình hiệu quả.
-
-\FloatBarrier
-\Needspace{8\baselineskip}
-\subsection{2.3 Lý do chọn F2-score làm mục tiêu vận
-hành}\label{luxfd-do-chux1ecdn-f2-score-luxe0m-mux1ee5c-tiuxeau-vux1eadn-huxe0nh}
-
-Trong tín dụng, chi phí \textbf{FN (bỏ sót người sẽ vỡ nợ)} thường lớn
-hơn \textbf{FP (từ chối nhầm người tốt)}.\\
-F2-score đặt trọng số cho Recall cao hơn Precision, phù hợp mục tiêu
-kinh doanh là giảm nợ xấu.
-
-\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
-
-\clearpage
-\FloatBarrier
-\section{CHƯƠNG 3: DỮ LIỆU VÀ TIỀN XỬ
-LÝ}\label{chux1b0ux1a1ng-3-dux1eef-liux1ec7u-vuxe0-tiux1ec1n-xux1eed-luxfd}
-
-\FloatBarrier
-\Needspace{8\baselineskip}
-\subsection{3.1 Khám phá dữ liệu
-(EDA)}\label{khuxe1m-phuxe1-dux1eef-liux1ec7u-eda}
-
-Dataset gồm: - \textbf{Kích thước:} 149.999 hồ sơ, 10 đặc trưng gốc + 4
-tự thiết kế - \textbf{Mất cân bằng:} 6,68\% vỡ nợ (9.951 dương), 93,32\%
-tốt (140.048 âm) - \textbf{Tuổi:} Ngoại lệ 0 (1 dòng loại đi) → 149.999
-hồ sơ - \textbf{Thu nhập:} Trung bình \$6.670, phạm vi \$0--\$3M
-
-\begin{figure}
-\centering
-\pandocbounded{\includegraphics[keepaspectratio,alt={Phân bố lớp mục tiêu}]{../reports/fig_01_target_distribution.png}}
-\caption{Phân bố lớp mục tiêu}
-\end{figure}
-
-\begin{figure}
-\centering
-\pandocbounded{\includegraphics[keepaspectratio,alt={Tổng quan giá trị thiếu}]{../reports/fig_02_missing_values.png}}
-\caption{Tổng quan giá trị thiếu}
-\end{figure}
-
-\FloatBarrier
-\Needspace{8\baselineskip}
-\subsection{3.2 Tiền xử lý}\label{tiux1ec1n-xux1eed-luxfd}
-
-\textbf{Xử lý giá trị thiếu:} - DelinquencyStatus: 33.375 thiếu (22,3\%)
-→ KNN Imputer (k=5) - MonthlyIncome: 29.731 thiếu (19,8\%) → KNN Imputer
-
-\textbf{Scaling \& Normalization:} - StandardScaler cho LR (yêu cầu
-gradient descent ổn định) - Không cần cho tree-based
-
-\FloatBarrier
-\Needspace{8\baselineskip}
-\subsection{3.3 Thiết kế đặc
-trưng}\label{thiux1ebft-kux1ebf-ux111ux1eb7c-trux1b0ng}
-
-\textbf{4 đặc trưng tự thiết kế:} 1. \texttt{TotalDelinquencyScore} =
-3×(90+) + 2×(60-89) + 1×(30-59) 2. \texttt{FinancialStressIndex} =
-RevolvingUtil × TotalDelinquencyScore 3. \texttt{AbsoluteMonthlyDebt} =
-DebtRatio × MonthlyIncome 4. \texttt{DelinquencySeverityBalance} =
-(30-59 days) − (90+ days)
-
-\textbf{Động lực:} Lịch sử trễ hạn không tuyến tính; chỉ số tổng hợp
-phát hiện nợ kinh niên. Biến \texttt{DelinquencySeverityBalance} chỉ là
-chỉ báo cân bằng mức độ trễ hạn trên snapshot dữ liệu tĩnh, không phải
-xu hướng thời gian.
-
-\FloatBarrier
-\Needspace{8\baselineskip}
-\subsection{3.4 Insight quan trọng từ
-EDA}\label{insight-quan-trux1ecdng-tux1eeb-eda}
-
-\begin{enumerate}
-\def\labelenumi{\arabic{enumi}.}
-\tightlist
-\item
-  Nhóm biến trễ hạn (\texttt{30-59}, \texttt{60-89}, \texttt{90+}) liên
-  hệ mạnh với rủi ro vỡ nợ.
-\item
-  \texttt{RevolvingUtilizationOfUnsecuredLines} và \texttt{DebtRatio} có
-  phân phối lệch, cần theo dõi ngưỡng cực trị.
-\item
-  Tương quan tuyến tính chỉ phản ánh một phần; đặc trưng tương tác giúp
-  mô hình phi tuyến học tốt hơn.
-\end{enumerate}
-
-\begin{figure}
-\centering
-\pandocbounded{\includegraphics[keepaspectratio,alt={Phân tích nhóm trễ hạn}]{../reports/fig_07_delinquency_analysis.png}}
-\caption{Phân tích nhóm trễ hạn}
-\end{figure}
-
-\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
-
-\clearpage
-\FloatBarrier
-\section{CHƯƠNG 4: THỰC NGHIỆM VÀ ĐÁNH
-GIÁ}\label{chux1b0ux1a1ng-4-thux1ef1c-nghiux1ec7m-vuxe0-ux111uxe1nh-giuxe1}
-
-\FloatBarrier
-\Needspace{8\baselineskip}
-\subsection{4.1 Thiết kế thử
-nghiệm}\label{thiux1ebft-kux1ebf-thux1eed-nghiux1ec7m}
-
-\textbf{Chiến lược tách tập:} - Tập huấn luyện: 104.999 (70\%) - Tập
-kiểm định: 22.500 (15\%) - Tập kiểm tra: 22.500 (15\%) - Stratified
-K-Fold (k=5) để cân bằng lớp
-
-\FloatBarrier
-\Needspace{8\baselineskip}
-\subsection{4.2 So sánh mô hình}\label{so-suxe1nh-muxf4-huxecnh}
-
-\emph{Bảng 4.1 --- Kết quả tổng hợp}
-
-{\def\LTcaptype{none} % do not increment counter
-\begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1452}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1452}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1613}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1290}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1774}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.2419}}@{}}
-\toprule\noalign{}
-\begin{minipage}[b]{\linewidth}\raggedright
-Mô hình
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-AUC-ROC
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-F1
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Recall
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Precision
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Thời gian (s)
-\end{minipage} \\
-\midrule\noalign{}
-\endhead
-\bottomrule\noalign{}
-\endlastfoot
-Logistic Regression & 0,8432 & 0,398 & 41,2\% & 39,8\% & 1,23 \\
-Decision Tree CART & 0,8579 & 0,421 & 48,7\% & 40,1\% & 0,18 \\
-Random Forest & 0,8703 & 0,437 & 52,1\% & 40,5\% & 5,32 \\
-\textbf{XGBoost} & \textbf{0,8714} & \textbf{0,442} & \textbf{52,6\%} &
-\textbf{41,3\%} & \textbf{2,18} \\
-\end{longtable}
-}
-
-\textbf{Kết luận:} XGBoost tốt nhất (AUC=0,8714, thoả mục tiêu
-AUC≥0,87).
-
-\begin{figure}
-\centering
-\pandocbounded{\includegraphics[keepaspectratio,alt={So sánh tổng hợp các mô hình}]{../reports/fig_20_model_comparison.png}}
-\caption{So sánh tổng hợp các mô hình}
-\end{figure}
-
-\FloatBarrier
-\Needspace{8\baselineskip}
-\subsection{4.3 Phân tích SHAP}\label{phuxe2n-tuxedch-shap}
-
-SHAP TreeExplainer được dùng để giải thích mô hình XGBoost:
-
-\emph{Bảng 4.2 --- 10 đặc trưng quan trọng nhất theo giá trị SHAP trung
-bình}
-
-{\def\LTcaptype{none} % do not increment counter
-\begin{longtable}[]{@{}lll@{}}
-\toprule\noalign{}
-Rank & Đặc trưng & SHAP \\
-\midrule\noalign{}
-\endhead
-\bottomrule\noalign{}
-\endlastfoot
-1 & RevolvingUtilizationOfUnsecuredLines & 0,251 \\
-2 & FinancialStressIndex (tự thiết kế) & 0,198 \\
-3 & TotalDelinquencyScore (tự thiết kế) & 0,187 \\
-4 & NumberOfOpenCreditLinesAndLoans & 0,142 \\
-5 & Age & 0,108 \\
-\end{longtable}
-}
-
-→ \textbf{2 trong top-3 là đặc trưng tự thiết kế}, xác nhận hiệu quả FE.
-
-\begin{figure}
-\centering
-\pandocbounded{\includegraphics[keepaspectratio,alt={Tầm quan trọng đặc trưng theo SHAP}]{../reports/fig_26a_shap_bar.png}}
-\caption{Tầm quan trọng đặc trưng theo SHAP}
-\end{figure}
-
-\FloatBarrier
-\Needspace{8\baselineskip}
-\subsection{4.4 Tối ưu ngưỡng theo
-F2}\label{tux1ed1i-ux1b0u-ngux1b0ux1ee1ng-theo-f2}
-
-Ngưỡng Bayes tối ưu (chi phí Fraud=1, Decile=14):
-\[t^* = \frac{c_{FP}}{c_{FP}+c_{FN}} = \frac{500}{500+11.250} \approx 0,043\]
-Tuy nhiên quá thấp (\textasciitilde74\% từ chối).
-
-\textbf{Ngưỡng tối ưu theo F2:} -
-\(F_2 = 5 \cdot \frac{P \cdot R}{4P+R}\) (ưu tiên Recall) - Tìm kiếm từ
-0,05 đến 0,95: \textbf{t = 0,625} - Recall = 66,9\%, Precision = 29,9\%,
-F2 = 0,537
-
-\emph{Bảng 4.3 --- So sánh ngưỡng trên tập kiểm tra 22.500 hồ sơ}
-
-{\def\LTcaptype{none} % do not increment counter
-\begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2286}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2286}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.3143}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.1143}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.1143}}@{}}
-\toprule\noalign{}
-\begin{minipage}[b]{\linewidth}\raggedright
-Ngưỡng
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Recall
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Precision
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-F2
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Chi phí (triệu USD)
-\end{minipage} \\
-\midrule\noalign{}
-\endhead
-\bottomrule\noalign{}
-\endlastfoot
-Mặc định (0,50) & 77,5\% & 22,2\% & 0,518 & 5,84 \\
-\textbf{F2-optimal (0,625)} & \textbf{66,9\%} & \textbf{29,9\%} &
-\textbf{0,537} & \textbf{6,78} \\
-F1-optimal (0,77) & 51,6\% & 39,4\% & 0,486 & 8,79 \\
-Bayes-optimal (0,043) & 99,2\% & 6,9\% & 0,265 & 34,50 \\
-\end{longtable}
-}
-
-→ \textbf{Giảm khoảng 2,01 triệu USD so với ngưỡng F1-optimal (0,77)},
-trong khi vẫn ưu tiên phát hiện hồ sơ rủi ro hơn so với ngưỡng F1.
-
-\begin{figure}
-\centering
-\pandocbounded{\includegraphics[keepaspectratio,alt={Tối ưu ngưỡng vận hành}]{../reports/fig_25_threshold_optimization.png}}
-\caption{Tối ưu ngưỡng vận hành}
-\end{figure}
-
-\FloatBarrier
-\Needspace{8\baselineskip}
-\subsection{4.5 Phân tích lỗi và phân bố điểm rủi
-ro}\label{phuxe2n-tuxedch-lux1ed7i-vuxe0-phuxe2n-bux1ed1-ux111iux1ec3m-rux1ee7i-ro}
-
-\begin{itemize}
-\tightlist
-\item
-  Nhóm lỗi chính nằm ở vùng điểm rủi ro sát ngưỡng, phản ánh các hồ sơ
-  có tín hiệu mâu thuẫn.
-\item
-  Việc kiểm soát vùng này bằng quy trình rà soát thủ công giúp giảm FP
-  mà không làm tăng mạnh FN.
-\end{itemize}
-
-\FloatBarrier
-\Needspace{8\baselineskip}
-\subsection{4.6 Hiệu chỉnh xác suất và độ tin cậy thống
-kê}\label{hiux1ec7u-chux1ec9nh-xuxe1c-suux1ea5t-vuxe0-ux111ux1ed9-tin-cux1eady-thux1ed1ng-kuxea}
-
-\begin{itemize}
-\tightlist
-\item
-  Hiệu chỉnh xác suất cho thấy xác suất dự báo của mô hình sau hiệu
-  chỉnh gần xác suất thực hơn.
-\item
-  DeLong test được dùng để kiểm tra khác biệt AUC giữa các mô hình có đủ
-  ý nghĩa thống kê hay không.
-\end{itemize}
-
-\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
-
-\clearpage
-\FloatBarrier
-\section{CHƯƠNG 5: SẢN PHẨM --- ỨNG DỤNG
-STREAMLIT}\label{chux1b0ux1a1ng-5-sux1ea3n-phux1ea9m-ux1ee9ng-dux1ee5ng-streamlit}
-
-\FloatBarrier
-\Needspace{8\baselineskip}
-\subsection{5.1 Tính năng chính}\label{tuxednh-nux103ng-chuxednh}
-
-\begin{itemize}
-\tightlist
-\item
-  \textbf{Tab 1: Dự báo đơn lẻ}
-
-  \begin{itemize}
-  \tightlist
-  \item
-    Nhập thông tin khách hàng
-  \item
-    Hiển thị xác suất vỡ nợ + quyết định (Duyệt/Từ chối)
-  \item
-    Biểu đồ SHAP dạng waterfall để giải thích dự báo
-  \end{itemize}
-\item
-  \textbf{Tab 2: Đánh giá theo lô}
-
-  \begin{itemize}
-  \tightlist
-  \item
-    Tải lên CSV/XLSX để dự báo theo lô và xuất kết quả
-  \item
-    Thanh chọn ngưỡng quyết định, mặc định 0,625
-  \item
-    Nếu file có cột nhãn thật \texttt{SeriousDlqin2yrs} dạng 0/1: tính
-    AUC, Recall, Precision, F2, ROC/PR, hiệu chỉnh xác suất, ma trận
-    nhầm lẫn và tác động chi phí
-  \item
-    Tóm tắt theo phân khúc thu nhập và nhóm tuổi
-  \end{itemize}
-\end{itemize}
-
-\textbf{Ghi chú về dữ liệu chạy thử:} Đây là mô phỏng hậu kiểm theo lô
-bằng dữ liệu có nhãn từ tập huấn luyện gốc. Với dữ liệu vận hành thật,
-cột nhãn thật sẽ được bổ sung sau kỳ quan sát để đo lại
-AUC/Recall/Precision/F2. Không sử dụng tập kiểm tra Kaggle để hậu kiểm
-vì tập này không có nhãn thật; file mẫu của cuộc thi chỉ là mẫu nộp xác
-suất dự đoán, không phải nhãn đúng 0/1.
-
-\FloatBarrier
-\Needspace{8\baselineskip}
-\subsection{5.2 Truy cập nhanh ứng
-dụng}\label{truy-cux1eadp-nhanh-ux1ee9ng-dux1ee5ng}
-
 Ứng dụng demo: \url{https://doandanhlong-loan-prediction.streamlit.app}.
-Link này giúp người đọc kiểm tra nhanh dự báo đơn lẻ và đánh giá theo lô
-mà không cần tự chạy trên máy cá nhân.
 
-\FloatBarrier
-\Needspace{8\baselineskip}
-\subsection{5.3 Chạy thử hậu kiểm theo
-lô}\label{chux1ea1y-thux1eed-hux1eadu-kiux1ec3m-theo-luxf4}
+\section{Chạy thử hậu kiểm theo lô}
+Để kiểm tra chức năng hậu kiểm, đồ án tạo \texttt{batch\_demo\_from\_training\_5000.csv}
+(5.000 hồ sơ, 334 vỡ nợ, giữ tỷ lệ $6{,}68\%$). Kết quả tại ngưỡng $t=0{,}625$ cho trong
+\cref{tab:batch}; phân bố và ma trận nhầm lẫn ở \cref{fig:batch}.
 
-Để kiểm tra chức năng hậu kiểm theo lô của Streamlit bằng dữ liệu có
-nhãn, đồ án tạo file
-\texttt{data/raw/batch\_demo\_from\_training\_5000.csv} từ
-\texttt{cs-training.csv}. File này gồm 5.000 hồ sơ, trong đó 334 hồ sơ
-vỡ nợ, giữ đúng tỷ lệ dương 6,68\% của bộ dữ liệu gốc.
+\begin{table}[htbp]\centering
+\caption{Kết quả hậu kiểm theo lô tại ngưỡng $t=0{,}625$.}
+\label{tab:batch}
+\begin{tabular}{l r}
+\toprule
+\textbf{Chỉ số} & \textbf{Giá trị}\\
+\midrule
+AUC-ROC & 0,8780\\
+Recall & 68,26\%\\
+Precision & 29,53\%\\
+$F_2$-score & 0,5408\\
+TP / FP / FN / TN & 228 / 544 / 106 / 4122\\
+Tỷ lệ từ chối & 15,44\%\\
+Chi phí tại ngưỡng & 1.464.500 USD\\
+Chi phí nếu duyệt tất cả & 3.757.500 USD\\
+Tiết kiệm mô phỏng & 2.293.000 USD\\
+\bottomrule
+\end{tabular}
+\end{table}
 
-Kết quả chạy thật ở ngưỡng vận hành \texttt{t\ =\ 0,625}:
-
-{\def\LTcaptype{none} % do not increment counter
-\begin{longtable}[]{@{}lr@{}}
-\toprule\noalign{}
-Chỉ số & Giá trị \\
-\midrule\noalign{}
-\endhead
-\bottomrule\noalign{}
-\endlastfoot
-AUC-ROC & 0,8780 \\
-Recall & 68,26\% \\
-Precision & 29,53\% \\
-F2-score & 0,5408 \\
-TP / FP / FN / TN & 228 / 544 / 106 / 4122 \\
-Tỷ lệ từ chối & 15,44\% \\
-Xác suất vỡ nợ trung bình & 33,44\% \\
-Chi phí tại ngưỡng 0,625 & 1.464.500 USD \\
-Chi phí nếu duyệt tất cả & 3.757.500 USD \\
-Tiết kiệm mô phỏng & 2.293.000 USD \\
-\end{longtable}
-}
-
-Kết quả này cho thấy phần hậu kiểm theo lô trong ứng dụng không chỉ hiển
-thị chỉ số học máy mà còn quy đổi sang tác động kinh doanh: số hồ sơ từ
-chối đúng, từ chối nhầm, bỏ sót nợ xấu và chi phí tương ứng. Đây là mô
-phỏng hậu kiểm bằng dữ liệu huấn luyện có nhãn; trong vận hành thật,
-nhãn thật chỉ xuất hiện sau kỳ quan sát.
-
-Diễn giải theo ma trận nhầm lẫn: TP = 228 hồ sơ vỡ nợ được chặn đúng, FP
-= 544 hồ sơ tốt bị từ chối nhầm, FN = 106 hồ sơ vỡ nợ bị bỏ sót, và TN =
-4122 hồ sơ tốt được duyệt đúng.
-
-\begin{figure}
-\centering
-\pandocbounded{\includegraphics[keepaspectratio,alt={Phân bố xác suất và nhóm rủi ro trên demo theo lô}]{../reports/fig_33_batch_demo_distribution.png}}
-\caption{Phân bố xác suất và nhóm rủi ro trên demo theo lô}
+\begin{figure}[htbp]\centering
+\includegraphics[width=0.49\linewidth]{../reports/fig_34_batch_demo_confusion.png}\hfill
+\includegraphics[width=0.49\linewidth]{../reports/fig_35_batch_demo_cost.png}
+\caption{Ma trận nhầm lẫn (trái) và tác động chi phí (phải) trên demo theo lô.}
+\label{fig:batch}
 \end{figure}
 
-\begin{figure}
-\centering
-\pandocbounded{\includegraphics[keepaspectratio,alt={Ma trận nhầm lẫn trên demo theo lô}]{../reports/fig_34_batch_demo_confusion.png}}
-\caption{Ma trận nhầm lẫn trên demo theo lô}
+\noindent\textbf{Lưu ý:} đây là mô phỏng hậu kiểm bằng dữ liệu huấn luyện có nhãn. Trong
+vận hành thật, nhãn thật chỉ xuất hiện sau kỳ quan sát. Không dùng tập kiểm tra Kaggle để
+hậu kiểm vì tập này không có nhãn thật.
+
+\section{Kết quả thử nộp Kaggle}
+Thử nộp đạt Public AUC $=0{,}85785$ và Private AUC $=0{,}86482$, khá gần AUC nội bộ
+$0{,}8714$ — cho thấy mô hình tổng quát hóa ổn trên tập đánh giá ngoài (\cref{fig:kaggle}).
+
+\begin{figure}[htbp]\centering
+\includegraphics[width=0.8\linewidth]{../reports/fig_36_kaggle_submission_result.png}
+\caption{Kết quả nộp thử trên Kaggle.}
+\label{fig:kaggle}
 \end{figure}
 
-\begin{figure}
-\centering
-\pandocbounded{\includegraphics[keepaspectratio,alt={Tác động chi phí trên demo theo lô}]{../reports/fig_35_batch_demo_cost.png}}
-\caption{Tác động chi phí trên demo theo lô}
-\end{figure}
+% =====================================================================
+\chapter{Kết luận và Hướng phát triển}\label{ch:ketluan}
 
-\FloatBarrier
-\Needspace{8\baselineskip}
-\subsection{5.4 Kết quả thử nộp
-Kaggle}\label{kux1ebft-quux1ea3-thux1eed-nux1ed9p-kaggle}
+\section{Kết luận}
+\begin{enumerate}
+  \item XGBoost đạt AUC $=0{,}8714$, vượt mục tiêu $0{,}87$.
+  \item Thiết kế đặc trưng có chủ đích: 2 đặc trưng tự thiết kế vào top-3 SHAP.
+  \item Ngưỡng $F_2$-optimal ($0{,}625$) cân bằng Recall--Precision phù hợp tín dụng và
+        giảm chi phí so với ngưỡng $F_1$.
+  \item SHAP giải thích từng quyết định, đáp ứng yêu cầu minh bạch (Basel III, GDPR).
+\end{enumerate}
 
-Kết quả thử nộp đạt Public AUC = 0,85785 và Private AUC = 0,86482, khá
-gần AUC kiểm tra nội bộ 0,8714; điều này cho thấy mô hình tổng quát hóa
-tương đối ổn trên tập đánh giá ngoài.
-
-\begin{figure}
-\centering
-\pandocbounded{\includegraphics[keepaspectratio,alt={Kết quả nộp thử Kaggle}]{../reports/fig_36_kaggle_submission_result.png}}
-\caption{Kết quả nộp thử Kaggle}
-\end{figure}
-
-\FloatBarrier
-\Needspace{8\baselineskip}
-\subsection{5.5 Công nghệ}\label{cuxf4ng-nghux1ec7}
-
+\section{Hướng phát triển}
 \begin{itemize}
-\tightlist
-\item
-  Streamlit 1.45.0
-\item
-  scikit-learn, XGBoost, SHAP
-\item
-  Bộ nhớ đệm dữ liệu + SHAP TreeExplainer để tối ưu hiệu năng
+  \item \textbf{Dữ liệu:} kết hợp dữ liệu tín dụng Việt Nam (CIC, SBV); chấm điểm thời gian thực.
+  \item \textbf{Mô hình:} mạng nơ-ron có cơ chế attention; mô hình hóa chuỗi thời gian (LSTM); meta-learner.
+  \item \textbf{Giải thích:} giải thích phản thực (counterfactual); hồ sơ tương tự (prototype).
+  \item \textbf{Vận hành:} thử nghiệm A/B cho ngưỡng; giám sát trôi dữ liệu; vòng phản hồi cập nhật mô hình.
 \end{itemize}
 
-\FloatBarrier
-\Needspace{8\baselineskip}
-\subsection{5.6 Giá trị sử dụng trong thực
-tế}\label{giuxe1-trux1ecb-sux1eed-dux1ee5ng-trong-thux1ef1c-tux1ebf}
+% =====================================================================
+%  TÀI LIỆU THAM KHẢO
+% =====================================================================
+\begin{thebibliography}{99}
+\addcontentsline{toc}{chapter}{Tài liệu tham khảo}
+\bibitem{sbv2024} Ngân hàng Nhà nước Việt Nam (2024). \emph{Báo cáo tình hình ngân hàng 2023}. \url{https://www.sbv.gov.vn}.
+\bibitem{bcbs2018} Basel Committee on Banking Supervision (2018). \emph{Basel III: Finalising post-crisis reforms}. Bank for International Settlements.
+\bibitem{lundberg2017} Lundberg, S. M., \& Lee, S. I. (2017). A unified approach to interpreting model predictions. \emph{NeurIPS}.
+\bibitem{chen2016} Chen, T., \& Guestrin, C. (2016). XGBoost: A scalable tree boosting system. \emph{KDD}.
+\bibitem{pedregosa2011} Pedregosa, F., et al. (2011). Scikit-learn: Machine learning in Python. \emph{JMLR}, 12, 2825--2830.
+\bibitem{kaggle2011} Kaggle (2011). \emph{Give Me Some Credit}. \url{https://www.kaggle.com/c/GiveMeSomeCredit}.
+\bibitem{breiman2001} Breiman, L. (2001). Random Forests. \emph{Machine Learning}, 45(1), 5--32.
+\bibitem{delong1988} DeLong, E. R., DeLong, D. M., \& Clarke-Pearson, D. L. (1988). Comparing areas under two or more correlated ROC curves. \emph{Biometrics}, 44(3), 837--845.
+\bibitem{platt1999} Platt, J. (1999). Probabilistic outputs for support vector machines. \emph{Advances in Large Margin Classifiers}.
+\bibitem{gdpr2018} European Union (2018). \emph{General Data Protection Regulation (EU) 2016/679}.
+\bibitem{molnar2020} Molnar, C. (2020). \emph{Interpretable Machine Learning: A Guide for Making Black Box Models Explainable}.
+\bibitem{hastie2009} Hastie, T., Tibshirani, R., \& Friedman, J. (2009). \emph{The Elements of Statistical Learning} (2nd ed.). Springer.
+\end{thebibliography}
 
-\begin{enumerate}
-\def\labelenumi{\arabic{enumi}.}
-\tightlist
-\item
-  \textbf{Đối với thẩm định viên:} có xác suất rủi ro + giải thích đặc
-  trưng để quyết định nhanh hơn.
-\item
-  \textbf{Đối với quản trị rủi ro:} theo dõi chất lượng mô hình qua đánh
-  giá theo lô và điều chỉnh ngưỡng.
-\item
-  \textbf{Đối với khách hàng cuối:} tăng tính minh bạch vì quyết định có
-  căn cứ dữ liệu và có thể giải thích.
-\end{enumerate}
+% =====================================================================
+%  PHỤ LỤC
+% =====================================================================
+\appendix
+\renewcommand{\chaptername}{Phụ lục}
+\titleformat{\chapter}[hang]
+  {\Huge\bfseries\color{bkblue}}
+  {\colorbox{bkblue}{\color{white}\rule[-6pt]{0pt}{28pt}\,\thechapter\,}}{16pt}{\Huge}
 
-\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+\chapter{Siêu tham số XGBoost}
+\begin{verbatim}
+{
+  'n_estimators': 200,      'max_depth': 6,
+  'learning_rate': 0.05,    'subsample': 0.8,
+  'colsample_bytree': 0.8,  'scale_pos_weight': 14.05,  # n_neg/n_pos
+  'objective': 'binary:logistic',  'random_state': 42
+}
+\end{verbatim}
 
-\clearpage
-\FloatBarrier
-\section{CHƯƠNG 6: KẾT LUẬN VÀ HƯỚNG PHÁT
-TRIỂN}\label{chux1b0ux1a1ng-6-kux1ebft-luux1eadn-vuxe0-hux1b0ux1edbng-phuxe1t-triux1ec3n}
+\chapter{Hình kỹ thuật bổ sung}
+Các hình dưới đây phục vụ kiểm tra sâu hơn, không lặp lại hình ở phần chính.
 
-\FloatBarrier
-\Needspace{8\baselineskip}
-\subsection{6.1 Kết luận chính}\label{kux1ebft-luux1eadn-chuxednh}
-
-\begin{enumerate}
-\def\labelenumi{\arabic{enumi}.}
-\tightlist
-\item
-  XGBoost đạt AUC=0,8714, vượt mục tiêu 0,87
-\item
-  Thiết kế đặc trưng có chủ đích (2 đặc trưng tự thiết kế vào top-3
-  SHAP)
-\item
-  Ngưỡng tối ưu theo F2 (0,625) cân bằng Recall-Precision phù hợp tín
-  dụng
-\item
-  SHAP giải thích từng quyết định, tuân thủ quy định (Basel III, GDPR)
-\end{enumerate}
-
-\FloatBarrier
-\Needspace{8\baselineskip}
-\subsection{6.2 Hướng phát
-triển}\label{hux1b0ux1edbng-phuxe1t-triux1ec3n}
-
-\begin{enumerate}
-\def\labelenumi{\arabic{enumi}.}
-\tightlist
-\item
-  \textbf{Dữ liệu thực:}
-
-  \begin{itemize}
-  \tightlist
-  \item
-    Kết hợp thêm dữ liệu tín dụng Việt Nam (SBV, JCIC)
-  \item
-    Real-time scoring
-  \end{itemize}
-\item
-  \textbf{Mô hình nâng cao:}
-
-  \begin{itemize}
-  \tightlist
-  \item
-    Neural network với attention (tầm quan trọng động)
-  \item
-    Mô hình hóa theo thời gian (LSTM cho chuỗi thời gian)
-  \item
-    Ensemble meta-learner
-  \end{itemize}
-\item
-  \textbf{Giải thích sâu:}
-
-  \begin{itemize}
-  \tightlist
-  \item
-    Counterfactual explanations (điều gì thay đổi để duyệt)
-  \item
-    Prototype cases (khách hàng tương tự)
-  \end{itemize}
-\item
-  \textbf{Vận hành:}
-
-  \begin{itemize}
-  \tightlist
-  \item
-    Thử nghiệm A/B cho ngưỡng trên dữ liệu mới
-  \item
-    Giám sát trôi dữ liệu và suy giảm hiệu năng mô hình
-  \item
-    Vòng phản hồi để cập nhật mô hình
-  \end{itemize}
-\end{enumerate}
-
-\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
-
-\clearpage
-\FloatBarrier
-\section{TÀI LIỆU THAM KHẢO}\label{tuxe0i-liux1ec7u-tham-khux1ea3o}
-
-{[}1{]} Ngân hàng Nhà nước Việt Nam (2024). ``Báo cáo tình hình ngân
-hàng 2023''. https://www.sbv.gov.vn {[}2{]} BCBS (2018). ``Basel III:
-Finalising post-crisis reforms''. Bank for International Settlements.
-{[}3{]} Lundberg, S. M., \& Lee, S. I. (2017). ``A unified approach to
-interpreting model predictions''. NIPS. {[}4{]} Chen, T., \& Guestrin,
-C. (2016). ``XGBoost: A scalable tree boosting system''. KDD. {[}5{]}
-Pedregosa, F., et al.~(2011). ``scikit-learn: ML in Python''. JMLR.
-{[}6{]} Kaggle (2011). ``Give Me Some Credit''.
-https://www.kaggle.com/c/GiveMeSomeCredit {[}7{]} Breiman, L. (2001).
-``Random Forests''. Machine Learning, 45(1), 5-32. {[}8{]} Fisher, A.,
-Rudin, C., \& Dominici, F. (2018). ``All Models are Wrong, but Many are
-Useful''. arXiv. {[}9{]} McCullough, B. D. (2007). ``Gretl 1.6.5
-Software Package''. Journal of Applied Econometrics. {[}10{]} ISO 27001
-(2022). ``Information Security Management Systems''. {[}11{]} EU GDPR
-(2018). ``Regulation (EU) 2016/679''. {[}12{]} Goodman, B., \& Flaxman,
-S. (2017). ``European Union Regulations on Algorithmic
-Decision-Making''. {[}13{]} Molnar, C. (2020). ``Interpretable ML --- A
-Guide''. Christoph Molnar.
-
-\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
-
-\clearpage
-\FloatBarrier
-\section{PHỤ LỤC}\label{phux1ee5-lux1ee5c}
-
-\FloatBarrier
-\Needspace{8\baselineskip}
-\subsection{A. Chi tiết tính toán đặc trưng tự thiết
-kế}\label{a.-chi-tiux1ebft-tuxednh-touxe1n-ux111ux1eb7c-trux1b0ng-tux1ef1-thiux1ebft-kux1ebf}
-
-\textbf{TotalDelinquencyScore:} - Đầu vào: DelinquencyStatus với 7 giá
-trị (0, 30, 60, 90, 120, \ldots) - Quy tắc: 3×(90+) + 2×(60-89) +
-1×(30-59) - Ý tưởng: phạt nặng hơn các trạng thái trễ hạn kéo dài.
-
-\textbf{FinancialStressIndex:} - Đầu vào:
-RevolvingUtilizationOfUnsecuredLines (0-1), TotalDelinquencyScore - Công
-thức: FSI = RevolvingUtil × TotalDelinquencyScore - Ý tưởng: Khách hàng
-dùng hết hạn mức + trễ hạn = stress cao
-
-\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
-
-\FloatBarrier
-\Needspace{8\baselineskip}
-\subsection{B. Siêu tham số
-XGBoost}\label{b.-siuxeau-tham-sux1ed1-xgboost}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{\{}
-  \StringTok{\textquotesingle{}n\_estimators\textquotesingle{}}\NormalTok{: }\DecValTok{200}\NormalTok{,}
-  \StringTok{\textquotesingle{}max\_depth\textquotesingle{}}\NormalTok{: }\DecValTok{6}\NormalTok{,}
-  \StringTok{\textquotesingle{}learning\_rate\textquotesingle{}}\NormalTok{: }\FloatTok{0.05}\NormalTok{,}
-  \StringTok{\textquotesingle{}subsample\textquotesingle{}}\NormalTok{: }\FloatTok{0.8}\NormalTok{,}
-  \StringTok{\textquotesingle{}colsample\_bytree\textquotesingle{}}\NormalTok{: }\FloatTok{0.8}\NormalTok{,}
-  \StringTok{\textquotesingle{}scale\_pos\_weight\textquotesingle{}}\NormalTok{: }\FloatTok{14.05}\NormalTok{,  }\CommentTok{\# n\_neg/n\_pos}
-  \StringTok{\textquotesingle{}objective\textquotesingle{}}\NormalTok{: }\StringTok{\textquotesingle{}binary:logistic\textquotesingle{}}\NormalTok{,}
-  \StringTok{\textquotesingle{}random\_state\textquotesingle{}}\NormalTok{: }\DecValTok{42}
-\NormalTok{\}}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
-
-\FloatBarrier
-\Needspace{8\baselineskip}
-\subsection{C. Ghi chú về hậu kiểm theo lô và
-Kaggle}\label{c.-ghi-chuxfa-vux1ec1-hux1eadu-kiux1ec3m-theo-luxf4-vuxe0-kaggle}
-
-Hậu kiểm theo lô trong Streamlit cần file có cột nhãn thật
-\texttt{SeriousDlqin2yrs} dạng 0/1. Đây là mô phỏng hậu kiểm bằng dữ
-liệu có nhãn từ tập huấn luyện gốc. Với dữ liệu vận hành thật, nhãn thật
-sẽ được bổ sung sau kỳ quan sát để đo lại AUC/Recall/Precision/F2.
-
-Tập kiểm tra Kaggle không có nhãn thật nên chỉ dùng để tạo file nộp dự
-đoán. File mẫu của cuộc thi là mẫu nộp xác suất dự đoán, không phải nhãn
-đúng.
-
-\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
-
-\FloatBarrier
-\Needspace{8\baselineskip}
-\subsection{D. Hiệu chỉnh xác
-suất}\label{d.-hiux1ec7u-chux1ec9nh-xuxe1c-suux1ea5t}
-
-Brier Score (điểm Brier) trên tập kiểm tra: - XGBoost thô: 0,0582 - Sau
-Platt Scaling: 0,0478 (cải thiện 17,9\%)
-
-Sai số hiệu chỉnh kỳ vọng (ECE): - XGBoost thô: 3,2\% - Sau Platt
-Scaling: 1,9\%
-
-→ Xác suất sau hiệu chỉnh gần thực tế hơn.
-
-\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
-
-\FloatBarrier
-\Needspace{8\baselineskip}
-\subsection{E. Hình kỹ thuật xem
-thêm}\label{e.-huxecnh-kux1ef9-thuux1eadt-xem-thuxeam}
-
-Các hình dưới đây phục vụ kiểm tra sâu hơn. Phần chính chỉ giữ các hình
-cần cho mạch đọc, phụ lục không lặp lại các hình chính.
-
-\clearpage
-
-\begin{figure}
-\centering
-\pandocbounded{\includegraphics[keepaspectratio,alt={Heatmap tương quan}]{../reports/fig_05_correlation_heatmap.png}}
-\caption{Heatmap tương quan}
+\begin{figure}[htbp]\centering
+\includegraphics[width=0.85\linewidth]{../reports/fig_14_mutual_information.png}
+\caption{Thông tin tương hỗ giữa đặc trưng và nhãn.}
 \end{figure}
 
-\clearpage
-
-\begin{figure}
-\centering
-\pandocbounded{\includegraphics[keepaspectratio,alt={SHAP dependence cho đặc trưng chính}]{../reports/fig_27_shap_dependence.png}}
-\caption{SHAP dependence cho đặc trưng chính}
+\begin{figure}[htbp]\centering
+\includegraphics[width=0.85\linewidth]{../reports/fig_27_shap_dependence.png}
+\caption{Đồ thị phụ thuộc SHAP cho đặc trưng chính.}
 \end{figure}
 
-\clearpage
-
-\begin{figure}
-\centering
-\pandocbounded{\includegraphics[keepaspectratio,alt={Phân bố điểm rủi ro}]{../reports/fig_24_score_distribution.png}}
-\caption{Phân bố điểm rủi ro}
+\begin{figure}[htbp]\centering
+\includegraphics[width=0.85\linewidth]{../reports/fig_29_learning_curve.png}
+\caption{Đường cong học của XGBoost.}
 \end{figure}
 
-\clearpage
-
-\begin{figure}
-\centering
-\pandocbounded{\includegraphics[keepaspectratio,alt={Hồ sơ sai số theo phân phối}]{../reports/fig_22_error_profile_hist.png}}
-\caption{Hồ sơ sai số theo phân phối}
+\begin{figure}[htbp]\centering
+\includegraphics[width=0.85\linewidth]{../reports/fig_32_delong_summary.png}
+\caption{Tóm tắt kiểm định DeLong giữa các mô hình.}
 \end{figure}
-
-\clearpage
-
-\begin{figure}
-\centering
-\pandocbounded{\includegraphics[keepaspectratio,alt={Biểu đồ calibration}]{../reports/fig_31_calibration.png}}
-\caption{Biểu đồ calibration}
-\end{figure}
-
-\clearpage
-
-\begin{figure}
-\centering
-\pandocbounded{\includegraphics[keepaspectratio,alt={Tóm tắt DeLong test}]{../reports/fig_32_delong_summary.png}}
-\caption{Tóm tắt DeLong test}
-\end{figure}
-
-\clearpage
-
-\begin{figure}
-\centering
-\pandocbounded{\includegraphics[keepaspectratio,alt={Bảng điều khiển phân tích tổng hợp}]{../reports/fig_30_analysis_dashboard.png}}
-\caption{Bảng điều khiển phân tích tổng hợp}
-\end{figure}
-
-\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
-
-\emph{Báo cáo này được xây dựng bằng Python 3.14, LaTeX (xelatex), và
-các thư viện khoa học mở.}
 
 \end{document}
