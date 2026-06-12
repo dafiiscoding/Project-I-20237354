@@ -222,12 +222,13 @@ những nghiên cứu tiếp theo.
 
 Báo cáo trình bày nghiên cứu ứng dụng học máy vào bài toán dự báo rủi ro vỡ nợ tín dụng,
 sử dụng bộ dữ liệu \emph{Give Me Some Credit} (Kaggle, 149.999 hồ sơ vay). Bốn mô hình
-được xây dựng và đánh giá: Hồi quy Logistic ($\mathrm{AUC}=0{,}8432$), Cây quyết định
-($0{,}8579$), Rừng ngẫu nhiên ($0{,}8703$) và XGBoost ($0{,}8714$). XGBoost vượt mục tiêu
-($\mathrm{AUC}>0{,}87$) nhờ thiết kế đặc trưng có chủ đích, trong đó hai đặc trưng tự thiết
-kế lọt vào top-3 theo giá trị SHAP. Ngưỡng quyết định được tối ưu theo $F_2$ tại
-$t=0{,}625$, đạt Recall $66{,}9\%$ và giảm chi phí ước tính khoảng $2{,}01$ triệu USD so
-với ngưỡng tối ưu theo $F_1$. Cuối cùng, toàn bộ pipeline được đóng gói thành một ứng
+được xây dựng và đánh giá trên tập kiểm tra: Hồi quy Logistic ($\mathrm{AUC}=0{,}8630$),
+Cây quyết định ($0{,}8579$), Rừng ngẫu nhiên ($0{,}8671$) và XGBoost ($0{,}8714$). XGBoost
+vượt mục tiêu ($\mathrm{AUC}>0{,}87$) nhờ thiết kế đặc trưng có chủ đích: hai đặc trưng tự
+thiết kế chiếm vị trí số 1 và số 3 theo giá trị SHAP. Ngưỡng quyết định được tối ưu theo
+$F_2$ tại $t=0{,}625$, đạt Recall $66{,}9\%$ với tỷ lệ từ chối $14{,}9\%$, giảm chi phí
+ước tính khoảng $2{,}14$ triệu USD so với ngưỡng tối ưu theo $F_1$. Xác suất đầu ra được
+hiệu chỉnh bằng Platt scaling, đưa sai số hiệu chỉnh ECE từ $25{,}0\%$ về $0{,}65\%$. Cuối cùng, toàn bộ pipeline được đóng gói thành một ứng
 dụng web triển khai thử nghiệm, cho phép chạy trực tiếp mô hình trên dữ liệu mới: dự báo
 đơn lẻ kèm giải thích SHAP và hậu kiểm theo lô.
 
@@ -270,7 +271,7 @@ Stratified (phân tầng) & Cách chia dữ liệu giữ nguyên tỷ lệ các 
 EDA & Exploratory Data Analysis — khám phá dữ liệu bằng thống kê mô tả và trực quan hóa trước khi mô hình hóa.\\
 Feature engineering & Thiết kế đặc trưng — tạo biến mới từ biến gốc dựa trên hiểu biết nghiệp vụ để mô hình học dễ hơn.\\
 Imputation (điền khuyết) & Điền giá trị hợp lý vào ô dữ liệu bị thiếu; KNN Imputer điền bằng trung bình của $k$ hồ sơ giống nhất.\\
-StandardScaler & Phép chuẩn hóa đưa mỗi đặc trưng về trung bình 0, độ lệch chuẩn 1.\\
+RobustScaler & Phép chuẩn hóa dùng trung vị và khoảng tứ phân vị (IQR) thay cho trung bình/độ lệch chuẩn — bền vững trước giá trị cực trị.\\
 Class imbalance & Mất cân bằng lớp — lớp thiểu số (vỡ nợ) chỉ chiếm $6{,}68\%$ số hồ sơ.\\
 SMOTE & Kỹ thuật sinh thêm mẫu lớp thiểu số tổng hợp bằng nội suy giữa các mẫu thật lân cận.\\
 \texttt{scale\_pos\_weight} & Tham số của XGBoost nhân trọng số lỗi của lớp dương (vỡ nợ) trong hàm mất mát, bù lại sự thiểu số.\\
@@ -322,7 +323,7 @@ giải quyết yêu cầu này bằng cách quy mỗi quyết định về đón
 \midrule
 Xây dựng mô hình & $\mathrm{AUC}\ge 0{,}87$ & \textbf{0,8714}\\
 So sánh 4 thuật toán & Bảng đầy đủ & \cref{tab:sosanh}\\
-Thiết kế đặc trưng & $\ge 2$ đặc trưng mới vào top-5 SHAP & \textbf{2 trong top-3}\\
+Thiết kế đặc trưng & $\ge 2$ đặc trưng mới vào top-5 SHAP & \textbf{hạng 1 và 3}\\
 Tối ưu ngưỡng & Tối ưu theo $F_2$ & $t=0{,}625$, Recall $66{,}9\%$\\
 Triển khai thử nghiệm & Ứng dụng web + giải thích SHAP & Đạt\\
 \bottomrule
@@ -340,9 +341,10 @@ Triển khai thử nghiệm & Ứng dụng web + giải thích SHAP & Đạt\\
 
 \section{Đóng góp chính và quy trình tổng quan}
 Đóng góp chính của đồ án gồm: (1) xây dựng đầy đủ quy trình từ khám phá dữ liệu đến demo
-sản phẩm; (2) thiết kế 4 đặc trưng mới có ý nghĩa nghiệp vụ, 2 trong số đó vào top-3 SHAP;
-(3) chuẩn hóa cách chọn ngưỡng triển khai theo $F_2$; (4) đóng gói thành ứng dụng web hỗ
-trợ dự báo đơn lẻ và hậu kiểm theo lô. Toàn bộ quy trình được tóm tắt trong \cref{fig:pipeline}.
+sản phẩm; (2) thiết kế 4 đặc trưng mới có ý nghĩa nghiệp vụ, hai trong số đó giữ vị trí
+số 1 và số 3 theo SHAP; (3) chuẩn hóa cách chọn ngưỡng triển khai theo $F_2$ kèm hiệu
+chỉnh xác suất bằng Platt scaling; (4) đóng gói thành ứng dụng web hỗ trợ dự báo đơn lẻ
+và hậu kiểm theo lô. Toàn bộ quy trình được tóm tắt trong \cref{fig:pipeline}.
 
 \begin{figure}[htbp]\centering
 \begin{tikzpicture}[
@@ -690,6 +692,29 @@ nghiệp vụ), 10 đặc trưng gốc gồm 3 nhóm: thông tin nhân khẩu (t
 năng lực tài chính (thu nhập tháng, tỷ lệ nợ, tỷ lệ dùng hạn mức tín dụng quay vòng) và
 lịch sử trễ hạn (số lần trễ 30--59, 60--89 và trên 90 ngày). Nhãn
 \texttt{SeriousDlqin2yrs} bằng 1 nếu hồ sơ trễ hạn nghiêm trọng trong vòng 2 năm sau đó.
+\Cref{tab:bien} mô tả đầy đủ từng biến.
+
+\begin{table}[htbp]\centering\small
+\caption{Các biến gốc của bộ dữ liệu \emph{Give Me Some Credit}.}
+\label{tab:bien}
+\begin{tabular}{p{5.6cm} p{6.6cm} r}
+\toprule
+\textbf{Biến} & \textbf{Ý nghĩa} & \textbf{Thiếu}\\
+\midrule
+\texttt{SeriousDlqin2yrs} (nhãn) & Trễ hạn $\ge 90$ ngày trong 2 năm tới (0/1) & 0\%\\
+\texttt{RevolvingUtilization}\ldots & Dư nợ thẻ/hạn mức quay vòng so với tổng hạn mức (tỷ lệ) & 0\%\\
+\texttt{age} & Tuổi người vay (năm) & 0\%\\
+\texttt{NumberOfTime30-59Days}\ldots & Số lần trễ hạn 30--59 ngày trong 2 năm qua & 0\%\\
+\texttt{DebtRatio} & (Trả nợ tháng + chi phí sinh hoạt) / thu nhập gộp tháng & 0\%\\
+\texttt{MonthlyIncome} & Thu nhập tháng (USD) & 19,8\%\\
+\texttt{NumberOfOpenCreditLines}\ldots & Số dòng tín dụng và khoản vay đang mở & 0\%\\
+\texttt{NumberOfTimes90DaysLate} & Số lần trễ hạn $\ge 90$ ngày & 0\%\\
+\texttt{NumberRealEstateLoans}\ldots & Số khoản vay/bảo đảm bất động sản & 0\%\\
+\texttt{NumberOfTime60-89Days}\ldots & Số lần trễ hạn 60--89 ngày & 0\%\\
+\texttt{NumberOfDependents} & Số người phụ thuộc trong gia đình & 2,6\%\\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \Cref{fig:target} cho thấy đặc điểm chi phối toàn bộ thiết kế phía sau: chỉ $9.951$ hồ sơ
 vỡ nợ so với $140.048$ hồ sơ tốt ($6{,}68\%$, tỷ lệ $\approx 14{:}1$). Cột bên trái áp đảo
@@ -706,10 +731,11 @@ phải tính đến sự lệch này.
 (i) \texttt{RevolvingUtilization} và \texttt{DebtRatio} lệch phải rất nặng, có những giá
 trị lớn bất thường (tỷ lệ dùng hạn mức hàng nghìn lần — nhiều khả năng là lỗi nhập liệu
 hoặc đơn vị); (ii) tuổi phân bố tương đối chuẩn quanh 45--50, còn các biến đếm lần trễ
-hạn tập trung gần như toàn bộ ở 0. Hệ quả thực tiễn: các mô hình tuyến tính nhạy với cực
-trị sẽ chịu thiệt, trong khi mô hình cây (chia theo ngưỡng, bất biến với biến đổi đơn
-điệu) ít bị ảnh hưởng — một lý do nữa để kỳ vọng họ mô hình cây làm tốt hơn trên dữ liệu
-này.
+hạn tập trung gần như toàn bộ ở 0. Về xử lý, đồ án \emph{giữ nguyên} các giá trị cực trị
+thay vì cắt bỏ: chúng có thể chính là tín hiệu rủi ro thật, và hai lớp phòng vệ đã có sẵn
+trong thiết kế — mô hình cây chia nút theo \emph{thứ tự} giá trị nên miễn nhiễm với độ
+lớn tuyệt đối của cực trị, còn Hồi quy Logistic được bảo vệ bằng phép chuẩn hóa bền vững
+RobustScaler (xem \cref{sec:scale}).
 
 \begin{figure}[htbp]\centering
 \includegraphics[width=0.95\linewidth]{../reports/fig_03_univariate.png}
@@ -717,12 +743,17 @@ này.
 \label{fig:univariate}
 \end{figure}
 
-\Cref{fig:corr} là ma trận tương quan Pearson giữa các đặc trưng. Đáng chú ý nhất là khối
-tương quan cao giữa ba biến trễ hạn (30--59, 60--89, 90+ ngày, tương quan đôi một
-$0{,}98$--$0{,}99$): chúng mang thông tin trùng lặp nhiều. Quan sát này dẫn thẳng đến
-quyết định ở \cref{sec:fe} — thay vì để mô hình tự xoay xở với ba biến gần như song song,
-ta tổng hợp chúng thành một chỉ số trễ hạn duy nhất có trọng số. Ngoài khối này, các đặc
-trưng còn lại tương quan yếu với nhau, tức mỗi biến đóng góp thông tin tương đối độc lập.
+\Cref{fig:corr} là ma trận tương quan \emph{hạng Spearman} giữa các đặc trưng (gồm cả
+bốn đặc trưng thiết kế ở \cref{sec:fe}, đưa vào đây để tiện đối chiếu). Chọn Spearman
+thay vì Pearson vì nó dựa trên thứ hạng nên không bị các giá trị cực trị nêu trên kéo
+lệch. Ba điểm đọc được từ hình: (i) các biến gốc phần lớn tương quan yếu với nhau
+($|\rho|<0{,}3$) — mỗi biến mang thông tin tương đối độc lập; (ii) các đặc trưng tổng
+hợp tương quan mạnh với đúng các biến thành phần của chúng (Điểm trễ hạn với Trễ 30--59
+ngày: $0{,}82$; Áp lực tài chính với Điểm trễ hạn: $0{,}96$) — đúng như cách xây dựng;
+(iii) hàng nhãn \texttt{SeriousDlqin2yrs} cho thấy nhóm trễ hạn và các đặc trưng tổng
+hợp có liên hệ hạng cao nhất với vỡ nợ, trong khi thu nhập, tỷ lệ nợ gần như không có
+tương quan hạng đơn biến — gợi ý vai trò của chúng nằm ở \emph{tương tác} với biến khác
+chứ không ở tác động trực tiếp.
 
 \begin{figure}[htbp]\centering
 \includegraphics[width=0.85\linewidth]{../reports/fig_05_correlation_heatmap.png}
@@ -730,12 +761,13 @@ trưng còn lại tương quan yếu với nhau, tức mỗi biến đóng góp 
 \label{fig:corr}
 \end{figure}
 
-\Cref{fig:delinq} đào sâu nhóm biến trễ hạn theo nhãn: tỷ lệ vỡ nợ tăng vọt theo số lần
-trễ hạn — hồ sơ chưa từng trễ hạn 90+ ngày vỡ nợ khoảng $4\%$, trong khi chỉ cần 1--2 lần
-trễ 90+ ngày tỷ lệ này đã nhân lên nhiều lần. Đây là tín hiệu dự báo mạnh nhất trong dữ
-liệu, và là cơ sở thực nghiệm cho cách đánh trọng số $3{:}2{:}1$ trong đặc trưng
-\texttt{TotalDelinquencyScore} ở \cref{sec:fe}: mức trễ hạn càng nặng, liên hệ với vỡ nợ
-càng dốc.
+\Cref{fig:delinq} đào sâu nhóm biến trễ hạn theo nhãn: so với mức nền $6{,}7\%$, hồ sơ
+chưa từng trễ hạn 90+ ngày chỉ vỡ nợ khoảng $5\%$, nhưng \emph{một} lần trễ 90+ ngày đã
+đẩy tỷ lệ lên trên $30\%$, và tái diễn nhiều lần đẩy lên $50$--$60\%$. Độ dốc này tăng
+theo mức độ nặng của trễ hạn (cùng một lần trễ, mức 30--59 ngày chỉ nâng tỷ lệ lên
+$\sim 15\%$). Đây là tín hiệu dự báo mạnh nhất trong dữ liệu, và là cơ sở thực nghiệm
+cho cách đánh trọng số $3{:}2{:}1$ trong đặc trưng \texttt{TotalDelinquencyScore} ở
+\cref{sec:fe}: mức trễ hạn càng nặng, liên hệ với vỡ nợ càng dốc.
 
 \begin{figure}[htbp]\centering
 \includegraphics[width=0.9\linewidth]{../reports/fig_07_delinquency_analysis.png}
@@ -761,27 +793,35 @@ Giữa các phương án điền khuyết, đồ án cân nhắc cụ thể như
         trúc tương quan. Chọn $k=5$ làm điểm cân bằng: $k$ quá nhỏ thì nhạy nhiễu, $k$
         quá lớn thì tiến dần về điền trung bình toàn cục.
 \end{itemize}
-\Cref{fig:imputation} kiểm chứng lựa chọn này bằng trực quan: phân phối thu nhập sau khi
-điền bằng KNN (đường liền) bám sát phân phối của phần dữ liệu quan sát được, trong khi
-điền trung vị tạo một đỉnh nhọn nhân tạo tại giá trị điền. Bộ điền khuyết được khớp
-(fit) \emph{chỉ trên tập huấn luyện} rồi áp sang tập kiểm định/kiểm tra, tránh rò rỉ
-thông tin từ dữ liệu đánh giá.
+\Cref{fig:imputation} cung cấp hai bằng chứng cho các nhận định trên. Panel trái cho
+thấy hậu quả của điền trung vị: toàn bộ $19{,}8\%$ hồ sơ thiếu bị dồn vào một đỉnh nhọn
+nhân tạo tại $5.400$ USD, phá vỡ hình dạng phân phối quan sát được (đường xanh). Panel
+phải so sánh tỷ lệ vỡ nợ giữa nhóm có và thiếu thu nhập ($6{,}9\%$ so với $5{,}6\%$):
+hai nhóm khác nhau thật sự về rủi ro, xác nhận khuyết thiếu \emph{mang thông tin} — vì
+vậy không thể xóa dòng, và giá trị điền nên phụ thuộc vào hồ sơ cụ thể (KNN) thay vì
+một hằng số chung. Bộ điền khuyết được khớp (fit) \emph{chỉ trên tập huấn luyện} rồi áp
+sang tập kiểm định/kiểm tra, tránh rò rỉ thông tin từ dữ liệu đánh giá.
 
 \begin{figure}[htbp]\centering
 \includegraphics[width=0.85\linewidth]{../reports/fig_11_imputation_comparison.png}
-\caption{So sánh phân phối trước/sau khi điền khuyết bằng KNN.}
+\caption{Trái: điền trung vị tạo đỉnh nhọn nhân tạo tại 5.400 USD. Phải: tỷ lệ vỡ nợ
+theo trạng thái thiếu thu nhập — khuyết thiếu mang thông tin.}
 \label{fig:imputation}
 \end{figure}
 
-\section{Chuẩn hóa}
-Áp dụng \texttt{StandardScaler} (đưa mỗi đặc trưng về trung bình 0, độ lệch chuẩn 1)
-\emph{chỉ cho Hồi quy Logistic}, vì hai lý do: thuật toán tối ưu hội tụ ổn định hơn khi
-các đặc trưng cùng thang đo (thu nhập cỡ hàng nghìn USD đứng cạnh tỷ lệ cỡ $[0,1]$ làm
-mặt mất mát rất dẹt theo một chiều), và hệ số sau chuẩn hóa so sánh được với nhau về độ
-lớn. Các mô hình cây (DT, RF, XGBoost) chia nút theo \emph{thứ tự} giá trị nên bất biến
-với mọi phép biến đổi đơn điệu — chuẩn hóa không thay đổi kết quả, do đó không áp dụng
-để giữ nguyên thang đo gốc dễ diễn giải. Tương tự bộ điền khuyết, scaler chỉ được khớp
-trên tập huấn luyện.
+\section{Chuẩn hóa}\label{sec:scale}
+Áp dụng \texttt{RobustScaler} \emph{chỉ cho Hồi quy Logistic}. Lý do cần chuẩn hóa:
+thuật toán tối ưu hội tụ ổn định hơn khi các đặc trưng cùng thang đo (thu nhập cỡ hàng
+nghìn USD đứng cạnh tỷ lệ cỡ $[0,1]$ làm mặt mất mát rất dẹt theo một chiều), và hệ số
+sau chuẩn hóa so sánh được với nhau về độ lớn. Lý do chọn bản \emph{robust} (trừ trung
+vị, chia khoảng tứ phân vị) thay vì chuẩn hóa thông thường theo trung bình/độ lệch
+chuẩn: như đã thấy ở \cref{fig:univariate}, nhiều biến chứa cực trị rất lớn — chỉ một
+giá trị \texttt{DebtRatio} hàng chục nghìn đã đủ thổi phồng độ lệch chuẩn và nén toàn
+bộ phần còn lại của thang đo về gần 0; trung vị và IQR thì miễn nhiễm. Các mô hình cây
+(DT, RF, XGBoost) chia nút theo \emph{thứ tự} giá trị nên bất biến với mọi phép biến
+đổi đơn điệu — chuẩn hóa không thay đổi kết quả, do đó không áp dụng để giữ nguyên
+thang đo gốc dễ diễn giải. Tương tự bộ điền khuyết, scaler chỉ được khớp trên tập huấn
+luyện (nằm trong cùng một pipeline với mô hình).
 
 \section{Thiết kế đặc trưng}\label{sec:fe}
 Mô hình cây tự bắt được tương tác, nhưng chỉ qua nhiều phép chia liên tiếp trên dữ liệu
@@ -795,9 +835,11 @@ nào) và một lý do học máy (giúp mô hình ở điểm nào).
         \emph{Nghiệp vụ:} mức độ trễ hạn càng nặng càng báo hiệu mất khả năng trả nợ;
         trọng số $3{:}2{:}1$ phạt lũy tiến theo độ nặng, nhất quán với độ dốc quan sát
         được ở \cref{fig:delinq}.\\
-        \emph{Học máy:} ba biến gốc tương quan đôi một $0{,}98$--$0{,}99$
-        (\cref{fig:corr}) — gộp thành một trục duy nhất vừa khử trùng lặp, vừa cho mô
-        hình tuyến tính một biến tổng hợp mà bản thân nó không thể tự tạo.
+        \emph{Học máy:} ba biến đếm gốc rất thưa (đại đa số hồ sơ bằng 0,
+        \cref{fig:univariate}) nên từng biến riêng lẻ mang ít thông tin cho một phép
+        chia; gộp có trọng số thành một trục ``cường độ trễ hạn'' liên tục cô đọng tín
+        hiệu vào một biến duy nhất — đặc biệt có giá trị cho Hồi quy Logistic, vốn
+        không tự tổ hợp được các biến theo bậc thang độ nặng.
   \item \texttt{FinancialStressIndex} $=\texttt{RevolvingUtil}\times\texttt{TotalDelinquencyScore}$.\\
         \emph{Nghiệp vụ:} dùng kiệt hạn mức \emph{và đồng thời} đang trễ hạn là cặp tín
         hiệu của người vay xoay vòng nợ để sống — nguy hiểm hơn nhiều so với từng tín
@@ -811,7 +853,8 @@ nào) và một lý do học máy (giúp mô hình ở điểm nào).
         thông tin mà tỷ lệ che mất.\\
         \emph{Học máy:} tách cặp biến tỷ lệ--quy mô thành một biến mức (level) trực
         giao hơn với hai biến gốc, giảm gánh nặng học tương tác chia/nhân cho mô hình.
-  \item \texttt{DelinquencySeverityBalance} $=(30\text{--}59)-(90{+})$.\\
+  \item \texttt{DelinquencySeverityBalance} $=(30\text{--}59)-(90{+})$
+        (tên trong mã nguồn: \texttt{DelinquencyTrend}).\\
         \emph{Nghiệp vụ:} dữ liệu là ảnh chụp tĩnh một thời điểm, không có chuỗi thời
         gian; hiệu số này xấp xỉ ``pha'' của vòng xoáy nợ — dương nghĩa là trễ hạn chủ
         yếu còn ở mức nhẹ (mới bắt đầu khó khăn), âm nghĩa là đã dồn về mức nặng.\\
@@ -859,51 +902,62 @@ quả cuối cùng (trên tập kiểm tra). Nếu chọn ngưỡng và báo cá
 cuối sẽ lạc quan hơn thực tế vì ngưỡng đã ``nhìn thấy'' tập đó. Cả ba phần đều chia
 \emph{phân tầng} (stratified — giữ nguyên tỷ lệ vỡ nợ $6{,}68\%$ trong từng phần): với
 lớp dương hiếm, chia ngẫu nhiên thuần có thể làm lệch tỷ lệ giữa các phần và khiến so
-sánh thiếu công bằng. Siêu tham số được chọn bằng kiểm định chéo phân tầng $k=5$ trên tập
-huấn luyện; chọn $k=5$ là điểm cân bằng thông dụng giữa độ ổn định của ước lượng và chi
-phí tính toán~\cite[Ch.~5]{james2021}. Bốn mô hình được so sánh đúng theo trật tự lý
-thuyết ở \cref{ch:lythuyet}: mốc tuyến tính $\to$ phi tuyến đơn $\to$ tổ hợp giảm phương
-sai $\to$ tổ hợp giảm độ chệch.
+sánh thiếu công bằng. Siêu tham số được tìm bằng \texttt{RandomizedSearchCV} (lấy mẫu
+ngẫu nhiên 15--20 cấu hình từ lưới tham số của từng mô hình — hiệu quả hơn duyệt toàn bộ
+lưới khi không gian tìm kiếm lớn), chấm điểm bằng AUC qua kiểm định chéo phân tầng $k=5$
+trên tập huấn luyện; chọn $k=5$ là điểm cân bằng thông dụng giữa độ ổn định của ước lượng
+và chi phí tính toán~\cite[Ch.~5]{james2021}. Cả bốn mô hình đều được bù mất cân bằng
+ngay trong hàm mất mát: \texttt{class\_weight=balanced} với LR/DT/RF và
+\texttt{scale\_pos\_weight} $\approx 14$ với XGBoost. Bốn mô hình được so sánh đúng theo
+trật tự lý thuyết ở \cref{ch:lythuyet}: mốc tuyến tính $\to$ phi tuyến đơn $\to$ tổ hợp
+giảm phương sai $\to$ tổ hợp giảm độ chệch.
+
+Về tính tái lập: mọi con số trong chương này được tính từ đúng bốn mô hình đã lưu trong
+\texttt{models/} áp lên các tập chia cố định trong \texttt{data/splits/}; hai script
+\texttt{final\_report/verify\_numbers.py} và \texttt{final\_report/regen\_figs.py} cho
+phép tái tạo toàn bộ bảng số và hình vẽ.
 
 \section{So sánh mô hình}
-Kết quả tổng hợp cho trong \cref{tab:sosanh}. AUC tăng dần đúng theo trật tự độ phức tạp
-của mô hình: LR ($0{,}8432$) $<$ DT ($0{,}8579$) $<$ RF ($0{,}8703$) $<$ XGBoost
-($0{,}8714$), và mức tăng \emph{lý giải được bằng lý thuyết} ở \cref{ch:lythuyet}: bước
-nhảy lớn nhất nằm giữa mô hình tuyến tính và họ mô hình cây (dữ liệu chứa nhiều quan hệ
-phi tuyến và cực trị mà LR không biểu diễn được), tiếp đó các mô hình tổ hợp vượt cây đơn
-nhờ giảm phương sai (RF) và giảm độ chệch tuần tự (XGBoost). Khoảng cách RF--XGBoost chỉ
-$0{,}0011$ AUC — nhỏ, và kiểm định DeLong ở cuối chương xác nhận không có ý nghĩa thống
-kê mạnh; XGBoost được chọn làm mô hình cuối vì đồng thời tốt hơn ở $F_1$/Recall, huấn
-luyện nhanh hơn RF ($2{,}18$ so với $5{,}32$ giây) và hỗ trợ \texttt{scale\_pos\_weight}
-tự nhiên trong hàm mất mát.
+Kết quả tổng hợp cho trong \cref{tab:sosanh}. Hai quan sát đáng chú ý. \emph{Thứ nhất},
+mô hình tổ hợp đứng đầu đúng như lý thuyết: XGBoost ($0{,}8714$) và RF ($0{,}8671$) vượt
+hai mô hình đơn, phản ánh hiệu quả của giảm phương sai (RF) và giảm độ chệch tuần tự
+(XGBoost). \emph{Thứ hai} — và thú vị hơn — Hồi quy Logistic ($0{,}8630$) \emph{vượt} cây
+đơn ($0{,}8579$), trái với trực giác ``phi tuyến thì hơn tuyến tính''. Điều này lý giải
+được bằng chính \cref{ch:lythuyet} và \cref{ch:dulieu}: phần phi tuyến quan trọng nhất
+của bài toán đã được \emph{gói sẵn} vào các đặc trưng thiết kế (biến tương tác, điểm tổng
+hợp), nên LR được ``san bằng sân chơi''; trong khi cây đơn vẫn chịu nguyên nhược điểm
+phương sai cao (\cref{md:rf} cho thấy phải trung bình hóa nhiều cây mới khử được). Nói
+cách khác, bảng kết quả này là minh chứng thực nghiệm cho cả hai luận điểm của đồ án:
+giá trị của thiết kế đặc trưng và giá trị của mô hình tổ hợp.
+
+XGBoost được chọn làm mô hình cuối với căn cứ định lượng rõ ràng: dẫn đầu \emph{đồng
+thời} AUC, $F_1$, $F_2$ và Precision; chênh lệch AUC với RF tuy nhỏ ($0{,}0043$) nhưng
+\emph{có ý nghĩa thống kê} theo kiểm định DeLong trên cùng tập kiểm tra ($z=4{,}18$,
+$p<0{,}001$ — chi tiết ở Phụ lục~\ref{app:hinh}); và cơ chế
+\texttt{scale\_pos\_weight} cho phép chỉnh trọng số lớp ngay trong hàm mất mát.
 
 \begin{table}[htbp]\centering
-\caption{Kết quả tổng hợp bốn mô hình trên tập kiểm tra.}
+\caption{Kết quả bốn mô hình trên tập kiểm tra. Recall/Precision/$F_1$/$F_2$ tính tại
+ngưỡng tối ưu $F_2$ riêng của từng mô hình (chọn trên tập kiểm định).}
 \label{tab:sosanh}
-\begin{tabular}{l c c c c c}
+\begin{tabular}{l c c c c c c}
 \toprule
-\textbf{Mô hình} & \textbf{AUC-ROC} & \textbf{F1} & \textbf{Recall} & \textbf{Precision} & \textbf{Thời gian (s)}\\
+\textbf{Mô hình} & \textbf{AUC-ROC} & \textbf{Ngưỡng $F_2$} & \textbf{Recall} & \textbf{Precision} & \textbf{$F_1$} & \textbf{$F_2$}\\
 \midrule
-Logistic Regression & 0,8432 & 0,398 & 41,2\% & 39,8\% & 1,23\\
-Decision Tree (CART) & 0,8579 & 0,421 & 48,7\% & 40,1\% & 0,18\\
-Random Forest & 0,8703 & 0,437 & 52,1\% & 40,5\% & 5,32\\
-\textbf{XGBoost} & \textbf{0,8714} & \textbf{0,442} & \textbf{52,6\%} & \textbf{41,3\%} & \textbf{2,18}\\
+Logistic Regression & 0,8630 & 0,530 & 68,7\% & 26,7\% & 0,384 & 0,522\\
+Decision Tree (CART) & 0,8579 & 0,630 & 66,8\% & 27,8\% & 0,392 & 0,521\\
+Random Forest & 0,8671 & 0,480 & 72,9\% & 24,5\% & 0,367 & 0,523\\
+\textbf{XGBoost} & \textbf{0,8714} & \textbf{0,625} & 66,9\% & \textbf{29,9\%} & \textbf{0,414} & \textbf{0,536}\\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\Cref{fig:compare} trực quan hóa \cref{tab:sosanh} dưới dạng cột để so sánh đồng thời
-nhiều chỉ số: dễ thấy bốn mô hình chênh nhau ít ở AUC nhưng phân hóa rõ hơn ở
-Recall — đúng chỉ số quan trọng với tín dụng. \Cref{fig:roc} vẽ bốn đường ROC trên cùng
-hệ trục: đường của RF và XGBoost gần như trùng nhau và cùng nằm trên LR/DT ở mọi mức
-ngưỡng, nghĩa là ưu thế của mô hình tổ hợp không phụ thuộc vào việc chọn một ngưỡng cụ
-thể nào.
-
-\begin{figure}[htbp]\centering
-\includegraphics[width=0.92\linewidth]{../reports/fig_20_model_comparison.png}
-\caption{So sánh tổng hợp các chỉ số giữa bốn mô hình.}
-\label{fig:compare}
-\end{figure}
+\Cref{fig:roc} vẽ bốn đường ROC trên cùng hệ trục — mỗi điểm trên một đường ứng với một
+mức ngưỡng, nên hình cho phép so sánh các mô hình \emph{trên mọi ngưỡng cùng lúc} thay vì
+tại một ngưỡng cụ thể. Bốn đường bám khá sát nhau (nhất quán với dải AUC hẹp
+$0{,}858$--$0{,}871$), trong đó đường XGBoost (đỏ) nhỉnh hơn rõ nhất ở vùng tỷ lệ dương
+giả $0{,}1$--$0{,}4$ — đúng vùng vận hành thực tế của bài toán (tỷ lệ từ chối vừa phải),
+còn đường DT (cam) thấp nhất gần như toàn dải.
 
 \begin{figure}[htbp]\centering
 \includegraphics[width=0.92\linewidth]{../reports/fig_roc_comparison.png}
@@ -912,33 +966,37 @@ thể nào.
 \end{figure}
 
 \section{Diễn giải SHAP}\label{sec:shap_kq}
-Áp dụng \texttt{TreeExplainer} cho XGBoost. Hai đặc trưng tự thiết kế
-(\texttt{FinancialStressIndex}, \texttt{TotalDelinquencyScore}) lọt vào top-3
-(\cref{tab:shap}, \cref{fig:shapbar}), xác nhận hai ý đồ thiết kế ở \cref{sec:fe}: biến
-tương tác ``dùng kiệt hạn mức kèm trễ hạn'' và chỉ số trễ hạn có trọng số thực sự mang
-thông tin mà mô hình khai thác nhiều hơn cả các biến gốc tạo ra chúng.
+Áp dụng \texttt{TreeExplainer} cho XGBoost trên mẫu $3.000$ hồ sơ của tập kiểm tra. Hai
+đặc trưng tự thiết kế chiếm vị trí số 1 và số 3 (\cref{tab:shap}, \cref{fig:shapbar}),
+xác nhận hai ý đồ thiết kế ở \cref{sec:fe}: biến tương tác ``dùng kiệt hạn mức kèm trễ
+hạn'' và chỉ số trễ hạn có trọng số thực sự mang thông tin mà mô hình khai thác nhiều
+hơn cả các biến gốc tạo ra chúng.
 
 \begin{table}[htbp]\centering
-\caption{Năm đặc trưng quan trọng nhất theo $|\text{SHAP}|$ trung bình.}
+\caption{Năm đặc trưng quan trọng nhất theo $|\text{SHAP}|$ trung bình (mẫu 3.000 hồ sơ
+tập kiểm tra).}
 \label{tab:shap}
 \begin{tabular}{c l c}
 \toprule
-\textbf{Hạng} & \textbf{Đặc trưng} & \textbf{SHAP}\\
+\textbf{Hạng} & \textbf{Đặc trưng} & \textbf{$|$SHAP$|$ trung bình}\\
 \midrule
-1 & RevolvingUtilizationOfUnsecuredLines & 0,251\\
-2 & \textit{FinancialStressIndex} (tự thiết kế) & 0,198\\
-3 & \textit{TotalDelinquencyScore} (tự thiết kế) & 0,187\\
-4 & NumberOfOpenCreditLinesAndLoans & 0,142\\
-5 & Age & 0,108\\
+1 & \textit{FinancialStressIndex} (tự thiết kế) & 0,577\\
+2 & RevolvingUtilizationOfUnsecuredLines & 0,535\\
+3 & \textit{TotalDelinquencyScore} (tự thiết kế) & 0,410\\
+4 & age & 0,244\\
+5 & NumberOfOpenCreditLinesAndLoans & 0,168\\
 \bottomrule
 \end{tabular}
 \end{table}
 
 Trong \cref{fig:shapbar}, mỗi cột là giá trị $|\text{SHAP}|$ trung bình của một đặc trưng
-trên toàn bộ tập kiểm tra — hiểu là ``trung bình mỗi dự báo, đặc trưng này đẩy xác suất
-vỡ nợ đi bao xa''. Thứ tự cột vì vậy đọc được trực tiếp thành mức độ mô hình \emph{dựa
-vào} từng đặc trưng: tỷ lệ dùng hạn mức đứng đầu (phù hợp trực giác nghiệp vụ — đây là
-tín hiệu căng thẳng thanh khoản sớm nhất), theo sát là hai đặc trưng tự thiết kế.
+— hiểu là ``trung bình mỗi dự báo, đặc trưng này đẩy xác suất vỡ nợ đi bao xa''. Thứ tự
+cột vì vậy đọc được trực tiếp thành mức độ mô hình \emph{dựa vào} từng đặc trưng. Đáng
+chú ý nhất: biến tương tác tự thiết kế \texttt{FinancialStressIndex} đứng \emph{trên} cả
+tín hiệu gốc mạnh nhất (tỷ lệ dùng hạn mức), nghĩa là tổ hợp ``dùng kiệt hạn mức
+\emph{kèm} trễ hạn'' dự báo tốt hơn từng tín hiệu đứng riêng — đúng giả thuyết nghiệp vụ
+đặt ra khi thiết kế. Ngược lại, ba biến trễ hạn gốc rơi xuống cuối bảng vì thông tin của
+chúng đã được hai đặc trưng tổng hợp hấp thụ.
 
 \begin{figure}[htbp]\centering
 \includegraphics[width=0.9\linewidth]{../reports/fig_26a_shap_bar.png}
@@ -956,39 +1014,49 @@ yếu không phải giá trị tuyệt đối mà là \emph{tỷ lệ bất đ�
 — bỏ sót đắt hơn từ chối nhầm hàng chục lần, điều ít tranh cãi trong tín dụng.
 
 Theo Nhận xét~\ref{nx:bayes}, ngưỡng Bayes tương ứng là
-$t^\star=\frac{500}{500+11.250}\approx 0{,}043$ — nhưng áp ngưỡng này đồng nghĩa từ chối
-$\sim 74\%$ hồ sơ, bất khả thi về kinh doanh (ngân hàng không thể từ chối ba phần tư
-khách hàng). Nguyên nhân là quy tắc Bayes chỉ tối ưu chi phí \emph{trong mô hình giả
-định}, bỏ qua các ràng buộc vận hành và sai số hiệu chỉnh xác suất. Vì vậy đồ án dùng nó
-làm mốc tham chiếu và chọn ngưỡng triển khai bằng cách tối ưu trực tiếp $F_2$
-(\cref{eq:fbeta}, $\beta=2$ — ưu tiên Recall gấp đôi, nhất quán với hướng bất đối xứng
-chi phí nhưng không cực đoan): quét $t\in[0{,}05;0{,}95]$ trên tập kiểm định cho cực đại
-tại $t=0{,}625$ với Recall $66{,}9\%$, Precision $29{,}9\%$, $F_2=0{,}537$
-(\cref{tab:nguong}, \cref{fig:threshold}).
+$t^\star=\frac{500}{500+11.250}\approx 0{,}043$ — nhưng áp ngưỡng này lên điểm số mô
+hình đồng nghĩa từ chối $97{,}8\%$ hồ sơ, hiển nhiên bất khả thi về kinh doanh. Có hai
+nguyên nhân: quy tắc Bayes giả định điểm số là xác suất hiệu chỉnh hoàn hảo (mục sau cho
+thấy điểm số XGBoost với trọng số lớp bị thổi phồng đáng kể), và nó bỏ qua mọi ràng buộc
+vận hành. Vì vậy đồ án dùng nó làm mốc tham chiếu và chọn ngưỡng triển khai bằng cách
+tối ưu trực tiếp $F_2$ (\cref{eq:fbeta}, $\beta=2$ — ưu tiên Recall gấp đôi, nhất quán
+với hướng bất đối xứng chi phí nhưng không cực đoan): quét $t\in[0{,}05;0{,}95]$ trên
+tập kiểm định cho cực đại tại $t=0{,}625$; trên tập kiểm tra ngưỡng này đạt Recall
+$66{,}9\%$, Precision $29{,}9\%$, $F_2=0{,}536$ (\cref{tab:nguong},
+\cref{fig:threshold}).
 
 \begin{table}[htbp]\centering
-\caption{So sánh các ngưỡng trên tập kiểm tra (22.500 hồ sơ).}
+\caption{So sánh các ngưỡng trên tập kiểm tra (22.500 hồ sơ, 1.504 vỡ nợ).}
 \label{tab:nguong}
-\begin{tabular}{l c c c c}
+\begin{tabular}{l c c c c c}
 \toprule
-\textbf{Ngưỡng} & \textbf{Recall} & \textbf{Precision} & \textbf{$F_2$} & \textbf{Chi phí (tr.USD)}\\
+\textbf{Ngưỡng} & \textbf{Recall} & \textbf{Precision} & \textbf{$F_2$} & \textbf{Tỷ lệ từ chối} & \textbf{Chi phí (tr.USD)}\\
 \midrule
-Mặc định (0,50) & 77,5\% & 22,2\% & 0,518 & 5,84\\
-\textbf{$F_2$-optimal (0,625)} & \textbf{66,9\%} & \textbf{29,9\%} & \textbf{0,537} & \textbf{6,78}\\
-$F_1$-optimal (0,77) & 51,6\% & 39,4\% & 0,486 & 8,79\\
-Bayes-optimal (0,043) & 99,2\% & 6,9\% & 0,265 & 34,50\\
+Mặc định (0,50) & 77,5\% & 22,2\% & 0,518 & 23,3\% & 5,84\\
+\textbf{$F_2$-optimal (0,625)} & \textbf{66,9\%} & \textbf{29,9\%} & \textbf{0,536} & \textbf{14,9\%} & \textbf{6,78}\\
+$F_1$-optimal (0,775) & 50,7\% & 39,5\% & 0,480 & 8,6\% & 8,92\\
+Bayes-optimal (0,043) & 99,9\% & 6,8\% & 0,268 & 97,8\% & 10,26\\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\Cref{fig:threshold} thể hiện quá trình quét ngưỡng: trục hoành là ngưỡng $t$, các đường
-cong là Recall (giảm dần theo $t$), Precision (tăng dần) và $F_2$; điểm cực đại của đường
-$F_2$ chính là ngưỡng $0{,}625$ được chọn. \Cref{tab:nguong} đặt bốn ngưỡng cạnh nhau để
-thấy rõ đánh đổi: ngưỡng Bayes lý thuyết cho Recall gần tuyệt đối nhưng chi phí và tỷ lệ
-từ chối phi thực tế; ngưỡng $F_1$ cân Precision--Recall đều nhau nên bỏ sót gần một nửa
-hồ sơ vỡ nợ; ngưỡng $F_2$ được chọn vì giữ Recall ở mức cao ($66{,}9\%$) trong khi tỷ lệ
-từ chối còn chấp nhận được — so với ngưỡng $F_1$, nó giảm khoảng $2{,}01$ triệu USD chi
-phí ước tính trên tập kiểm tra.
+\Cref{fig:threshold} thể hiện quá trình quét ngưỡng trên tập kiểm định: panel trái là
+$F_1/F_2$ theo ngưỡng với cực đại $F_2$ tại $0{,}625$; panel giữa cho thấy cơ chế đánh
+đổi (Recall giảm, Precision tăng theo ngưỡng); panel phải so sánh bốn ngưỡng chính trên
+tập kiểm tra.
+
+Cần trung thực rằng \emph{không ngưỡng nào thắng trên mọi tiêu chí} trong
+\cref{tab:nguong}. Dưới giả định chi phí hai tham số, ngưỡng $0{,}50$ thậm chí có chi
+phí thấp nhất ($5{,}84$ triệu) kèm Recall cao hơn — nhưng phải từ chối $23{,}3\%$ tổng
+hồ sơ, gấp rưỡi mức $14{,}9\%$ của ngưỡng $0{,}625$. Khoản chênh đó là $\sim 1.900$
+khách hàng tốt bị từ chối thêm, mà mô hình chi phí chỉ định giá $500$ USD/hồ sơ — con
+số không phản ánh tổn thất dài hạn về thị phần và trải nghiệm khách hàng khi từ chối
+gần một phần tư thị trường. Ngưỡng $0{,}625$ được chọn vì là cực đại $F_2$ (tiêu chí
+chính, cân Recall--Precision theo đúng khẩu vị rủi ro đã tuyên bố) với tỷ lệ từ chối ở
+mức vận hành được; so với ngưỡng $F_1$ ($0{,}775$) — lựa chọn ``mặc định'' nếu không
+phân biệt chi phí FN/FP — nó tăng Recall từ $50{,}7\%$ lên $66{,}9\%$ và giảm khoảng
+$2{,}14$ triệu USD chi phí ước tính. Ngưỡng Bayes lý thuyết cho Recall gần tuyệt đối
+nhưng từ chối $97{,}8\%$ hồ sơ — chỉ có giá trị làm mốc tham chiếu.
 
 \begin{figure}[htbp]\centering
 \includegraphics[width=0.9\linewidth]{../reports/fig_25_threshold_optimization.png}
@@ -997,34 +1065,50 @@ phí ước tính trên tập kiểm tra.
 \end{figure}
 
 \section{Phân tích lỗi và hiệu chỉnh xác suất}
-\Cref{fig:score} vẽ phân bố điểm rủi ro của hai lớp: lớp tốt dồn về điểm thấp, lớp vỡ nợ
-trải về phía điểm cao, và phần \emph{giao nhau} của hai phân bố quanh ngưỡng chính là nơi
-sinh ra hầu hết FP/FN — các hồ sơ mang tín hiệu mâu thuẫn (ví dụ thu nhập tốt nhưng đã
-từng trễ hạn). Hàm ý vận hành: thay vì tin tưởng tuyệt đối quyết định nhị phân, vùng điểm
-sát ngưỡng nên được chuyển sang thẩm định thủ công — mô hình lo phần dễ chiếm đa số, con
-người lo phần khó.
+\Cref{fig:score} (panel trái) vẽ phân bố điểm dự báo của hai lớp: lớp tốt dồn về điểm
+thấp, lớp vỡ nợ trải về phía điểm cao, và phần \emph{giao nhau} của hai phân bố chính là
+nơi sinh ra FP/FN — các hồ sơ mang tín hiệu mâu thuẫn (ví dụ thu nhập tốt nhưng đã từng
+trễ hạn). Panel phải tách riêng nhóm vỡ nợ theo hai phía của ngưỡng $0{,}625$: phần lớn
+hồ sơ bị bỏ sót (FN) không nằm sát 0 mà rải đều ở vùng điểm trung bình — tức mô hình
+\emph{có} nhận ra mức rủi ro nhất định nhưng chưa đủ vượt ngưỡng. Hàm ý vận hành: vùng
+điểm sát dưới ngưỡng nên được chuyển sang thẩm định thủ công — mô hình lo phần dễ chiếm
+đa số, con người lo phần khó.
 
 \begin{figure}[htbp]\centering
-\includegraphics[width=0.8\linewidth]{../reports/fig_24_score_distribution.png}
-\caption{Phân bố điểm rủi ro của hai lớp quanh ngưỡng quyết định.}
+\includegraphics[width=0.95\linewidth]{../reports/fig_24_score_distribution.png}
+\caption{Trái: phân bố điểm dự báo theo nhãn thật. Phải: nhóm vỡ nợ tách theo bắt
+đúng/bỏ sót tại ngưỡng 0,625.}
 \label{fig:score}
 \end{figure}
 
-Về chất lượng xác suất: sau Platt scaling, điểm Brier giảm từ $0{,}0582$ xuống $0{,}0478$
-và ECE từ $3{,}2\%$ xuống $1{,}9\%$. \Cref{fig:calib} cho thấy điều này bằng hình: trục
-hoành là xác suất mô hình dự báo, trục tung là tần suất vỡ nợ thực tế trong từng khoảng
-điểm; đường chéo $45^\circ$ là hiệu chỉnh hoàn hảo. Đường của mô hình gốc võng khỏi đường
-chéo (đặc trưng của boosting~\cite{niculescu2005}), còn đường sau Platt scaling bám sát
-đường chéo hơn rõ rệt — tức con số ``xác suất vỡ nợ $30\%$'' mà ứng dụng hiển thị thực sự
-gần nghĩa đen của nó. Cuối cùng, kiểm định DeLong cho cặp XGBoost--Random Forest trên
-cùng tập kiểm tra xác nhận chênh lệch AUC $0{,}0011$ không có ý nghĩa thống kê mạnh —
-nhất quán với nhận định ở \cref{tab:sosanh}, và củng cố rằng lý do chọn XGBoost nằm ở
-Recall, tốc độ và cơ chế trọng số lớp chứ không phải ở một khác biệt AUC mong manh.
+Về chất lượng xác suất: \cref{fig:calib} vẽ biểu đồ độ tin cậy của bốn mô hình — trục
+hoành là xác suất dự báo, trục tung là tần suất vỡ nợ thực tế trong từng khoảng điểm,
+đường chéo $45^\circ$ là hiệu chỉnh hoàn hảo. Cả bốn đường đều nằm \emph{dưới} đường
+chéo rất xa: các mô hình ước lượng rủi ro cao hơn thực tế một cách hệ thống. Đây là hệ
+quả đã lường trước của trọng số lớp $\approx 14$ (mô hình được huấn luyện như thể lớp
+vỡ nợ đông gấp 14 lần thật) — và nó giải thích luôn vì sao ngưỡng tối ưu $0{,}625$ nằm
+cao hơn hẳn $0{,}5$. Điểm Brier định lượng điều này: cả bốn mô hình ở mức
+$0{,}119$--$0{,}157$, \emph{tệ hơn} cả mức nền $0{,}0624$ (luôn dự báo đúng tỷ lệ
+$6{,}68\%$) — điểm số thô xếp hạng tốt nhưng tuyệt đối không đọc được như xác suất.
 
 \begin{figure}[htbp]\centering
-\includegraphics[width=0.8\linewidth]{../reports/fig_31_calibration.png}
-\caption{Đường hiệu chỉnh xác suất trước và sau Platt scaling.}
+\includegraphics[width=0.95\linewidth]{../reports/fig_31_calibration.png}
+\caption{Biểu đồ độ tin cậy và điểm Brier của bốn mô hình (trước hiệu chỉnh).}
 \label{fig:calib}
+\end{figure}
+
+Khắc phục bằng Platt scaling (\cref{sec:calib}): khớp hồi quy logistic một biến trên
+điểm số của tập kiểm định, áp lên tập kiểm tra. \Cref{fig:platt} cho thấy kết quả: điểm
+Brier của XGBoost giảm từ $0{,}1388$ xuống $0{,}0492$ (vượt mức nền $0{,}0624$) và ECE
+giảm từ $25{,}0\%$ xuống $0{,}65\%$ — đường hiệu chỉnh gần như trùng đường chéo. Vì
+Platt scaling là phép biến đổi đơn điệu, AUC giữ nguyên $0{,}8714$ và mọi kết luận về
+ngưỡng/xếp hạng phía trên không đổi; điều thay đổi là con số ``xác suất vỡ nợ'' hiển thị
+cho người dùng cuối giờ mang đúng nghĩa đen của nó.
+
+\begin{figure}[htbp]\centering
+\includegraphics[width=0.62\linewidth]{../reports/fig_31b_platt.png}
+\caption{XGBoost trước/sau hiệu chỉnh Platt scaling trên tập kiểm tra.}
+\label{fig:platt}
 \end{figure}
 
 % =====================================================================
@@ -1154,12 +1238,36 @@ quát hóa.
 
 \section{Kết luận}
 \begin{enumerate}
-  \item XGBoost đạt AUC $=0{,}8714$, vượt mục tiêu $0{,}87$.
-  \item Thiết kế đặc trưng có chủ đích: 2 đặc trưng tự thiết kế vào top-3 SHAP.
-  \item Ngưỡng $F_2$-optimal ($0{,}625$) cân bằng Recall--Precision phù hợp tín dụng và
-        giảm chi phí so với ngưỡng $F_1$.
+  \item XGBoost đạt AUC $=0{,}8714$ trên tập kiểm tra, vượt mục tiêu $0{,}87$; chênh
+        lệch với Random Forest nhỏ nhưng có ý nghĩa thống kê (DeLong, $p<0{,}001$).
+  \item Thiết kế đặc trưng có chủ đích phát huy tác dụng kép: hai đặc trưng tự thiết kế
+        chiếm vị trí số 1 và số 3 theo SHAP, đồng thời giúp cả mô hình tuyến tính cạnh
+        tranh được với mô hình phi tuyến đơn.
+  \item Ngưỡng $F_2$-optimal ($0{,}625$) cân bằng Recall ($66{,}9\%$) với tỷ lệ từ chối
+        vận hành được ($14{,}9\%$); đánh đổi giữa các ngưỡng được trình bày tường minh
+        thay vì chỉ chọn một con số.
+  \item Xác suất đầu ra được hiệu chỉnh bằng Platt scaling (ECE $25{,}0\%\to 0{,}65\%$),
+        tách bạch hai vai trò xếp hạng và định lượng rủi ro.
   \item SHAP giải thích từng quyết định, đáp ứng yêu cầu minh bạch (Basel III, GDPR).
 \end{enumerate}
+
+\section{Hạn chế}
+Để các kết quả trên được đọc đúng trọng lượng, cần nêu rõ các giới hạn:
+\begin{itemize}
+  \item \textbf{Dữ liệu:} bộ \emph{Give Me Some Credit} thu thập tại Mỹ quanh năm 2011
+        — quan hệ giữa đặc trưng và rủi ro có thể khác với tín dụng Việt Nam hiện nay;
+        mỗi hồ sơ là một ảnh chụp tĩnh, không có lịch sử giao dịch theo thời gian.
+  \item \textbf{Đánh giá:} dữ liệu được chia ngẫu nhiên, chưa kiểm chứng theo trục thời
+        gian (huấn luyện quá khứ — kiểm tra tương lai) như môi trường vận hành thật;
+        nhãn nhị phân ``trễ hạn 90+ ngày trong 2 năm'' không phân biệt mức độ tổn thất
+        giữa các hồ sơ vỡ nợ.
+  \item \textbf{Giả định chi phí:} cặp $(c_{FN},c_{FP})=(11.250,\,500)$ USD là kịch bản
+        minh họa; ngân hàng thật cần thay bằng số liệu danh mục của mình (ứng dụng đã
+        cho phép chỉnh hai tham số này).
+  \item \textbf{Phạm vi kỹ thuật:} giá trị SHAP tính trên mẫu $3.000$ hồ sơ; các kết
+        luận so sánh mô hình gắn với bộ siêu tham số tìm được bằng tìm kiếm ngẫu nhiên,
+        chưa phải tối ưu toàn cục.
+\end{itemize}
 
 \section{Hướng phát triển}
 \begin{itemize}
@@ -1215,14 +1323,21 @@ quát hóa.
   {\colorbox{bkblue}{\color{white}\rule[-6pt]{0pt}{28pt}\,\thechapter\,}}{16pt}{\Huge}
 
 \chapter{Siêu tham số XGBoost}
+Cấu hình dưới đây đọc trực tiếp từ mô hình đã lưu (\texttt{models/best\_model.pkl}),
+là kết quả của \texttt{RandomizedSearchCV} mô tả ở \cref{ch:thucnghiem}:
 \begin{verbatim}
 {
-  'n_estimators': 200,      'max_depth': 6,
+  'n_estimators': 200,      'max_depth': 4,
   'learning_rate': 0.05,    'subsample': 0.8,
-  'colsample_bytree': 0.8,  'scale_pos_weight': 14.05,  # n_neg/n_pos
+  'colsample_bytree': 0.8,  'scale_pos_weight': 13.96,  # = n_neg/n_pos
+  'reg_lambda': 1.0,        'reg_alpha': 0.1,
+  'min_child_weight': 5,    'gamma': 0.1,
   'objective': 'binary:logistic',  'random_state': 42
 }
 \end{verbatim}
+Đáng chú ý là tìm kiếm chọn cây khá nông (\texttt{max\_depth}=4) kèm chính quy hóa đủ
+cả ba kênh ($\lambda$, $\alpha$, $\gamma$ — xem \cref{eq:xgbobj}): với dữ liệu nhiễu và
+mất cân bằng, nhiều cây nông cộng dồn tổng quát hóa tốt hơn ít cây sâu.
 
 \chapter{Hình kỹ thuật bổ sung}\label{app:hinh}
 Các hình dưới đây bổ trợ cho lập luận ở phần chính nhưng không thiết yếu với mạch đọc,
@@ -1246,10 +1361,13 @@ do đồ án chọn trọng số lớp thay vì SMOTE.
 \label{fig:mi}
 \end{figure}
 \noindent\textbf{Về \cref{fig:mi}:} thông tin tương hỗ (mutual information) đo mức phụ
-thuộc \emph{bất kỳ dạng nào} (kể cả phi tuyến) giữa từng đặc trưng và nhãn vỡ nợ, bổ sung
-cho tương quan Pearson vốn chỉ bắt quan hệ tuyến tính. Thứ hạng cao của nhóm trễ hạn và
-các đặc trưng tự thiết kế ở đây nhất quán với kết quả SHAP ở \cref{sec:shap_kq} — hai
-phương pháp độc lập cùng chỉ về một nhóm tín hiệu.
+thuộc \emph{bất kỳ dạng nào} (kể cả phi tuyến) giữa từng đặc trưng và nhãn vỡ nợ — một
+thước đo độc lập hoàn toàn với mô hình, tính trước khi huấn luyện. Kết quả nhất quán
+đáng kể với SHAP ở \cref{sec:shap_kq}: hai vị trí dẫn đầu vẫn là
+\texttt{FinancialStressIndex} và \texttt{TotalDelinquencyScore} (cột đỏ — đặc trưng
+thiết kế), và \texttt{DelinquencyTrend} cũng vào top-4 — ba trong bốn đặc trưng tự
+thiết kế được một phương pháp ``trung lập'' xác nhận giá trị, trước cả khi mô hình nào
+được huấn luyện.
 
 \begin{figure}[htbp]\centering
 \includegraphics[width=0.85\linewidth]{../reports/fig_27_shap_dependence.png}
@@ -1267,21 +1385,28 @@ mà mô hình tuyến tính không bắt được, củng cố lựa chọn mô 
 \caption{Đường cong học của XGBoost.}
 \label{fig:lc}
 \end{figure}
-\noindent\textbf{Về \cref{fig:lc}:} đường cong học vẽ hiệu năng trên tập huấn luyện và
-tập kiểm định theo số mẫu huấn luyện. Hai đường hội tụ về gần nhau khi đủ dữ liệu, không
-có khoảng hở lớn — dấu hiệu mô hình không quá khớp nghiêm trọng và lượng dữ liệu hiện có
-đã gần đủ ``no'' cho cấu hình mô hình này (thu thập thêm dữ liệu cùng loại sẽ không cải
-thiện nhiều; muốn tốt hơn cần đặc trưng mới hoặc nguồn dữ liệu mới).
+\noindent\textbf{Về \cref{fig:lc}:} đường cong học vẽ AUC trên tập huấn luyện và tập
+kiểm định theo số mẫu huấn luyện. Khi tăng từ $10$ nghìn lên $70$ nghìn mẫu, AUC huấn
+luyện giảm từ $\sim 0{,}96$ về $\sim 0{,}885$ trong khi AUC kiểm định tăng lên
+$\sim 0{,}864$; khoảng cách hai đường thu hẹp từ $0{,}12$ xuống $\sim 0{,}02$, dưới
+ngưỡng cảnh báo $0{,}03$ (panel phải). Diễn giải: ở cỡ mẫu nhỏ mô hình quá khớp rõ rệt,
+nhưng với toàn bộ dữ liệu hiện có thì đã vào vùng lành mạnh và hai đường gần bão hòa —
+thu thập thêm dữ liệu cùng loại sẽ không cải thiện nhiều; muốn tốt hơn cần đặc trưng
+mới hoặc nguồn dữ liệu mới.
 
 \begin{figure}[htbp]\centering
 \includegraphics[width=0.85\linewidth]{../reports/fig_32_delong_summary.png}
-\caption{Tóm tắt kiểm định DeLong giữa các mô hình.}
+\caption{Kiểm định DeLong cho cặp XGBoost--Random Forest trên tập kiểm tra.}
 \label{fig:delong}
 \end{figure}
-\noindent\textbf{Về \cref{fig:delong}:} ma trận giá trị $p$ của kiểm định DeLong cho
-từng cặp mô hình trên cùng tập kiểm tra. Các cặp liên quan đến LR/DT đều khác biệt có ý
-nghĩa (giá trị $p$ rất nhỏ), riêng cặp RF--XGBoost không đạt ngưỡng ý nghĩa thống kê —
-cơ sở định lượng cho phát biểu ở \cref{ch:thucnghiem} rằng việc chọn XGBoost dựa trên
-Recall, tốc độ và cơ chế trọng số lớp chứ không dựa trên chênh lệch AUC.
+\noindent\textbf{Về \cref{fig:delong}:} kiểm định DeLong so sánh AUC của XGBoost
+($0{,}8714$) và Random Forest ($0{,}8671$) trên \emph{cùng} tập kiểm tra 22.500 hồ sơ
+(hai mô hình chấm điểm cùng các hồ sơ nên hai AUC tương quan — DeLong xử lý đúng sự
+tương quan này, điều mà so sánh hai khoảng tin cậy độc lập không làm được). Kết quả
+$z=4{,}18$, $p<0{,}001$: chênh lệch $0{,}0043$ AUC tuy nhỏ về độ lớn nhưng có ý nghĩa
+thống kê — với 22.500 quan sát, sai số ước lượng AUC đủ nhỏ để phân biệt được hai mô
+hình. Đây là cơ sở định lượng cho việc chọn XGBoost ở \cref{ch:thucnghiem}. (Ghi chú
+trên hình: nhãn ``same test set'' và mô hình RF dùng trong kiểm định là đúng các mô
+hình lưu tại \texttt{models/}.)
 
 \end{document}
