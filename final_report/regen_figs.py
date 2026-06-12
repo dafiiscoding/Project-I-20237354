@@ -8,6 +8,11 @@
 - fig_31b_platt.png (MỚI) : XGBoost trước/sau Platt scaling (khớp trên VAL).
 - fig_24_score_distribution.png : phân bố điểm theo nhãn thật; bản cũ vẽ
   vạch ngưỡng 0,77 trong khi ngưỡng triển khai của báo cáo là 0,625.
+- model_results.csv : bảng so sánh 4 mô hình. Bản cũ là output của một lần
+  chạy notebook 03 trước khi lưu model (LR 0.8432, RF 0.8703 — lệch với
+  models/*.pkl); bản này tính lại từ model đã lưu, khớp bảng trong báo cáo.
+  Hai cột cv_auc và train_time_s bị bỏ vì không tái lập được nếu không
+  chạy lại toàn bộ tìm kiếm siêu tham số.
 
 Chạy: python regen_figs.py
 """
@@ -21,7 +26,8 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import roc_auc_score, brier_score_loss
+from sklearn.metrics import (roc_auc_score, brier_score_loss,
+                             average_precision_score)
 from sklearn.calibration import calibration_curve
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -192,7 +198,29 @@ def main() -> None:
                 bbox_inches='tight')
     plt.close(fig)
 
-    print('OK — đã ghi fig_24, fig_25, fig_31, fig_31b vào reports/')
+    # ---------- model_results.csv: bảng so sánh từ model đã lưu ----------
+    rows = []
+    for name, m in models.items():
+        p_val = m.predict_proba(Xv)[:, 1]
+        p_test = probs_t[name]
+        t2 = max((metrics_at(yv, p_val, t) for t in grid),
+                 key=lambda d: d['f2'])['t']
+        d = metrics_at(yt, p_test, t2)
+        rows.append({
+            'model': name,
+            'test_auc': round(roc_auc_score(yt, p_test), 4),
+            'avg_precision': round(average_precision_score(yt, p_test), 4),
+            'threshold_f2': round(t2, 3),
+            'recall': round(d['recall'], 4),
+            'precision': round(d['precision'], 4),
+            'f1': round(d['f1'], 4),
+            'f2': round(d['f2'], 4),
+        })
+    pd.DataFrame(rows).to_csv(REPORTS / 'model_results.csv', index=False)
+    print(pd.DataFrame(rows).to_string(index=False))
+
+    print('OK — đã ghi fig_24, fig_25, fig_31, fig_31b, model_results.csv '
+          'vào reports/')
 
 
 if __name__ == '__main__':

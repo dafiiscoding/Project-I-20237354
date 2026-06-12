@@ -3,7 +3,7 @@
 
 ## DeLong Test: XGBoost vs RF
 
-**Lưu ý tái lập:** Bảng so sánh mô hình chính trong `reports/model_results.csv` ghi RF test AUC = 0.8703. Riêng kiểm định DeLong dưới đây dùng RF được huấn luyện lại như một model phụ nội bộ để tạo xác suất so sánh, nên RF AUC = 0.8671. Vì vậy ΔAUC = +0.0043 chỉ áp dụng cho cặp model trong addendum, không phải chênh lệch trực tiếp với dòng RF trong bảng chính.
+**Lưu ý tái lập:** Các con số dưới đây tính từ đúng các model đã lưu trong `models/` (RF test AUC = 0.8671), nhất quán với `reports/model_results.csv` (đã được tái sinh từ cùng bộ model bằng `final_report/regen_figs.py`) và với bảng so sánh trong báo cáo chính. Bản `model_results.csv` cũ (RF = 0.8703, LR = 0.8432) là output của một lần chạy notebook trước khi lưu model và đã bị thay thế.
 
 | Metric | Giá trị |
 |--------|--------|
